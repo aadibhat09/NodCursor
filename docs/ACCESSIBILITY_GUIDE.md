@@ -12,6 +12,9 @@
 - Tune sensitivity and smoothing in Settings.
 - Use dwell click if blink gestures are difficult.
 - Enable voice commands for redundant control.
+- Blink triggers left click, double blink triggers right click, and long blink toggles drag mode.
+- Open the on-screen keyboard in Demo to type with facial gestures:
+	mouth open cycles key focus, smile selects key, and double blink backspaces.
 
 ## Troubleshooting
 
@@ -19,6 +22,8 @@
 - Jittery cursor: increase smoothing and deadzone.
 - Missed blinks: raise click sensitivity threshold.
 - Voice commands missing: use Chrome/Edge and ensure microphone permissions.
+- Page scrolling unexpectedly: keep head-tilt scroll disabled in Settings unless needed.
+- Keyboard gesture typing too fast: pause mouth-open motion between key steps.
 
 ## Accessibility Considerations
 

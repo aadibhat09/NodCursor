@@ -11,6 +11,8 @@ import { useFaceTracking } from '../../hooks/useFaceTracking';
 import { useVoiceCommands } from '../../hooks/useVoiceCommands';
 import { VirtualButtons } from '../../components/VirtualButtons';
 import { useGestureControls } from '../../hooks/useGestureControls';
+import { OnScreenKeyboard } from '../../components/OnScreenKeyboard';
+import { useMouthTypingControls } from '../../hooks/useMouthTypingControls';
 
 function dispatchAtCursor(type: string, x: number, y: number, button = 0) {
   const clientX = Math.round(x * window.innerWidth);
@@ -35,6 +37,8 @@ export function DemoPage() {
   const { state, videoRef, cameraError, availableCameras } = useFaceTracking(settings, calibration);
   const actions = useBlinkDetection(state.blink, state.doubleBlink, state.longBlink);
   const [eventLog, setEventLog] = useState<string[]>([]);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [typingMode, setTypingMode] = useState(false);
 
   const appendEvent = useCallback((event: string) => {
     setEventLog((prev) => [new Date().toLocaleTimeString() + ' - ' + event, ...prev.slice(0, 10)]);
@@ -55,6 +59,12 @@ export function DemoPage() {
 
   useVoiceCommands(settings.voiceEnabled, voiceHandlers);
 
+  const mouthTyping = useMouthTypingControls(typingMode && keyboardOpen, {
+    mouthOpen: state.mouthOpen,
+    smile: state.smile,
+    doubleBlink: state.doubleBlink
+  });
+
   useGestureControls(
     settings,
     {
@@ -69,7 +79,8 @@ export function DemoPage() {
     },
     {
       onEvent: appendEvent
-    }
+    },
+    !typingMode
   );
 
   const [virtualDrag, setVirtualDrag] = useState(false);
@@ -106,6 +117,29 @@ export function DemoPage() {
     <>
       <CursorOverlay x={state.x} y={state.y} dwellProgress={dwellProgress} dragMode={state.dragMode} />
       <VirtualButtons onAction={handleVirtualAction} />
+      <OnScreenKeyboard
+        isOpen={keyboardOpen}
+        text={mouthTyping.text}
+        selectedIndex={mouthTyping.selectedIndex}
+        shift={mouthTyping.shift}
+        typingMode={typingMode}
+        onToggleOpen={() => {
+          setKeyboardOpen((prev) => !prev);
+          if (keyboardOpen) {
+            setTypingMode(false);
+          }
+        }}
+        onToggleTypingMode={() => {
+          setTypingMode((prev) => !prev);
+          appendEvent(typingMode ? 'Mouth typing stopped' : 'Mouth typing started');
+        }}
+        onKeyPress={(key) => {
+          if (key === 'ENTER') {
+            appendEvent('Keyboard enter');
+          }
+          mouthTyping.applyKey(key);
+        }}
+      />
       <div className="grid gap-4 xl:grid-cols-[1.1fr_1fr]">
         <div className="space-y-4">
           <CameraView videoRef={videoRef} cameraError={cameraError} sourceLabel={state.source} />

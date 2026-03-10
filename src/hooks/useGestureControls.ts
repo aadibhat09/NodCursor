@@ -41,7 +41,12 @@ function dispatchMouse(type: string, x: number, y: number, button = 0) {
   );
 }
 
-export function useGestureControls(settings: CursorSettings, input: GestureInput, handlers?: GestureHandlers) {
+export function useGestureControls(
+  settings: CursorSettings,
+  input: GestureInput,
+  handlers?: GestureHandlers,
+  enabled = true
+) {
   const prev = useRef({
     blink: false,
     doubleBlink: false,
@@ -53,8 +58,14 @@ export function useGestureControls(settings: CursorSettings, input: GestureInput
   const dragMode = useRef(false);
   const lastScrollAt = useRef(0);
   const mouthCooldownUntil = useRef(0);
+  const tiltBaseline = useRef<number | null>(null);
+  const tiltDirection = useRef<0 | 1 | -1>(0);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     const now = performance.now();
 
     if (settings.blinkEnabled && input.blink && !prev.current.blink) {
@@ -94,13 +105,36 @@ export function useGestureControls(settings: CursorSettings, input: GestureInput
       }
     }
 
-    if (settings.headTiltScrollEnabled && now - lastScrollAt.current > 120) {
-      const threshold = 0.025;
-      if (input.headTilt > threshold) {
-        window.scrollBy({ top: 90, behavior: 'smooth' });
-        lastScrollAt.current = now;
-      } else if (input.headTilt < -threshold) {
-        window.scrollBy({ top: -90, behavior: 'smooth' });
+    if (!settings.headTiltScrollEnabled) {
+      tiltBaseline.current = null;
+      tiltDirection.current = 0;
+    }
+
+    if (settings.headTiltScrollEnabled) {
+      if (tiltBaseline.current === null) {
+        tiltBaseline.current = input.headTilt;
+      }
+
+      // Keep a moving neutral pose so tiny posture drift does not trigger auto-scroll.
+      tiltBaseline.current = tiltBaseline.current * 0.96 + input.headTilt * 0.04;
+      const relativeTilt = input.headTilt - tiltBaseline.current;
+      const threshold = 0.06;
+      const nextDirection: 0 | 1 | -1 =
+        relativeTilt > threshold ? 1 : relativeTilt < -threshold ? -1 : 0;
+
+      if (nextDirection === 0) {
+        tiltDirection.current = 0;
+      }
+
+      if (nextDirection !== 0 && nextDirection !== tiltDirection.current && now - lastScrollAt.current > 260) {
+        tiltDirection.current = nextDirection;
+        if (nextDirection === 1) {
+          window.scrollBy({ top: 110, behavior: 'smooth' });
+          handlers?.onEvent?.('Head tilt scroll down');
+        } else {
+          window.scrollBy({ top: -110, behavior: 'smooth' });
+          handlers?.onEvent?.('Head tilt scroll up');
+        }
         lastScrollAt.current = now;
       }
     }
@@ -113,6 +147,7 @@ export function useGestureControls(settings: CursorSettings, input: GestureInput
       smile: input.smile
     };
   }, [
+    enabled,
     input.blink,
     input.doubleBlink,
     input.longBlink,

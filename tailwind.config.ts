@@ -6,11 +6,11 @@ export default {
     extend: {
       colors: {
         app: {
-          bg: '#0a0f1f',
-          panel: '#10192f',
-          panelAlt: '#162345',
+          bg: '#000000',
+          panel: '#080b12',
+          panelAlt: '#0d121c',
           accent: '#9cd8ff',
-          accentStrong: '#63c5ff',
+          accentStrong: '#71cfff',
           text: '#eaf6ff',
           subtle: '#9bb4c9',
           success: '#83f5cc',
@@ -22,7 +22,7 @@ export default {
         body: ['"Atkinson Hyperlegible"', '"Segoe UI"', 'sans-serif']
       },
       boxShadow: {
-        glow: '0 0 0 1px rgba(156,216,255,0.25), 0 16px 42px rgba(99,197,255,0.16)'
+        glow: '0 0 0 1px rgba(156,216,255,0.14), 0 10px 24px rgba(99,197,255,0.08)'
       },
       keyframes: {
         'float-in': {

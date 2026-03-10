@@ -1,7 +1,7 @@
 ---
-name: "📘 Documentation: Setup, Usage, and Accessibility Guide"
+name: "Documentation: Setup, Usage, and Accessibility Guide"
 about: Improve docs for users and contributors
-title: "📘 Documentation: Setup, Usage, and Accessibility Guide"
+title: "Documentation: Setup, Usage, and Accessibility Guide"
 labels: ["documentation", "accessibility"]
 assignees: []
 ---

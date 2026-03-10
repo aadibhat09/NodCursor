@@ -19,6 +19,8 @@ export function DocumentationPage() {
           <li>Demo playground with interactive controls for click, scroll, input, and event logging.</li>
           <li>Settings panel with sensitivity, smoothing, deadzone, dwell, gestures, and camera selection.</li>
           <li>Voice command hook for click, right click, drag, and scrolling commands.</li>
+          <li>Functional gesture controls: blink click, double blink right click, long blink drag toggle.</li>
+          <li>On-screen keyboard with mouth-driven typing navigation and selection.</li>
           <li>Fallback pointer behavior when camera access is unavailable.</li>
         </ul>
       </Panel>
@@ -29,6 +31,7 @@ export function DocumentationPage() {
           <li>Added explicit favicon asset and HTML link to avoid missing favicon 404 errors.</li>
           <li>Reduced MediaPipe noise by disabling unnecessary blendshape output and filtering known internal logs.</li>
           <li>Moved camera list retrieval in Settings to a lightweight devices hook to avoid unnecessary model startup.</li>
+          <li>Head-tilt scrolling defaults to off and now uses anti-drift baseline logic.</li>
         </ul>
       </Panel>
 

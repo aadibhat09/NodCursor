@@ -1,4 +1,4 @@
-# Head Cursor Accessibility App
+# NodCursor
 
 Browser-based head-tracking cursor control system for users with motor impairments and limited hand mobility.
 
@@ -19,6 +19,7 @@ Add a GIF at `docs/demo.gif` after running the app and recording a short session
 - Dwell click, blink click, double blink, long blink drag
 - Optional mouth gesture and voice command triggers
 - Head tilt scroll support
+- Gesture-driven on-screen keyboard with mouth typing mode
 - On-screen virtual action buttons
 - Demo playground page for interaction testing
 - Dark, high-contrast, large-control UI
@@ -59,6 +60,7 @@ Open the local URL in your browser and grant camera access when prompted.
 - `/demo` full interactive test playground
 - `/calibration` guided range capture
 - `/settings` controls, toggles, camera selection, debug mode
+- `/documentation` in-app development and accessibility blog
 
 ## Architecture
 
@@ -76,6 +78,8 @@ src/
     useBlinkDetection.ts
     useDwellClick.ts
     useVoiceCommands.ts
+    useGestureControls.ts
+    useMouthTypingControls.ts
   utils/
     smoothing/
     calibration/

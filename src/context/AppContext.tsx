@@ -19,7 +19,7 @@ const defaultSettings: CursorSettings = {
   stabilization: true,
   blinkEnabled: true,
   mouthEnabled: false,
-  headTiltScrollEnabled: true,
+  headTiltScrollEnabled: false,
   voiceEnabled: false,
   acceleration: 1.2
 };

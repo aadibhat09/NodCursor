@@ -7,6 +7,8 @@
 - `useBlinkDetection(blink, doubleBlink, longBlink)`
 - `useDwellClick(x, y, dwellMs, onClick)`
 - `useVoiceCommands(enabled, handlers)`
+- `useGestureControls(settings, input, handlers, enabled)`
+- `useMouthTypingControls(active, input)`
 
 ## Worker Contract
 
@@ -27,3 +29,11 @@ Output payload:
 - `mouthOpen`, `smile`
 - `headTilt`
 - `dragMode`
+
+## Keyboard And Gesture Modules
+
+- `OnScreenKeyboard` renders the optional keyboard overlay.
+- Mouth typing mode maps:
+	mouth open -> next key focus
+	smile -> commit key
+	double blink -> backspace
