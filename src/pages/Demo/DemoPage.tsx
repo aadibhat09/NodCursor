@@ -13,6 +13,7 @@ import { VirtualButtons } from '../../components/VirtualButtons';
 import { useGestureControls } from '../../hooks/useGestureControls';
 import { OnScreenKeyboard } from '../../components/OnScreenKeyboard';
 import { useMouthTypingControls } from '../../hooks/useMouthTypingControls';
+import { useSmoothCursor } from '../../hooks/useSmoothCursor';
 
 function dispatchAtCursor(type: string, x: number, y: number, button = 0) {
   const clientX = Math.round(x * window.innerWidth);
@@ -35,6 +36,10 @@ function dispatchAtCursor(type: string, x: number, y: number, button = 0) {
 export function DemoPage() {
   const { settings, setSettings, calibration } = useAppContext();
   const { state, videoRef, cameraError, availableCameras } = useFaceTracking(settings, calibration);
+  
+  // Apply advanced three-stage smoothing with Kalman filter + RAF interpolation
+  const smoothCursorPos = useSmoothCursor({ x: state.x, y: state.y });
+  
   const actions = useBlinkDetection(state.blink, state.doubleBlink, state.longBlink);
   const [eventLog, setEventLog] = useState<string[]>([]);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -44,7 +49,7 @@ export function DemoPage() {
     setEventLog((prev) => [new Date().toLocaleTimeString() + ' - ' + event, ...prev.slice(0, 10)]);
   }, []);
 
-  const dwellProgress = useDwellClick(state.x, state.y, settings.dwellMs, () => appendEvent('Dwell click'));
+  const dwellProgress = useDwellClick(smoothCursorPos.x, smoothCursorPos.y, settings.dwellMs, () => appendEvent('Dwell click'));
 
   const voiceHandlers = useMemo(
     () => ({
@@ -68,8 +73,8 @@ export function DemoPage() {
   useGestureControls(
     settings,
     {
-      x: state.x,
-      y: state.y,
+      x: smoothCursorPos.x,
+      y: smoothCursorPos.y,
       blink: state.blink,
       doubleBlink: state.doubleBlink,
       longBlink: state.longBlink,
@@ -88,11 +93,11 @@ export function DemoPage() {
   const handleVirtualAction = useCallback(
     (action: string) => {
       if (action === 'Left Click') {
-        dispatchAtCursor('click', state.x, state.y, 0);
+        dispatchAtCursor('click', smoothCursorPos.x, smoothCursorPos.y, 0);
         appendEvent('Virtual left click');
       }
       if (action === 'Right Click') {
-        dispatchAtCursor('contextmenu', state.x, state.y, 2);
+        dispatchAtCursor('contextmenu', smoothCursorPos.x, smoothCursorPos.y, 2);
         appendEvent('Virtual right click');
       }
       if (action === 'Scroll') {
@@ -101,21 +106,21 @@ export function DemoPage() {
       }
       if (action === 'Drag Toggle') {
         if (!virtualDrag) {
-          dispatchAtCursor('mousedown', state.x, state.y, 0);
+          dispatchAtCursor('mousedown', smoothCursorPos.x, smoothCursorPos.y, 0);
           appendEvent('Virtual drag start');
         } else {
-          dispatchAtCursor('mouseup', state.x, state.y, 0);
+          dispatchAtCursor('mouseup', smoothCursorPos.x, smoothCursorPos.y, 0);
           appendEvent('Virtual drag end');
         }
         setVirtualDrag((prev) => !prev);
       }
     },
-    [appendEvent, state.x, state.y, virtualDrag]
+    [appendEvent, smoothCursorPos.x, smoothCursorPos.y, virtualDrag]
   );
 
   return (
     <>
-      <CursorOverlay x={state.x} y={state.y} dwellProgress={dwellProgress} dragMode={state.dragMode} />
+      <CursorOverlay x={smoothCursorPos.x} y={smoothCursorPos.y} dwellProgress={dwellProgress} dragMode={state.dragMode} />
       <VirtualButtons onAction={handleVirtualAction} />
       <OnScreenKeyboard
         isOpen={keyboardOpen}
