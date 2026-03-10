@@ -37,8 +37,43 @@ jobs:
       - name: Add SPA fallback for GitHub Pages
         run: cp dist/index.html dist/404.html
 
+      - name: Ensure Pages Site Exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          repo="${GITHUB_REPOSITORY}"
+          api="https://api.github.com/repos/${repo}/pages"
+
+          status=$(curl -s -o /tmp/pages_resp.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${api}")
+
+          if [ "${status}" = "404" ]; then
+            echo "Pages site missing, creating with build_type=workflow"
+            create_status=$(curl -s -o /tmp/pages_create.json -w "%{http_code}" \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "${api}" \
+              -d '{"build_type":"workflow"}')
+
+            if [ "${create_status}" != "201" ] && [ "${create_status}" != "409" ]; then
+              echo "Failed to create Pages site (status ${create_status})"
+              cat /tmp/pages_create.json
+              exit 1
+            fi
+          elif [ "${status}" != "200" ]; then
+            echo "Unexpected status while checking Pages site: ${status}"
+            cat /tmp/pages_resp.json
+            exit 1
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
