@@ -1,5 +1,6 @@
 export interface CursorSettings {
   cameraId: string;
+  mirrorCamera: boolean;
   sensitivity: number;
   deadzone: number;
   smoothing: number;

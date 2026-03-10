@@ -33,7 +33,12 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
   const videoRef = useRef<HTMLVideoElement>(null);
   const workerRef = useRef<Worker | null>(null);
 
-  const mapped = useCursorMapping(raw.x, raw.y, calibration, settings);
+  const mapped = useCursorMapping(
+    raw.source === 'camera' && settings.mirrorCamera ? 1 - raw.x : raw.x,
+    raw.y,
+    calibration,
+    settings
+  );
 
   const state = useMemo(
     () => ({

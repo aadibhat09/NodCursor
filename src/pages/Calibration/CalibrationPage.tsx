@@ -32,7 +32,12 @@ export function CalibrationPage() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <CameraView videoRef={videoRef} cameraError={cameraError} sourceLabel={state.source} />
+      <CameraView
+        videoRef={videoRef}
+        cameraError={cameraError}
+        sourceLabel={state.source}
+        mirrored={settings.mirrorCamera}
+      />
       <CalibrationUI
         step={step}
         progress={progress}

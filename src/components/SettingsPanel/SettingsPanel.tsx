@@ -95,6 +95,14 @@ export function SettingsPanel({
           />
           <span>Voice commands</span>
         </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={settings.mirrorCamera}
+            onChange={(e) => onChange({ ...settings, mirrorCamera: e.target.checked })}
+          />
+          <span>Mirror camera preview</span>
+        </label>
         <label className="space-y-2 md:col-span-2">
           <span className="text-sm text-app-subtle">Camera Selection</span>
           <select

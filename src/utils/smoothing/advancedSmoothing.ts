@@ -11,6 +11,7 @@ interface Point {
 export class AdvancedSmoothingPipeline {
   private kalman: KalmanFilter2D;
   private exponentialState: Point;
+  private outputState: Point;
   private lastUpdate: number;
   private alpha: number;
   private microDeadzone: number;
@@ -21,6 +22,7 @@ export class AdvancedSmoothingPipeline {
   ) {
     this.kalman = new KalmanFilter2D();
     this.exponentialState = { x: 0.5, y: 0.5 };
+    this.outputState = { x: 0.5, y: 0.5 };
     this.lastUpdate = performance.now();
     this.alpha = alpha;
     this.microDeadzone = microDeadzone;
@@ -39,7 +41,7 @@ export class AdvancedSmoothingPipeline {
   private applyExponentialSmoothing(kalmanFiltered: Point): Point {
     this.exponentialState.x = this.exponentialState.x + this.alpha * (kalmanFiltered.x - this.exponentialState.x);
     this.exponentialState.y = this.exponentialState.y + this.alpha * (kalmanFiltered.y - this.exponentialState.y);
-    
+
     return { ...this.exponentialState };
   }
 
@@ -49,12 +51,12 @@ export class AdvancedSmoothingPipeline {
   private applyMicroDeadzone(smoothed: Point, previous: Point): Point {
     const dx = Math.abs(smoothed.x - previous.x);
     const dy = Math.abs(smoothed.y - previous.y);
-    
+
     // If movement is below threshold, keep previous position
     if (dx < this.microDeadzone && dy < this.microDeadzone) {
       return previous;
     }
-    
+
     return smoothed;
   }
 
@@ -70,13 +72,14 @@ export class AdvancedSmoothingPipeline {
 
     // Stage 1: Kalman filter
     const kalmanFiltered = this.applyKalmanFilter(raw, dt);
-    
+
     // Stage 2: Exponential smoothing
     const exponentialSmoothed = this.applyExponentialSmoothing(kalmanFiltered);
-    
+
     // Stage 3: Micro-deadzone
-    const final = this.applyMicroDeadzone(exponentialSmoothed, this.exponentialState);
-    
+    const final = this.applyMicroDeadzone(exponentialSmoothed, this.outputState);
+    this.outputState = { ...final };
+
     return final;
   }
 
@@ -86,6 +89,7 @@ export class AdvancedSmoothingPipeline {
   reset(x: number = 0.5, y: number = 0.5): void {
     this.kalman.reset(x, y);
     this.exponentialState = { x, y };
+    this.outputState = { x, y };
     this.lastUpdate = performance.now();
   }
 

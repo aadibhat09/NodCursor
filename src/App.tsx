@@ -5,10 +5,12 @@ import { DemoPage } from './pages/Demo/DemoPage';
 import { CalibrationPage } from './pages/Calibration/CalibrationPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { DocumentationPage } from './pages/Documentation/DocumentationPage';
+import { GamesPage } from './pages/Games/GamesPage';
 
 const navItems = [
   { to: '/', label: 'Home' },
   { to: '/demo', label: 'Demo Playground' },
+  { to: '/games', label: 'Games' },
   { to: '/calibration', label: 'Calibration' },
   { to: '/settings', label: 'Settings' },
   { to: '/documentation', label: 'Documentation Blog' }
@@ -40,6 +42,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/demo" element={<DemoPage />} />
+            <Route path="/games" element={<GamesPage />} />
             <Route path="/calibration" element={<CalibrationPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/documentation" element={<DocumentationPage />} />

@@ -12,7 +12,7 @@ export function HomePage() {
         <div className="mt-4 grid gap-2 text-sm text-app-subtle">
           <p>1. Open Calibration to map your personal movement range.</p>
           <p>2. Use the Demo Playground to test click, drag, scroll, and typing.</p>
-          <p>3. Tune settings for speed, dwell click, and gesture sensitivity.</p>
+          <p>3. Jump into Games to practice speed, precision, and dwell control.</p>
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link to="/calibration">
@@ -20,6 +20,9 @@ export function HomePage() {
           </Link>
           <Link to="/demo">
             <BigButton variant="secondary">Open Demo Playground</BigButton>
+          </Link>
+          <Link to="/games">
+            <BigButton variant="secondary">Play Games</BigButton>
           </Link>
         </div>
       </Panel>

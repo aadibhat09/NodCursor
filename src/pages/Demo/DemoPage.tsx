@@ -37,8 +37,11 @@ export function DemoPage() {
   const { settings, setSettings, calibration } = useAppContext();
   const { state, videoRef, cameraError, availableCameras } = useFaceTracking(settings, calibration);
   
-  // Apply advanced three-stage smoothing with Kalman filter + RAF interpolation
-  const smoothCursorPos = useSmoothCursor({ x: state.x, y: state.y });
+  // Apply continuous smoothing that preserves momentum without visible snapping.
+  const smoothCursorPos = useSmoothCursor(
+    { x: state.x, y: state.y },
+    { smoothing: settings.smoothing, stabilization: settings.stabilization }
+  );
   
   const actions = useBlinkDetection(state.blink, state.doubleBlink, state.longBlink);
   const [eventLog, setEventLog] = useState<string[]>([]);
@@ -147,7 +150,12 @@ export function DemoPage() {
       />
       <div className="grid gap-4 xl:grid-cols-[1.1fr_1fr]">
         <div className="space-y-4">
-          <CameraView videoRef={videoRef} cameraError={cameraError} sourceLabel={state.source} />
+          <CameraView
+            videoRef={videoRef}
+            cameraError={cameraError}
+            sourceLabel={state.source}
+            mirrored={settings.mirrorCamera}
+          />
           <GestureIndicators
             blink={actions.leftClick}
             doubleBlink={actions.rightClick}

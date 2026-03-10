@@ -11,6 +11,7 @@ interface AppContextValue {
 
 const defaultSettings: CursorSettings = {
   cameraId: '',
+  mirrorCamera: true,
   sensitivity: 1,
   deadzone: 0.03,
   smoothing: 0.7,
