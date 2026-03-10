@@ -54,6 +54,19 @@ npm run dev
 
 Open the local URL in your browser and grant camera access when prompted.
 
+## CI/CD
+
+This project uses GitHub Actions workflows:
+
+- **CI Workflow**: Validates builds and type safety on push/PR to main and develop branches (Node 18.x and 20.x)
+- **Deploy Workflow**: Automatically deploys to GitHub Pages on push to main
+
+To enable GitHub Pages deployment:
+1. Go to repository Settings > Pages
+2. Set Source to "GitHub Actions"
+3. If deploying to a repository path (not root domain), update `vite.config.ts` with `base: '/your-repo-name/'`
+4. Push to main branch to trigger deployment
+
 ## App Pages
 
 - `/` Home overview and privacy explanation
