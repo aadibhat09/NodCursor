@@ -6,6 +6,10 @@ export function useCursorMapping(rawX: number, rawY: number, calibration: Calibr
   return useMemo(() => {
     const mapped = mapToViewport(rawX, rawY, calibration);
 
+    const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1440;
+    const adaptiveMultiplier = viewportWidth < 430 ? 1.28 : viewportWidth < 900 ? 1.14 : 1;
+    const verticalBoost = viewportWidth < 430 ? 1.55 : viewportWidth < 900 ? 1.38 : 1.26;
+
     const centerOffsetX = mapped.x - 0.5;
     const centerOffsetY = mapped.y - 0.5;
     const distance = Math.sqrt(centerOffsetX ** 2 + centerOffsetY ** 2);
@@ -15,8 +19,9 @@ export function useCursorMapping(rawX: number, rawY: number, calibration: Calibr
     }
 
     const acceleration = Math.pow(distance, settings.acceleration);
-    const x = 0.5 + centerOffsetX * settings.sensitivity * (1 + acceleration);
-    const y = 0.5 + centerOffsetY * settings.sensitivity * (1 + acceleration);
+    const gain = settings.sensitivity * adaptiveMultiplier * (1 + acceleration);
+    const x = 0.5 + centerOffsetX * gain;
+    const y = 0.5 + centerOffsetY * gain * verticalBoost;
 
     return {
       x: Math.min(1, Math.max(0, x)),

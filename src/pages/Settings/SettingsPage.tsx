@@ -7,7 +7,7 @@ import { useVoiceCommands } from '../../hooks/useVoiceCommands';
 import { useNavigate } from 'react-router-dom';
 
 export function SettingsPage() {
-  const { settings, setSettings, calibration, setCalibration } = useAppContext();
+  const { settings, setSettings, isPhoneMode, calibration, setCalibration } = useAppContext();
   const { availableCameras } = useCameraDevices();
   const navigate = useNavigate();
 
@@ -28,6 +28,21 @@ export function SettingsPage() {
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
+        <Panel title="Adaptive Mode" className="animate-float-in">
+          <div className="space-y-3 text-sm text-app-subtle">
+            <p>
+              Current profile:
+              <span className="ml-2 rounded-full border border-app-accent/30 bg-app-accent/10 px-2 py-0.5 text-xs text-app-text">
+                {isPhoneMode ? 'Phone mode (auto)' : 'Desktop mode (auto)'}
+              </span>
+            </p>
+            <p>
+              Mode switches automatically by screen characteristics (small viewport or coarse touch pointer).
+              Desktop and phone settings are saved separately.
+            </p>
+          </div>
+        </Panel>
+
         <Panel title="Testing Workspace" className="animate-float-in">
           <div className="space-y-4 text-sm text-app-subtle">
             <p>Use this section for testing and diagnostics so demo/play pages stay focused on interaction practice.</p>
@@ -62,21 +77,21 @@ export function SettingsPage() {
                   setSettings(() => ({
                     cameraId: '',
                     mirrorCamera: true,
-                    sensitivity: 1,
-                    deadzone: 0.03,
-                    smoothing: 0.7,
-                    dwellMs: 900,
-                    clickSensitivity: 0.22,
+                    sensitivity: isPhoneMode ? 0.9 : 1,
+                    deadzone: isPhoneMode ? 0.05 : 0.03,
+                    smoothing: isPhoneMode ? 0.82 : 0.7,
+                    dwellMs: isPhoneMode ? 700 : 900,
+                    clickSensitivity: isPhoneMode ? 0.24 : 0.22,
                     stabilization: true,
                     blinkEnabled: true,
-                    mouthEnabled: false,
+                    mouthEnabled: isPhoneMode,
                     headTiltScrollEnabled: false,
                     voiceEnabled: false,
-                    acceleration: 1.2
+                    acceleration: isPhoneMode ? 1.05 : 1.2
                   }));
                 }}
               >
-                Restore Default Settings
+                Restore {isPhoneMode ? 'Phone' : 'Desktop'} Defaults
               </BigButton>
             </div>
           </div>

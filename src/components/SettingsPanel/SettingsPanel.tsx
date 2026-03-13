@@ -106,7 +106,7 @@ export function SettingsPanel({
             onChange={(e) => onChange({ ...settings, mirrorCamera: e.target.checked })}
             className="accent-app-accent"
           />
-          <span>Mirror camera preview</span>
+          <span>Flip camera preview</span>
         </label>
         <label className="space-y-2 md:col-span-2">
           <span className="text-sm text-app-subtle">Camera Selection</span>
