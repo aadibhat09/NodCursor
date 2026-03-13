@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CameraView } from '../../components/CameraView/CameraView';
 import { CursorOverlay } from '../../components/CursorOverlay/CursorOverlay';
 import { GestureIndicators } from '../../components/GestureIndicators/GestureIndicators';
@@ -8,6 +9,7 @@ import { useDwellClick } from '../../hooks/useDwellClick';
 import { useFaceTracking } from '../../hooks/useFaceTracking';
 import { useGestureControls } from '../../hooks/useGestureControls';
 import { useSmoothCursor } from '../../hooks/useSmoothCursor';
+import { useVoiceCommands } from '../../hooks/useVoiceCommands';
 
 const targetCellCount = 9;
 const memoryPadCount = 4;
@@ -100,6 +102,22 @@ export function GamesPage() {
   }, [appendActivity, smoothCursorPos.x, smoothCursorPos.y]);
 
   const dwellProgress = useDwellClick(smoothCursorPos.x, smoothCursorPos.y, settings.dwellMs, handleDwellClick);
+
+  const navigate = useNavigate();
+
+  useVoiceCommands(settings.voiceEnabled, {
+    click: () => {
+      dispatchAtCursor('click', smoothCursorPos.x, smoothCursorPos.y, 0);
+      appendActivity('Voice click');
+    },
+    rightClick: () => {
+      dispatchAtCursor('contextmenu', smoothCursorPos.x, smoothCursorPos.y, 2);
+      appendActivity('Voice right click');
+    },
+    scrollUp:   () => window.scrollBy({ top: -120, behavior: 'smooth' }),
+    scrollDown: () => window.scrollBy({ top:  120, behavior: 'smooth' }),
+    navigate:   (path) => navigate(path)
+  });
 
   useGestureControls(
     settings,

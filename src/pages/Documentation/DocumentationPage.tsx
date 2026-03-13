@@ -1,6 +1,18 @@
+import { useNavigate } from 'react-router-dom';
 import { Panel } from '../../components/common';
+import { useAppContext } from '../../context/AppContext';
+import { useVoiceCommands } from '../../hooks/useVoiceCommands';
 
 export function DocumentationPage() {
+  const { settings } = useAppContext();
+  const navigate = useNavigate();
+
+  useVoiceCommands(settings.voiceEnabled, {
+    scrollUp:   () => window.scrollBy({ top: -200, behavior: 'smooth' }),
+    scrollDown: () => window.scrollBy({ top:  200, behavior: 'smooth' }),
+    navigate:   (path) => navigate(path)
+  });
+
   return (
     <div className="grid gap-4">
       <Panel title="NodCursor Documentation" className="animate-float-in">

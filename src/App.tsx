@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { HomePage } from './pages/Home/HomePage';
 import { DemoPage } from './pages/Demo/DemoPage';
@@ -6,6 +6,7 @@ import { CalibrationPage } from './pages/Calibration/CalibrationPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { DocumentationPage } from './pages/Documentation/DocumentationPage';
 import { GamesPage } from './pages/Games/GamesPage';
+import { VoicePersonalizationPage } from './pages/VoicePersonalization/VoicePersonalizationPage';
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -13,25 +14,42 @@ const navItems = [
   { to: '/games', label: 'Games' },
   { to: '/calibration', label: 'Calibration' },
   { to: '/settings', label: 'Settings' },
+  { to: '/voice-personalization', label: 'Voice Personalization' },
   { to: '/documentation', label: 'Documentation Blog' }
 ];
 
 export default function App() {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-app-bg text-app-text font-body">
-        <header className="sticky top-0 z-40 border-b border-app-accent/20 bg-app-bg/90 backdrop-blur">
+      <div className="relative min-h-screen overflow-x-clip bg-app-bg text-app-text font-body">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-app-accent/10 blur-3xl" />
+          <div className="absolute right-0 top-20 h-80 w-80 rounded-full bg-app-success/10 blur-3xl" />
+          <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-app-accentStrong/10 blur-3xl" />
+        </div>
+
+        <header className="sticky top-0 z-40 border-b border-app-accent/20 bg-app-bg/80 backdrop-blur-xl">
           <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-            <p className="font-display text-lg tracking-wide text-app-accent">NodCursor</p>
+            <div className="flex items-center gap-2">
+              <img src="/logo-mark.svg" alt="NodCursor logo" className="h-8 w-8 rounded-lg border border-app-accent/25 bg-app-panelAlt" />
+              <p className="font-display text-lg tracking-wide text-app-accent drop-shadow-sm">NodCursor</p>
+            </div>
             <ul className="flex flex-wrap gap-2">
               {navItems.map((item) => (
                 <li key={item.to}>
-                  <Link
+                  <NavLink
                     to={item.to}
-                    className="rounded-full border border-app-accent/30 px-4 py-2 text-sm text-app-text transition hover:border-app-accent hover:bg-app-accent/10"
+                    className={({ isActive }) =>
+                      [
+                        'rounded-full border px-4 py-2 text-sm transition duration-200',
+                        isActive
+                          ? 'border-app-accent bg-app-accent/20 text-app-text shadow-glow'
+                          : 'border-app-accent/30 text-app-text hover:border-app-accent hover:bg-app-accent/10'
+                      ].join(' ')
+                    }
                   >
                     {item.label}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
@@ -45,6 +63,7 @@ export default function App() {
             <Route path="/games" element={<GamesPage />} />
             <Route path="/calibration" element={<CalibrationPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/voice-personalization" element={<VoicePersonalizationPage />} />
             <Route path="/documentation" element={<DocumentationPage />} />
           </Routes>
         </main>

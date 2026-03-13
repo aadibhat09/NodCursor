@@ -24,7 +24,7 @@ export function SettingsPanel({
             step="0.05"
             value={settings.sensitivity}
             onChange={(e) => onChange({ ...settings, sensitivity: Number(e.target.value) })}
-            className="w-full"
+            className="w-full accent-app-accent"
           />
         </label>
         <label className="space-y-2">
@@ -36,7 +36,7 @@ export function SettingsPanel({
             step="0.05"
             value={settings.smoothing}
             onChange={(e) => onChange({ ...settings, smoothing: Number(e.target.value) })}
-            className="w-full"
+            className="w-full accent-app-accent"
           />
         </label>
         <label className="space-y-2">
@@ -48,7 +48,7 @@ export function SettingsPanel({
             step="0.01"
             value={settings.deadzone}
             onChange={(e) => onChange({ ...settings, deadzone: Number(e.target.value) })}
-            className="w-full"
+            className="w-full accent-app-accent"
           />
         </label>
         <label className="space-y-2">
@@ -60,46 +60,51 @@ export function SettingsPanel({
             step="50"
             value={settings.dwellMs}
             onChange={(e) => onChange({ ...settings, dwellMs: Number(e.target.value) })}
-            className="w-full"
+            className="w-full accent-app-accent"
           />
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 rounded-lg border border-app-accent/15 bg-app-panelAlt/60 px-3 py-2 transition hover:border-app-accent/30">
           <input
             type="checkbox"
             checked={settings.blinkEnabled}
             onChange={(e) => onChange({ ...settings, blinkEnabled: e.target.checked })}
+            className="accent-app-accent"
           />
           <span>Blink detection</span>
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 rounded-lg border border-app-accent/15 bg-app-panelAlt/60 px-3 py-2 transition hover:border-app-accent/30">
           <input
             type="checkbox"
             checked={settings.mouthEnabled}
             onChange={(e) => onChange({ ...settings, mouthEnabled: e.target.checked })}
+            className="accent-app-accent"
           />
           <span>Mouth gesture click</span>
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 rounded-lg border border-app-accent/15 bg-app-panelAlt/60 px-3 py-2 transition hover:border-app-accent/30">
           <input
             type="checkbox"
             checked={settings.headTiltScrollEnabled}
             onChange={(e) => onChange({ ...settings, headTiltScrollEnabled: e.target.checked })}
+            className="accent-app-accent"
           />
           <span>Head tilt scroll</span>
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 rounded-lg border border-app-accent/15 bg-app-panelAlt/60 px-3 py-2 transition hover:border-app-accent/30">
           <input
             type="checkbox"
             checked={settings.voiceEnabled}
             onChange={(e) => onChange({ ...settings, voiceEnabled: e.target.checked })}
+            className="accent-app-accent"
           />
           <span>Voice commands</span>
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 rounded-lg border border-app-accent/15 bg-app-panelAlt/60 px-3 py-2 transition hover:border-app-accent/30">
           <input
             type="checkbox"
             checked={settings.mirrorCamera}
             onChange={(e) => onChange({ ...settings, mirrorCamera: e.target.checked })}
+            className="accent-app-accent"
           />
           <span>Mirror camera preview</span>
         </label>
@@ -108,7 +113,7 @@ export function SettingsPanel({
           <select
             value={settings.cameraId}
             onChange={(e) => onSelectCamera(e.target.value)}
-            className="w-full rounded-lg border border-app-accent/30 bg-app-panelAlt p-2"
+            className="w-full rounded-lg border border-app-accent/30 bg-app-panelAlt p-2 text-app-text transition focus:border-app-accent focus:outline-none"
           >
             <option value="">Default Camera</option>
             {cameras.map((camera, idx) => (

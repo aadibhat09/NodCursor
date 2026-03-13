@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CameraView } from '../../components/CameraView/CameraView';
 import { CursorOverlay } from '../../components/CursorOverlay/CursorOverlay';
 import { GestureIndicators } from '../../components/GestureIndicators/GestureIndicators';
-import { SettingsPanel } from '../../components/SettingsPanel/SettingsPanel';
 import { Panel } from '../../components/common';
 import { useAppContext } from '../../context/AppContext';
 import { useBlinkDetection } from '../../hooks/useBlinkDetection';
@@ -34,8 +34,8 @@ function dispatchAtCursor(type: string, x: number, y: number, button = 0) {
 }
 
 export function DemoPage() {
-  const { settings, setSettings, calibration } = useAppContext();
-  const { state, videoRef, cameraError, availableCameras } = useFaceTracking(settings, calibration);
+  const { settings, calibration } = useAppContext();
+  const { state, videoRef, cameraError } = useFaceTracking(settings, calibration);
   
   // Apply continuous smoothing that preserves momentum without visible snapping.
   const smoothCursorPos = useSmoothCursor(
@@ -54,18 +54,42 @@ export function DemoPage() {
 
   const dwellProgress = useDwellClick(smoothCursorPos.x, smoothCursorPos.y, settings.dwellMs, () => appendEvent('Dwell click'));
 
-  const voiceHandlers = useMemo(
-    () => ({
-      click: () => appendEvent('Voice click'),
-      rightClick: () => appendEvent('Voice right click'),
-      drag: () => appendEvent('Voice drag mode'),
-      scrollUp: () => window.scrollBy({ top: -120, behavior: 'smooth' }),
-      scrollDown: () => window.scrollBy({ top: 120, behavior: 'smooth' })
-    }),
-    [appendEvent]
-  );
+  const navigate = useNavigate();
+  const voiceDragActive = useRef(false);
 
-  useVoiceCommands(settings.voiceEnabled, voiceHandlers);
+  useVoiceCommands(settings.voiceEnabled, {
+    click: () => {
+      dispatchAtCursor('click', smoothCursorPos.x, smoothCursorPos.y, 0);
+      appendEvent('Voice click');
+    },
+    rightClick: () => {
+      dispatchAtCursor('contextmenu', smoothCursorPos.x, smoothCursorPos.y, 2);
+      appendEvent('Voice right click');
+    },
+    drag: () => {
+      if (!voiceDragActive.current) {
+        dispatchAtCursor('mousedown', smoothCursorPos.x, smoothCursorPos.y, 0);
+        voiceDragActive.current = true;
+        appendEvent('Voice drag start');
+      } else {
+        dispatchAtCursor('mouseup', smoothCursorPos.x, smoothCursorPos.y, 0);
+        voiceDragActive.current = false;
+        appendEvent('Voice drag end');
+      }
+    },
+    scrollUp: () => {
+      window.scrollBy({ top: -120, behavior: 'smooth' });
+      appendEvent('Voice scroll up');
+    },
+    scrollDown: () => {
+      window.scrollBy({ top: 120, behavior: 'smooth' });
+      appendEvent('Voice scroll down');
+    },
+    navigate: (path) => {
+      navigate(path);
+      appendEvent(`Voice navigate to ${path}`);
+    }
+  });
 
   const mouthTyping = useMouthTypingControls(typingMode && keyboardOpen, {
     mouthOpen: state.mouthOpen,
@@ -167,13 +191,6 @@ export function DemoPage() {
         </div>
 
         <div className="space-y-4">
-          <SettingsPanel
-            settings={settings}
-            onChange={(next) => setSettings(() => next)}
-            cameras={availableCameras}
-            onSelectCamera={(cameraId) => setSettings((prev) => ({ ...prev, cameraId }))}
-          />
-
           <Panel title="Demo Playground" className="animate-float-in">
             <div className="grid gap-3">
               <button className="rounded-xl bg-app-accentStrong p-3 text-app-bg" onClick={() => appendEvent('Button click')}>

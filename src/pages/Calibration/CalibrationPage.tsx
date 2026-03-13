@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CalibrationUI } from '../../components/CalibrationUI/CalibrationUI';
 import { CameraView } from '../../components/CameraView/CameraView';
 import { useAppContext } from '../../context/AppContext';
 import { useFaceTracking } from '../../hooks/useFaceTracking';
+import { useVoiceCommands } from '../../hooks/useVoiceCommands';
 
 const steps = ['center', 'left', 'right', 'up', 'down'] as const;
 
@@ -10,6 +12,14 @@ export function CalibrationPage() {
   const { settings, calibration, setCalibration } = useAppContext();
   const { state, videoRef, cameraError } = useFaceTracking(settings, calibration);
   const [step, setStep] = useState(0);
+  const navigate = useNavigate();
+
+  useVoiceCommands(settings.voiceEnabled, {
+    scrollUp:   () => window.scrollBy({ top: -120, behavior: 'smooth' }),
+    scrollDown: () => window.scrollBy({ top:  120, behavior: 'smooth' }),
+    navigate:   (path) => navigate(path)
+  });
+
 
   const progress = useMemo(() => step / (steps.length - 1), [step]);
 
