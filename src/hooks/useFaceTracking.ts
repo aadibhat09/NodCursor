@@ -32,6 +32,13 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const workerRef = useRef<Worker | null>(null);
+  const workerSettingsRef = useRef({
+    smoothing: settings.smoothing,
+    clickSensitivity: settings.clickSensitivity,
+    doubleBlinkWindowMs: settings.doubleBlinkWindowMs,
+    consecutiveBlinkGapMs: settings.consecutiveBlinkGapMs,
+    longBlinkMs: settings.longBlinkMs
+  });
 
   const mapped = useCursorMapping(
     raw.source === 'camera' && settings.mirrorCamera ? 1 - raw.x : raw.x,
@@ -48,6 +55,22 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
     }),
     [raw, mapped.x, mapped.y]
   );
+
+  useEffect(() => {
+    workerSettingsRef.current = {
+      smoothing: settings.smoothing,
+      clickSensitivity: settings.clickSensitivity,
+      doubleBlinkWindowMs: settings.doubleBlinkWindowMs,
+      consecutiveBlinkGapMs: settings.consecutiveBlinkGapMs,
+      longBlinkMs: settings.longBlinkMs
+    };
+  }, [
+    settings.smoothing,
+    settings.clickSensitivity,
+    settings.doubleBlinkWindowMs,
+    settings.consecutiveBlinkGapMs,
+    settings.longBlinkMs
+  ]);
 
   useEffect(() => {
     const worker = new Worker(new URL('../workers/trackingWorker.ts', import.meta.url), { type: 'module' });
@@ -69,6 +92,7 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
 
   useEffect(() => {
     let stream: MediaStream | null = null;
+    let landmarker: FaceLandmarker | null = null;
     let frameId = 0;
     let mounted = true;
 
@@ -84,7 +108,7 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
           'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
         );
 
-        const landmarker = await FaceLandmarker.createFromOptions(vision, {
+        landmarker = await FaceLandmarker.createFromOptions(vision, {
           baseOptions: {
             modelAssetPath:
               'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'
@@ -107,7 +131,7 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
         await videoRef.current.play();
 
         const loop = () => {
-          if (!videoRef.current) {
+          if (!videoRef.current || !landmarker) {
             return;
           }
 
@@ -133,12 +157,15 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
 
           workerRef.current?.postMessage({
             point: { x: nose.x, y: nose.y },
-            smoothing: settings.smoothing,
+            smoothing: workerSettingsRef.current.smoothing,
             blinkRatio: Math.abs(eyeTop - eyeBottom) / Math.max(Math.abs(eyeLeft - eyeRight), 0.001),
             mouthRatio: Math.abs(mouthTop - mouthBottom),
             smileRatio: Math.abs(smileRight - smileLeft),
             headTilt: browTilt,
-            clickSensitivity: settings.clickSensitivity
+            clickSensitivity: workerSettingsRef.current.clickSensitivity,
+            doubleBlinkWindowMs: workerSettingsRef.current.doubleBlinkWindowMs,
+            consecutiveBlinkGapMs: workerSettingsRef.current.consecutiveBlinkGapMs,
+            longBlinkMs: workerSettingsRef.current.longBlinkMs
           });
 
           frameId = requestAnimationFrame(loop);
@@ -146,6 +173,9 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
 
         frameId = requestAnimationFrame(loop);
       } catch (error) {
+        if (!mounted) {
+          return;
+        }
         const message = error instanceof Error ? error.message : 'Camera is unavailable';
         setCameraError(message);
       }
@@ -162,8 +192,12 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
       mounted = false;
       cancelAnimationFrame(frameId);
       stream?.getTracks().forEach((track) => track.stop());
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+      landmarker?.close?.();
     };
-  }, [settings.cameraId, settings.smoothing, settings.clickSensitivity]);
+  }, [settings.cameraId]);
 
   useEffect(() => {
     if (state.source === 'camera') {

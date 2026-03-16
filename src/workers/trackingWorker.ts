@@ -10,6 +10,9 @@ interface WorkerInput {
   smileRatio: number;
   headTilt: number;
   clickSensitivity: number;
+  doubleBlinkWindowMs: number;
+  consecutiveBlinkGapMs: number;
+  longBlinkMs: number;
 }
 
 let previous = { x: 0.5, y: 0.5 };
@@ -30,7 +33,7 @@ self.onmessage = (event: MessageEvent<WorkerInput>) => {
   }
 
   if (!blink && blinkStart !== 0) {
-    if (now - lastBlinkAt < 450) {
+    if (now - lastBlinkAt < payload.consecutiveBlinkGapMs) {
       blinkCount += 1;
     } else {
       blinkCount = 1;
@@ -39,8 +42,8 @@ self.onmessage = (event: MessageEvent<WorkerInput>) => {
     blinkStart = 0;
   }
 
-  const longBlink = blink && now - blinkStart > 900;
-  const doubleBlink = blinkCount >= 2 && now - lastBlinkAt < 500;
+  const longBlink = blink && now - blinkStart > payload.longBlinkMs;
+  const doubleBlink = blinkCount >= 2 && now - lastBlinkAt < payload.doubleBlinkWindowMs;
 
   if (doubleBlink) {
     blinkCount = 0;
