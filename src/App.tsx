@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { HomePage } from './pages/Home/HomePage';
 import { DemoPage } from './pages/Demo/DemoPage';
@@ -129,7 +129,9 @@ export default function App() {
             <Route path="/calibration" element={<CalibrationPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/voice-personalization" element={<VoicePersonalizationPage />} />
-            <Route path="/documentation" element={<DocumentationPage />} />
+            <Route path="/documentation" element={<Navigate to="/documentation/overview" replace />} />
+            <Route path="/documentation/:section" element={<DocumentationPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>

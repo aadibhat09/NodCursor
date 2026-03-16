@@ -57,7 +57,7 @@ const NAV_MAP: [RegExp, string][] = [
   [/\b(go\s+to\s+|open\s+)?(calibrat\w*|calibration\s*page)\b/, '/calibration'],
   [/\b(go\s+to\s+|open\s+)?(settings?|preferences)\b/, '/settings'],
   [/\b(go\s+to\s+|open\s+)?(games?|game\s*page)\b/, '/games'],
-  [/\b(go\s+to\s+|open\s+)?(docs?|documentation)\b/, '/documentation'],
+  [/\b(go\s+to\s+|open\s+)?(docs?|documentation)\b/, '/documentation/overview'],
   [/\b(go\s+to\s+|open\s+)?(voice|voice\s*profile|voice\s*personalization|personalize\s*voice)\b/, '/voice-personalization'],
 ];
 
