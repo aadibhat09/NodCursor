@@ -1,10 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SettingsPanel } from '../../components/SettingsPanel/SettingsPanel';
 import { BigButton, Panel } from '../../components/common';
 import { useAppContext } from '../../context/AppContext';
 import { useCameraDevices } from '../../hooks/useCameraDevices';
 import { useVoiceCommands } from '../../hooks/useVoiceCommands';
-import { useNavigate } from 'react-router-dom';
 
 function buildDefaultSettings(isPhoneMode: boolean) {
   return {
