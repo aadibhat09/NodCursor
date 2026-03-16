@@ -19,6 +19,15 @@
 
 ---
 
+## Related Documentation
+
+- In-app documentation blog: `/documentation/overview`
+- Product motivation: `docs/WHY_WE_STARTED.md`
+- Developer reference: `docs/API.md`
+- Typing behavior and tuning: `docs/TYPING_SYSTEM.md`
+
+---
+
 ## Getting Started
 
 ### What is NodCursor?

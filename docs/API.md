@@ -1,263 +1,125 @@
 # NodCursor API Reference
 
-**Comprehensive technical documentation for developers**
+This file documents the current runtime APIs and settings model used by the app.
 
----
+## Core Runtime Flow
 
-## Table of Contents
+1. `useFaceTracking` captures landmarks from MediaPipe and posts normalized signals to `trackingWorker`.
+2. `trackingWorker` applies smoothing + blink state logic and returns gesture signals.
+3. `useCursorMapping` converts normalized tracking coordinates to viewport coordinates.
+4. `useSmoothCursor` applies motion smoothing for stable cursor movement.
+5. `useGestureControls` and `useMouthTypingControls` convert signals into UI actions and synthetic pointer events.
 
-1. [Core Hooks](#core-hooks)
-2. [Gesture Hooks](#gesture-hooks)
-3. [Utility Hooks](#utility-hooks)
-4. [Components](#components)
-5. [Context & State](#context--state)
-6. [Types & Interfaces](#types--interfaces)
-7. [Workers](#workers)
-8. [Utilities](#utilities)
+## App Context
 
----
+Location: `src/context/AppContext.tsx`
 
-## Core Hooks
+- `settings`: active `CursorSettings` profile (desktop or mobile auto-profile)
+- `setSettings(updater)`: persisted settings update
+- `calibration` + `setCalibration`: calibration state
+- `isPhoneMode`: profile switch based on viewport/pointer media query
 
-### useFaceTracking
+## Key Hooks
 
-**Purpose:** Core integration with MediaPipe Face Landmarker for facial recognition and tracking.
+### `useFaceTracking(settings, calibration)`
 
-**Location:** `src/hooks/useFaceTracking.ts`
+Location: `src/hooks/useFaceTracking.ts`
 
-**Returns:**
-```typescript
+Returns:
+
+```ts
 {
-  landmarks: NormalizedLandmark[] | null;  // 478 facial landmarks
-  error: string | null;                    // Error message if tracking fails
-  isLoading: boolean;                      // True during MediaPipe initialization
-  eyeState: { left: number; right: number }; // Blink ratios (0-1)
-  mouthState: { isOpen: boolean; smileDegree: number };
-  headRotation: { roll: number };         // Head tilt angle in degrees
-  startTracking: () => void;              // Begin camera capture
-  stopTracking: () => void;               // Stop camera and cleanup
-  availableCameras: MediaDeviceInfo[];    // List of camera devices
+  state: TrackingState;
+  videoRef: React.RefObject<HTMLVideoElement>;
+  cameraError: string | null;
+  availableCameras: MediaDeviceInfo[];
 }
 ```
 
-**Key Features:**
-- Uses global `cameraId` from `AppContext` settings
-- Initializes MediaPipe FaceLandmarker with WASM runtime
-- Sends tracking data to Web Worker for smoothing
-- Automatically restarts when cameraId changes
-- Disables blendshapes to reduce MediaPipe verbose logging
-- Computes eye aspect ratios for blink detection
-- Computes mouth aspect ratio for gesture detection
-- Calculates head roll from nose-to-eye-center rotation
+Notes:
 
-**Usage Example:**
-```typescript
-const { landmarks, eyeState, startTracking, stopTracking } = useFaceTracking();
+- Stream/model lifecycle depends on `cameraId` changes.
+- Frequently tuned values are passed to worker via refs without reinitializing camera/model.
 
-useEffect(() => {
-  startTracking();
-  return () => stopTracking();
-}, []);
-```
+### `useCursorMapping(rawX, rawY, calibration, settings)`
 
----
+Location: `src/hooks/useCursorMapping.ts`
 
-### useCursorMapping
+- Applies calibration mapping + deadzone.
+- Uses global sensitivity and axis-specific multipliers (`horizontalSensitivity`, `verticalSensitivity`).
+- Applies acceleration curve and viewport adaptation.
 
-**Purpose:** Transform nose landmark position to viewport coordinates.
+### `useDwellClick(x, y, dwellMs, moveTolerance, onClick)`
 
-**Location:** `src/hooks/useCursorMapping.ts`
+Location: `src/hooks/useDwellClick.ts`
 
-**Parameters:**
-```typescript
-landmarks: NormalizedLandmark[] | null  // From useFaceTracking
-calibration: CalibrationData | null     // From AppContext
-settings: CursorSettings                // From AppContext
-```
+- Starts progress while cursor remains within `moveTolerance`.
+- Triggers click callback at completion and resets progress.
 
-**Returns:**
-```typescript
+### `useGestureControls(settings, input, handlers?, enabled?)`
+
+Location: `src/hooks/useGestureControls.ts`
+
+- Blink/double-blink/long-blink to pointer actions.
+- Mouth/smile optional click actions with cooldown settings.
+- Head-tilt scroll with threshold, cooldown, and step controls.
+
+### `useMouthTypingControls(active, input, options)`
+
+Location: `src/hooks/useMouthTypingControls.ts`
+
+Input options:
+
+```ts
 {
-  x: number;  // Viewport X coordinate (px)
-  y: number;  // Viewport Y coordinate (px)
+  advanceCooldownMs: number;
+  selectCooldownMs: number;
+  backspaceCooldownMs: number;
 }
 ```
 
-**Algorithm:**
-1. Extract nose tip position (landmark[1])
-2. Apply deadzone filtering (ignore micro-movements)
-3. Map calibrated range to viewport dimensions
-4. Apply sensitivity multiplier
-5. Clamp to screen bounds
+Behavior:
 
-**Deadzone Implementation:**
-```typescript
-const dx = Math.abs(noseX - prevNoseX);
-const dy = Math.abs(noseY - prevNoseY);
-if (dx < deadzone && dy < deadzone) {
-  return prevCursorPosition; // Ignore small movements
-}
-```
+- Mouth open advances key focus.
+- Smile selects focused key.
+- Double blink triggers backspace.
+- Includes smart punctuation insertion and shift toggle support.
 
----
+## Worker Contract
 
-### useBlinkDetection
+Location: `src/workers/trackingWorker.ts`
 
-**Purpose:** Interpret eye state into blink events (single, double, long).
+Input includes:
 
-**Location:** `src/hooks/useBlinkDetection.ts`
+- `point`, `smoothing`, `clickSensitivity`
+- `doubleBlinkWindowMs`, `consecutiveBlinkGapMs`, `longBlinkMs`
+- `blinkRatio`, `mouthRatio`, `smileRatio`, `headTilt`
 
-**Parameters:**
-```typescript
-eyeState: { left: number; right: number }  // From useFaceTracking
-clickBlinkEnabled: boolean                  // From settings
-clickSensitivity: number                    // From settings (0.15-0.35)
-```
+Output includes:
 
-**Returns:**
-```typescript
-{
-  onSingleBlink: (callback: () => void) => void;
-  onDoubleBlink: (callback: () => void) => void;
-  onLongBlink: (callback: () => void) => void;
-}
-```
+- cursor point, blink/double/long blink flags
+- mouth/smile/headTilt signals
+- drag mode signal
 
-**Event Triggers:**
-- **Single Blink**: Eye closes for < 300ms, then opens
-- **Double Blink**: Two single blinks within 450ms window
-- **Long Blink**: Eyes held closed > 900ms
+## Types
 
-**State Machine:**
-```
-OPEN → (blink) → CLOSED → (release < 300ms) → SINGLE
-                       → (hold > 900ms) → LONG
-SINGLE → (blink within 450ms) → DOUBLE
-```
+Location: `src/types.ts`
 
----
+`CursorSettings` contains controls for:
 
-### useDwellClick
+- camera, mirroring, cursor speed, axis multipliers, deadzone, acceleration
+- dwell timing + movement tolerance
+- blink threshold + timing windows
+- mouth gesture cooldowns and mouth-typing cooldowns
+- tilt scroll threshold/step/cooldown
+- toggles for stabilization, blink, mouth, tilt-scroll, and voice
 
-**Purpose:** Trigger clicks by hovering cursor over target for duration.
+## Documentation Map
 
-**Location:** `src/hooks/useDwellClick.ts`
-
-**Parameters:**
-```typescript
-cursorPos: { x: number; y: number }
-dwellTimeMs: number          // 400-2200ms
-isEnabled: boolean
-```
-
-**Returns:**
-```typescript
-{
-  startDwell: (target: HTMLElement) => void;
-  cancelDwell: () => void;
-  dwellProgress: number;     // 0-1 for UI progress bar
-}
-```
-
-**How It Works:**
-1. User hovers cursor over element
-2. Timer starts counting to `dwellTimeMs`
-3. If cursor stays within bounds, click dispatched
-4. If cursor leaves, timer resets
-
----
-
-### useVoiceCommands
-
-**Purpose:** Speech recognition for voice command triggers.
-
-**Location:** `src/hooks/useVoiceCommands.ts`
-
-**Parameters:**
-```typescript
-isEnabled: boolean
-```
-
-**Returns:**
-```typescript
-{
-  listening: boolean;
-  lastCommand: string | null;
-  onCommand: (command: string, callback: () => void) => void;
-}
-```
-
-**Supported Commands:**
-- "click" → Left click
-- "right click" → Right click
-- "drag" → Toggle drag mode
-- "scroll up" → Page scroll up
-- "scroll down" → Page scroll down
-
-**Browser Support:**
-- Chrome: ✅ Full support
-- Edge: ✅ Full support
-- Firefox: ❌ No Web Speech API
-- Safari: ⚠️ Limited support
-
----
-
-## Gesture Hooks
-
-### useGestureControls
-
-**Purpose:** Convert gesture states into actual DOM mouse events.
-
-**Location:** `src/hooks/useGestureControls.ts`
-
-**Parameters:**
-```typescript
-{
-  cursorPos: { x: number; y: number };
-  gestureInput: {
-    singleBlink: boolean;
-    doubleBlink: boolean;
-    longBlink: boolean;
-    mouthOpen: boolean;
-    smile: boolean;
-  };
-  headRotation: { roll: number };
-  settings: CursorSettings;
-  enabled?: boolean;  // Default: true
-}
-```
-
-**Features:**
-- **Blink → Click**: Single blink dispatches MouseEvent at cursor position
-- **Double Blink → Right Click**: Context menu trigger
-- **Long Blink → Drag**: Toggle drag mode with visual feedback
-- **Mouth → Click** (optional): Mouth open triggers click
-- **Smile → Double Click** (optional): Smile triggers double-click
-- **Head Tilt → Scroll** (optional): Roll angle scrolls page
-
-**Anti-Drift Scrolling:**
-```typescript
-const baseline = 0.96 * prevBaseline + 0.04 * currentRoll;
-const deviation = Math.abs(currentRoll - baseline);
-
-if (deviation > threshold) {
-  window.scrollBy(0, sign * scrollSpeed);
-}
-```
-
----
-
-### useMouthTypingControls
-
-**Purpose:** Navigate on-screen keyboard using facial gestures.
-
-**Location:** `src/hooks/useMouthTypingControls.ts`
-
-**Parameters:**
-```typescript
-{
-  mouthState: { isOpen: boolean; smileDegree: number };
-  doubleBlink: boolean;
+- Product overview & story: `src/pages/Documentation/DocumentationPage.tsx` (`/documentation/*`)
+- API details: `docs/API.md`
+- Accessibility workflow: `docs/ACCESSIBILITY_GUIDE.md`
+- Contribution guide: `CONTRIBUTING.md`
   onKeyPress: (key: string) => void;
 }
 ```
