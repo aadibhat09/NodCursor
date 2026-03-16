@@ -114,6 +114,10 @@ export function DemoPage() {
     mouthOpen: state.mouthOpen,
     smile: state.smile,
     doubleBlink: state.doubleBlink
+  }, {
+    advanceCooldownMs: settings.mouthTypingAdvanceCooldownMs,
+    selectCooldownMs: settings.mouthTypingSelectCooldownMs,
+    backspaceCooldownMs: settings.mouthTypingBackspaceCooldownMs
   });
 
   useGestureControls(

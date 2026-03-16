@@ -16,7 +16,8 @@ const keyboardRows = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 export function buildKeyboardKeys(shift: boolean) {
   const chars = keyboardRows.join('').split('');
   const alpha = shift ? chars.map((c) => c.toUpperCase()) : chars;
-  return [...alpha, 'SPACE', 'BACKSPACE', 'CLEAR', 'ENTER'];
+  const punctuation = [',', '.', '?', "'"];
+  return [...alpha, ...punctuation, 'SHIFT', 'SPACE', 'BACKSPACE', 'CLEAR', 'ENTER'];
 }
 
 export function OnScreenKeyboard({
@@ -50,7 +51,7 @@ export function OnScreenKeyboard({
           {typingMode ? 'Stop Mouth Typing' : 'Start Mouth Typing'}
         </button>
         <span className="text-xs text-app-subtle">
-          Mouth open: next key | Smile: select key | Double blink: backspace
+          Mouth open: next key | Smile: select key | Double blink: backspace | SHIFT toggles case
         </span>
       </div>
 

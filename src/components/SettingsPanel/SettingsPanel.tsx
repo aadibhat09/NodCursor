@@ -184,6 +184,42 @@ export function SettingsPanel({
           />
         </label>
         <label className="space-y-2">
+          <span className="text-sm text-app-subtle">Mouth Typing Next-Key Cooldown ({settings.mouthTypingAdvanceCooldownMs}ms)</span>
+          <input
+            type="range"
+            min="120"
+            max="900"
+            step="20"
+            value={settings.mouthTypingAdvanceCooldownMs}
+            onChange={(e) => onChange({ ...settings, mouthTypingAdvanceCooldownMs: Number(e.target.value) })}
+            className="w-full accent-app-accent"
+          />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm text-app-subtle">Mouth Typing Select Cooldown ({settings.mouthTypingSelectCooldownMs}ms)</span>
+          <input
+            type="range"
+            min="150"
+            max="1000"
+            step="20"
+            value={settings.mouthTypingSelectCooldownMs}
+            onChange={(e) => onChange({ ...settings, mouthTypingSelectCooldownMs: Number(e.target.value) })}
+            className="w-full accent-app-accent"
+          />
+        </label>
+        <label className="space-y-2">
+          <span className="text-sm text-app-subtle">Mouth Typing Backspace Cooldown ({settings.mouthTypingBackspaceCooldownMs}ms)</span>
+          <input
+            type="range"
+            min="120"
+            max="1000"
+            step="20"
+            value={settings.mouthTypingBackspaceCooldownMs}
+            onChange={(e) => onChange({ ...settings, mouthTypingBackspaceCooldownMs: Number(e.target.value) })}
+            className="w-full accent-app-accent"
+          />
+        </label>
+        <label className="space-y-2">
           <span className="text-sm text-app-subtle">Tilt Scroll Threshold ({settings.tiltScrollThreshold.toFixed(3)})</span>
           <input
             type="range"

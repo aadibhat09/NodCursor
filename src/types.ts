@@ -17,6 +17,9 @@ export interface CursorSettings {
   mouthEnabled: boolean;
   mouthClickCooldownMs: number;
   smileDoubleClickCooldownMs: number;
+  mouthTypingAdvanceCooldownMs: number;
+  mouthTypingSelectCooldownMs: number;
+  mouthTypingBackspaceCooldownMs: number;
   headTiltScrollEnabled: boolean;
   tiltScrollThreshold: number;
   tiltScrollStep: number;
