@@ -22,15 +22,25 @@ function dispatchAtCursor(type: string, x: number, y: number, button = 0) {
   if (!target) {
     return;
   }
+
+  const buttons = type === 'mouseup' || type === 'click' || type === 'contextmenu' ? 0 : 1;
+
   target.dispatchEvent(
     new MouseEvent(type, {
       bubbles: true,
       cancelable: true,
       clientX,
       clientY,
-      button
+      button,
+      buttons,
+      view: window
     })
   );
+}
+
+interface EventLogEntry {
+  id: number;
+  line: string;
 }
 
 export function DemoPage() {
@@ -44,15 +54,24 @@ export function DemoPage() {
   );
   
   const actions = useBlinkDetection(state.blink, state.doubleBlink, state.longBlink);
-  const [eventLog, setEventLog] = useState<string[]>([]);
+  const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [typingMode, setTypingMode] = useState(false);
+  const eventIdRef = useRef(0);
 
   const appendEvent = useCallback((event: string) => {
-    setEventLog((prev) => [new Date().toLocaleTimeString() + ' - ' + event, ...prev.slice(0, 10)]);
+    const id = ++eventIdRef.current;
+    const line = `${new Date().toLocaleTimeString()} - ${event}`;
+    setEventLog((prev) => [{ id, line }, ...prev.slice(0, 10)]);
   }, []);
 
-  const dwellProgress = useDwellClick(smoothCursorPos.x, smoothCursorPos.y, settings.dwellMs, () => appendEvent('Dwell click'));
+  const dwellProgress = useDwellClick(
+    smoothCursorPos.x,
+    smoothCursorPos.y,
+    settings.dwellMs,
+    settings.dwellMoveTolerance,
+    () => appendEvent('Dwell click')
+  );
 
   const navigate = useNavigate();
   const voiceDragActive = useRef(false);
@@ -219,7 +238,7 @@ export function DemoPage() {
               </div>
               <div className="rounded-xl border border-app-accent/30 bg-app-panelAlt p-3 text-xs text-app-subtle">
                 <p className="mb-2 font-semibold text-app-text">Event log</p>
-                {eventLog.length ? eventLog.map((line) => <p key={line}>{line}</p>) : <p>No events yet.</p>}
+                {eventLog.length ? eventLog.map((entry) => <p key={entry.id}>{entry.line}</p>) : <p>No events yet.</p>}
               </div>
             </div>
           </Panel>

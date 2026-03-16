@@ -101,7 +101,13 @@ export function GamesPage() {
     appendActivity('Dwell click');
   }, [appendActivity, smoothCursorPos.x, smoothCursorPos.y]);
 
-  const dwellProgress = useDwellClick(smoothCursorPos.x, smoothCursorPos.y, settings.dwellMs, handleDwellClick);
+  const dwellProgress = useDwellClick(
+    smoothCursorPos.x,
+    smoothCursorPos.y,
+    settings.dwellMs,
+    settings.dwellMoveTolerance,
+    handleDwellClick
+  );
 
   const navigate = useNavigate();
 

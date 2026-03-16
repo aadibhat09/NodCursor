@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
-export function useDwellClick(x: number, y: number, dwellMs: number, onClick: () => void) {
+export function useDwellClick(x: number, y: number, dwellMs: number, moveTolerance: number, onClick: () => void) {
   const [progress, setProgress] = useState(0);
   const lastPoint = useRef({ x, y });
   const startedAt = useRef<number>(performance.now());
 
   useEffect(() => {
     const distance = Math.hypot(x - lastPoint.current.x, y - lastPoint.current.y);
-    if (distance > 0.02) {
+    if (distance > moveTolerance) {
       lastPoint.current = { x, y };
       startedAt.current = performance.now();
       setProgress(0);
@@ -28,7 +28,7 @@ export function useDwellClick(x: number, y: number, dwellMs: number, onClick: ()
     });
 
     return () => cancelAnimationFrame(raf);
-  }, [x, y, dwellMs, onClick]);
+  }, [x, y, dwellMs, moveTolerance, onClick]);
 
   return progress;
 }

@@ -20,12 +20,21 @@ export function useCursorMapping(rawX: number, rawY: number, calibration: Calibr
 
     const acceleration = Math.pow(distance, settings.acceleration);
     const gain = settings.sensitivity * adaptiveMultiplier * (1 + acceleration);
-    const x = 0.5 + centerOffsetX * gain;
-    const y = 0.5 + centerOffsetY * gain * verticalBoost;
+    const x = 0.5 + centerOffsetX * gain * settings.horizontalSensitivity;
+    const y = 0.5 + centerOffsetY * gain * verticalBoost * settings.verticalSensitivity;
 
     return {
       x: Math.min(1, Math.max(0, x)),
       y: Math.min(1, Math.max(0, y))
     };
-  }, [rawX, rawY, calibration, settings.deadzone, settings.sensitivity, settings.acceleration]);
+  }, [
+    rawX,
+    rawY,
+    calibration,
+    settings.deadzone,
+    settings.sensitivity,
+    settings.acceleration,
+    settings.horizontalSensitivity,
+    settings.verticalSensitivity
+  ]);
 }

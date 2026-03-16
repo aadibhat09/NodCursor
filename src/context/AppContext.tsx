@@ -14,14 +14,25 @@ const defaultSettings: CursorSettings = {
   cameraId: '',
   mirrorCamera: true,
   sensitivity: 1,
+  horizontalSensitivity: 1,
+  verticalSensitivity: 1,
   deadzone: 0.03,
   smoothing: 0.7,
   dwellMs: 900,
+  dwellMoveTolerance: 0.02,
   clickSensitivity: 0.22,
+  doubleBlinkWindowMs: 500,
+  consecutiveBlinkGapMs: 450,
+  longBlinkMs: 900,
   stabilization: true,
   blinkEnabled: true,
   mouthEnabled: false,
+  mouthClickCooldownMs: 700,
+  smileDoubleClickCooldownMs: 900,
   headTiltScrollEnabled: false,
+  tiltScrollThreshold: 0.06,
+  tiltScrollStep: 110,
+  tiltScrollCooldownMs: 260,
   voiceEnabled: false,
   acceleration: 1.2
 };
@@ -29,12 +40,23 @@ const defaultSettings: CursorSettings = {
 const mobileDefaultSettings: CursorSettings = {
   ...defaultSettings,
   sensitivity: 0.9,
+  horizontalSensitivity: 0.95,
+  verticalSensitivity: 1.1,
   deadzone: 0.05,
   smoothing: 0.82,
   dwellMs: 700,
+  dwellMoveTolerance: 0.03,
   clickSensitivity: 0.24,
+  doubleBlinkWindowMs: 560,
+  consecutiveBlinkGapMs: 500,
+  longBlinkMs: 980,
   acceleration: 1.05,
-  mouthEnabled: true
+  mouthEnabled: true,
+  mouthClickCooldownMs: 760,
+  smileDoubleClickCooldownMs: 980,
+  tiltScrollThreshold: 0.065,
+  tiltScrollStep: 90,
+  tiltScrollCooldownMs: 300
 };
 
 const defaultCalibration: CalibrationData = {

@@ -2,14 +2,25 @@ export interface CursorSettings {
   cameraId: string;
   mirrorCamera: boolean;
   sensitivity: number;
+  horizontalSensitivity: number;
+  verticalSensitivity: number;
   deadzone: number;
   smoothing: number;
   dwellMs: number;
+  dwellMoveTolerance: number;
   clickSensitivity: number;
+  doubleBlinkWindowMs: number;
+  consecutiveBlinkGapMs: number;
+  longBlinkMs: number;
   stabilization: boolean;
   blinkEnabled: boolean;
   mouthEnabled: boolean;
+  mouthClickCooldownMs: number;
+  smileDoubleClickCooldownMs: number;
   headTiltScrollEnabled: boolean;
+  tiltScrollThreshold: number;
+  tiltScrollStep: number;
+  tiltScrollCooldownMs: number;
   voiceEnabled: boolean;
   acceleration: number;
 }
