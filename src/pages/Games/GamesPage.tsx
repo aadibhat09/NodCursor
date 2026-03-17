@@ -82,7 +82,7 @@ function initialMemoryMatchState(): MemoryMatchState {
 
 export function GamesPage() {
   const { settings, calibration } = useAppContext();
-  const { state, videoRef, cameraError } = useFaceTracking(settings, calibration);
+  const { state, videoRef, cameraError, lightState } = useFaceTracking(settings, calibration);
   const smoothCursorPos = useSmoothCursor(
     { x: state.x, y: state.y },
     { smoothing: settings.smoothing, stabilization: settings.stabilization }
@@ -318,6 +318,7 @@ export function GamesPage() {
             cameraError={cameraError}
             sourceLabel={state.source}
             mirrored={settings.mirrorCamera}
+            lightState={lightState}
           />
 
           <GestureIndicators

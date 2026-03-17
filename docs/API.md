@@ -1,488 +1,269 @@
-# NodCursor API Reference
+# NodCursor API and Runtime Specification
 
-This file documents the current runtime APIs and settings model used by the app.
+This document is a technical reference for the current runtime behavior of NodCursor.
+It is written for maintainers, reviewers, and instructors who need implementation-level detail.
 
-## Core Runtime Flow
+---
 
-1. `useFaceTracking` captures landmarks from MediaPipe and posts normalized signals to `trackingWorker`.
-2. `trackingWorker` applies smoothing + blink state logic and returns gesture signals.
-3. `useCursorMapping` converts normalized tracking coordinates to viewport coordinates.
-4. `useSmoothCursor` applies motion smoothing for stable cursor movement.
-5. `useGestureControls` and `useMouthTypingControls` convert signals into UI actions and synthetic pointer events.
+## 1) Runtime Architecture (Concrete)
 
-## App Context
+### 1.1 Main Pipeline
 
-Location: `src/context/AppContext.tsx`
+1. **Camera acquisition** (`getUserMedia`) starts in `useFaceTracking`.
+2. **Face inference** runs through MediaPipe `FaceLandmarker` in `VIDEO` mode.
+3. **Signal extraction** computes normalized features:
+   - Nose anchor (`x`, `y`)
+   - Eye aspect ratio proxy (`blinkRatio`)
+   - Mouth gap proxy (`mouthRatio`)
+   - Smile width proxy (`smileRatio`)
+   - Brow differential (`headTilt`)
+4. **Worker offload** posts signal payload to `trackingWorker`.
+5. **Worker smoothing/state machine** computes smoothed cursor + blink event states.
+6. **Viewport mapping** (`useCursorMapping`) transforms normalized coordinates into calibrated screen-space.
+7. **Second-stage rendering smoothing** (`useSmoothCursor`) reduces visual snapping.
+8. **Action interpretation** (`useGestureControls`, `useDwellClick`, `useMouthTypingControls`, `useVoiceCommands`) dispatches UI and synthetic pointer events.
 
-- `settings`: active `CursorSettings` profile (desktop or mobile auto-profile)
-- `setSettings(updater)`: persisted settings update
-- `calibration` + `setCalibration`: calibration state
-- `isPhoneMode`: profile switch based on viewport/pointer media query
+### 1.2 Threading Model
 
-## Key Hooks
+- **Main thread**: camera stream, MediaPipe inference, rendering, event dispatch.
+- **Web Worker**: temporal smoothing and blink sequence logic.
+- **Goal**: keep high-frequency smoothing logic off the UI path to improve interactivity.
 
-### `useFaceTracking(settings, calibration)`
+---
 
-Location: `src/hooks/useFaceTracking.ts`
+## 2) Module Contracts
 
-Returns:
+## 2.1 App Context
+
+**Location:** `src/context/AppContext.tsx`
+
+### Provided API
+
+- `settings: CursorSettings`
+- `setSettings(updater: (prev: CursorSettings) => CursorSettings): void`
+- `isPhoneMode: boolean`
+- `calibration: CalibrationData`
+- `setCalibration(next: CalibrationData): void`
+
+### Persistence behavior
+
+- Desktop profile key: `head-cursor-settings-desktop`
+- Mobile profile key: `head-cursor-settings-mobile`
+- Legacy compatibility key: `head-cursor-settings`
+- Migration key: `head-cursor-mirror-flipped-v2`
+
+Profiles are selected dynamically with media query:
+- `(max-width: 768px), (pointer: coarse)`
+
+---
+
+## 2.2 useFaceTracking
+
+**Location:** `src/hooks/useFaceTracking.ts`
+
+### Signature
 
 ```ts
-{
+useFaceTracking(settings: CursorSettings, calibration: CalibrationData): {
   state: TrackingState;
   videoRef: React.RefObject<HTMLVideoElement>;
   cameraError: string | null;
   availableCameras: MediaDeviceInfo[];
+  lightState: AdaptiveLightState | null;
 }
 ```
 
-Notes:
+### Responsibilities (SRP-aligned)
 
-- Stream/model lifecycle depends on `cameraId` changes.
-- Frequently tuned values are passed to worker via refs without reinitializing camera/model.
+1. Camera lifecycle management.
+2. Face model lifecycle management.
+3. Frame pacing and inference scheduling.
+4. Feature extraction from landmarks.
+5. Worker message exchange.
+6. Adaptive light estimation integration.
+7. Fallback mouse source when camera path is unavailable.
 
-### `useCursorMapping(rawX, rawY, calibration, settings)`
+### Performance safeguards
 
-Location: `src/hooks/useCursorMapping.ts`
+- Detection is **paced** using a dynamic interval instead of unconditional per-frame inference.
+- Update commits to React state are skipped for negligible movement + no gesture changes.
+- Camera constraints are tuned periodically (not every frame).
+- Inference is skipped when video element is not `readyState >= 2`.
 
-- Applies calibration mapping + deadzone.
-- Uses global sensitivity and axis-specific multipliers (`horizontalSensitivity`, `verticalSensitivity`).
-- Applies acceleration curve and viewport adaptation.
+---
 
-### `useDwellClick(x, y, dwellMs, moveTolerance, onClick)`
+## 2.3 Adaptive Light Learner
 
-Location: `src/hooks/useDwellClick.ts`
+**Location:** `src/utils/ml/adaptiveLightLearner.ts`
 
-- Starts progress while cursor remains within `moveTolerance`.
-- Triggers click callback at completion and resets progress.
+### Purpose
 
-### `useGestureControls(settings, input, handlers?, enabled?)`
+Implements a lightweight online learner (EMA-based) that adapts processing cadence and blink sensitivity under changing lighting conditions.
 
-Location: `src/hooks/useGestureControls.ts`
+### Exposed types
 
-- Blink/double-blink/long-blink to pointer actions.
-- Mouth/smile optional click actions with cooldown settings.
-- Head-tilt scroll with threshold, cooldown, and step controls.
+```ts
+interface AdaptiveLightState {
+  brightness: number;              // normalized [0, 1]
+  contrast: number;                // normalized [0, 1]
+  quality: number;                 // aggregate quality [0, 1]
+  recommendation: 'low-light' | 'balanced' | 'bright';
+  detectionIntervalMs: number;     // target cadence hint
+  blinkSensitivityMultiplier: number;
+}
+```
 
-### `useMouthTypingControls(active, input, options)`
+### Learning behavior
 
-Location: `src/hooks/useMouthTypingControls.ts`
+- Uses exponential moving updates (`alpha = 0.08`) over sampled luma statistics.
+- Combines brightness/contrast into a scalar quality score.
+- Outputs:
+  - A camera condition recommendation.
+  - Inference pacing recommendation (`~33–66ms` range with warmup bias).
+  - Blink threshold adjustment multiplier (`0.9–1.15`).
 
-Input options:
+### Why this is “ML-style”
+
+This is an **online adaptive model** (streaming parameter update over observations), not a static if-else rule table. It continuously re-estimates environment quality and influences downstream inference behavior.
+
+---
+
+## 2.4 trackingWorker
+
+**Location:** `src/workers/trackingWorker.ts`
+
+### Input contract
 
 ```ts
 {
-  advanceCooldownMs: number;
-  selectCooldownMs: number;
-  backspaceCooldownMs: number;
-}
-```
-
-Behavior:
-
-- Mouth open advances key focus.
-- Smile selects focused key.
-- Double blink triggers backspace.
-- Includes smart punctuation insertion and shift toggle support.
-
-## Worker Contract
-
-Location: `src/workers/trackingWorker.ts`
-
-Input includes:
-
-- `point`, `smoothing`, `clickSensitivity`
-- `doubleBlinkWindowMs`, `consecutiveBlinkGapMs`, `longBlinkMs`
-- `blinkRatio`, `mouthRatio`, `smileRatio`, `headTilt`
-
-Output includes:
-
-- cursor point, blink/double/long blink flags
-- mouth/smile/headTilt signals
-- drag mode signal
-
-## Types
-
-Location: `src/types.ts`
-
-`CursorSettings` contains controls for:
-
-- camera, mirroring, cursor speed, axis multipliers, deadzone, acceleration
-- dwell timing + movement tolerance
-- blink threshold + timing windows
-- mouth gesture cooldowns and mouth-typing cooldowns
-- tilt scroll threshold/step/cooldown
-- toggles for stabilization, blink, mouth, tilt-scroll, and voice
-
-## Documentation Map
-
-- Product overview & story: `src/pages/Documentation/DocumentationPage.tsx` (`/documentation/*`)
-- API details: `docs/API.md`
-- Accessibility workflow: `docs/ACCESSIBILITY_GUIDE.md`
-- Contribution guide: `CONTRIBUTING.md`
-  onKeyPress: (key: string) => void;
-}
-```
-
-**Returns:**
-```typescript
-{
-  selectedIndex: number;          // Currently highlighted key (0-35)
-  selectedKey: KeyboardKey;       // { label, value, type }
-  advanceKey: () => void;         // Manually advance to next
-  selectKey: () => void;          // Manually select current
-  clearAll: () => void;           // Reset to index 0
-}
-```
-
-**Gesture Mapping:**
-- **Mouth Open** → Advance to next key (wraparound at end)
-- **Smile** → Select highlighted key
-- **Double Blink** → Backspace (delete last character)
-
----
-
-## Utility Hooks
-
-### useCameraDevices
-
-**Purpose:** Lightweight camera enumeration without initializing MediaPipe.
-
-**Location:** `src/hooks/useCameraDevices.ts`
-
-**Returns:**
-```typescript
-{
-  cameras: MediaDeviceInfo[];
-  isLoading: boolean;
-  error: string | null;
-}
-```
-
-**Why Separate Hook?**
-- Settings page needs camera list but not full tracking
-- Avoids unnecessary MediaPipe initialization overhead
-- Faster page load and lower resource usage
-
----
-
-## Components
-
-### CursorOverlay
-
-**Purpose:** Visual indicator for head-controlled cursor position.
-
-**Location:** `src/components/CursorOverlay.tsx`
-
-**Props:**
-```typescript
-{
-  x: number;              // Cursor X position (px)
-  y: number;              // Cursor Y position (px)
-  isDragging?: boolean;   // Show drag state styling
-}
-```
-
-**Visual Elements:**
-- Cyan circle (12px diameter) at cursor position
-- Pulsing glow effect on hover
-- Red border when dragging active
-- Hardware-accelerated with `will-change: transform`
-
----
-
-### CalibrationUI
-
-**Purpose:** Multi-step guided calibration flow.
-
-**Location:** `src/components/CalibrationUI.tsx`
-
-**Props:**
-```typescript
-{
-  currentStep: number;          // 0-4 (center, left, right, up, down)
-  onCapture: () => void;        // Callback when user clicks "Capture"
-  isComplete: boolean;          // Show completion state
-}
-```
-
-**Calibration Steps:**
-1. **Center** (step 0): Neutral head position
-2. **Left** (step 1): Turn head left
-3. **Right** (step 2): Turn head right
-4. **Up** (step 3): Tilt head up
-5. **Down** (step 4): Tilt head down
-
----
-
-### SettingsPanel
-
-**Purpose:** Centralized configuration for all tracking parameters.
-
-**Location:** `src/components/SettingsPanel/SettingsPanel.tsx`
-
-**Props:**
-```typescript
-{
-  settings: CursorSettings;
-  onUpdate: (newSettings: Partial<CursorSettings>) => void;
-  cameras: MediaDeviceInfo[];
-}
-```
-
-**Settings Exposed:**
-- Cursor Control: Speed, Smoothing, Deadzone
-- Gestures: Blink/Mouth/Smile toggles, Click Sensitivity
-- Dwell Click: Enabled, Dwell Time
-- Voice Commands: Enabled
-- Head Tilt Scroll: Enabled, Tilt Threshold
-- Camera: Device selection
-- Debug: Debug Mode toggle
-
----
-
-### OnScreenKeyboard
-
-**Purpose:** Virtual keyboard for gesture-based typing.
-
-**Location:** `src/components/OnScreenKeyboard.tsx`
-
-**Props:**
-```typescript
-{
-  selectedIndex: number;         // Highlighted key (0-35)
-  onKeySelect: (key: string) => void;
-  visible: boolean;
-  typingMode: boolean;          // Show typing mode indicator
-  currentText: string;          // Display entered text
-}
-```
-
-**Keyboard Layout:**
-- 26 letters (a-z)
-- 10 numbers (0-9)
-- 4 actions (SPACE, BACKSPACE, CLEAR, ENTER)
-
----
-
-## Context & State
-
-### AppContext
-
-**Purpose:** Global application state for settings and calibration.
-
-**Location:** `src/context/AppContext.tsx`
-
-**Provided State:**
-```typescript
-{
-  settings: CursorSettings;
-  calibration: CalibrationData | null;
-  setSettings: (settings: CursorSettings) => void;
-  setCalibration: (calibration: CalibrationData) => void;
-}
-```
-
-**CursorSettings Type:**
-```typescript
-{
-  cursorSpeed: number;
+  point: { x: number; y: number };
   smoothing: number;
-  deadzone: number;
-  clickBlinkEnabled: boolean;
-  mouthClickEnabled: boolean;
-  smileDoubleClickEnabled: boolean;
+  blinkRatio: number;
+  mouthRatio: number;
+  smileRatio: number;
+  headTilt: number;
   clickSensitivity: number;
-  dwellClickEnabled: boolean;
-  dwellTimeMs: number;
-  voiceCommandsEnabled: boolean;
-  headTiltScrollEnabled: boolean;
-  tiltThreshold: number;
-  debugMode: boolean;
-  cameraId: string;
+  doubleBlinkWindowMs: number;
+  consecutiveBlinkGapMs: number;
+  longBlinkMs: number;
 }
 ```
 
-**CalibrationData Type:**
-```typescript
+### Output contract
+
+```ts
 {
-  center: { x: number; y: number };
-  left: { x: number; y: number };
-  right: { x: number; y: number };
-  up: { x: number; y: number };
-  down: { x: number; y: number };
-}
-```
-
-**Persistence:**
-Settings and calibration saved to `localStorage`:
-- Key: `nodcursor-settings`
-- Key: `nodcursor-calibration`
-
----
-
-## Types & Interfaces
-
-### TrackingState
-
-**Location:** `src/types.ts`
-
-```typescript
-interface TrackingState {
-  landmarks: NormalizedLandmark[] | null;
-  eyeState: { left: number; right: number };
-  mouthState: { isOpen: boolean; smileDegree: number };
-  headRotation: { roll: number };
-  isTracking: boolean;
-  error: string | null;
-}
-```
-
-### GestureInput
-
-```typescript
-interface GestureInput {
-  singleBlink: boolean;
+  x: number;
+  y: number;
+  blink: boolean;
   doubleBlink: boolean;
   longBlink: boolean;
   mouthOpen: boolean;
   smile: boolean;
+  headTilt: number;
+  dragMode: boolean;
 }
 ```
 
-### KeyboardKey
+### State machine summary
 
-```typescript
-type KeyType = 'LETTER' | 'NUMBER' | 'ACTION';
-
-interface KeyboardKey {
-  label: string;    // Display text
-  value: string;    // Actual character to insert
-  type: KeyType;
-}
-```
+- `blink` is level-based (`blinkRatio < clickSensitivity`).
+- `longBlink` is duration-based.
+- `doubleBlink` uses count + timing windows.
+- `dragMode` follows long blink behavior.
 
 ---
 
-## Workers
+## 2.5 Mapping and Action Hooks
 
-### trackingWorker
+### useCursorMapping
 
-**Purpose:** Off-thread processing for smoothing and gesture state machines.
+**Location:** `src/hooks/useCursorMapping.ts`
 
-**Location:** `src/workers/trackingWorker.ts`
+- Converts normalized source to calibrated viewport coordinates.
+- Applies deadzone, axis sensitivity, acceleration curve.
+- Honors mirror mode upstream in `useFaceTracking` mapping input.
 
-**Input Message:**
-```typescript
-{
-  type: 'smooth';
-  data: {
-    landmarks: NormalizedLandmark[];
-    eyeState: { left: number; right: number };
-    mouthState: { isOpen: boolean; smileDegree: number };
-    headRotation: { roll: number };
-    smoothing: number;
-  }
-}
-```
+### useDwellClick
 
-**Output Message:**
-```typescript
-{
-  type: 'smoothed';
-  landmarks: NormalizedLandmark[];
-  eyeState: { left: number; right: number };
-  mouthState: { isOpen: boolean; smileDegree: number };
-  headRotation: { roll: number };
-  blinkState: {
-    singleBlink: boolean;
-    doubleBlink: boolean;
-    longBlink: boolean;
-  };
-}
-```
+**Location:** `src/hooks/useDwellClick.ts`
 
-**Smoothing Algorithm:**
-```typescript
-// Exponential Moving Average
-smoothedValue = alpha * currentValue + (1 - alpha) * previousValue
-```
+- Tracks cursor stability against `dwellMoveTolerance`.
+- Triggers callback after `dwellMs` of stability.
 
-**Why Web Worker?**
-- Offloads processing from main thread
-- Prevents UI jank during intensive computation
-- Maintains 60fps camera processing
-
----
-
-## Utilities
-
-### dispatchMouseEvent
-
-**Purpose:** Programmatically create and dispatch DOM mouse events.
+### useGestureControls
 
 **Location:** `src/hooks/useGestureControls.ts`
 
-**Signature:**
-```typescript
-function dispatchMouseEvent(
-  type: 'click' | 'mousedown' | 'mouseup' | 'contextmenu',
-  x: number,
-  y: number
-): void
-```
+- Consumes worker gesture signals and dispatches app actions.
+- Handles blink/right-click/drag and optional mouth + tilt scrolling.
 
-**Implementation:**
-```typescript
-const element = document.elementFromPoint(x, y);
-if (element) {
-  const event = new MouseEvent(type, {
-    bubbles: true,
-    cancelable: true,
-    view: window,
-    clientX: x,
-    clientY: y
-  });
-  element.dispatchEvent(event);
-}
-```
+### useMouthTypingControls
+
+**Location:** `src/hooks/useMouthTypingControls.ts`
+
+- Maps mouth and smile actions to keyboard scanning + select behavior.
+- Uses three independent cooldown controls for repeat suppression.
 
 ---
 
-### buildKeyboardKeys
+## 3) Data Types
 
-**Purpose:** Generate keyboard layout array.
+**Location:** `src/types.ts`
 
-**Location:** `src/components/OnScreenKeyboard.tsx`
+### CursorSettings (selected groups)
 
-**Returns:**
-```typescript
-KeyboardKey[]  // 36 keys total
-```
+1. **Camera + rendering**: `cameraId`, `mirrorCamera`, `stabilization`
+2. **Movement dynamics**: `sensitivity`, axis sensitivities, `deadzone`, `smoothing`, `acceleration`
+3. **Dwell click**: `dwellMs`, `dwellMoveTolerance`
+4. **Blink timing**: `clickSensitivity`, `doubleBlinkWindowMs`, `consecutiveBlinkGapMs`, `longBlinkMs`
+5. **Mouth typing timing**: advance/select/backspace cooldowns
+6. **Head tilt scrolling**: enable + threshold + step + cooldown
+7. **Voice**: `voiceEnabled`
 
----
+### TrackingState
 
-## Performance Considerations
-
-### Optimization Techniques
-
-**Web Worker Processing:**
-- Smoothing runs off main thread
-- Prevents UI blocking during computation
-- Maintains 60fps camera updates
-
-**Transform-based Positioning:**
-```typescript
-// Use transform instead of left/top for 60fps
-transform: `translate(${x}px, ${y}px)`;
-will-change: transform;
-```
-
-**MediaPipe Optimization:**
-- Disabled `outputFaceBlendshapes` (reduces processing)
-- VIDEO mode instead of IMAGE (optimized for streams)
-- Limited landmark subset for cursor (only nose tip)
+- Cursor coordinates (`x`, `y`)
+- Confidence and source (`camera` or fallback)
+- Gesture booleans
+- Drag mode state
 
 ---
 
-**For questions or contributions, see [README.md](../README.md#contributing) and [ACCESSIBILITY_GUIDE.md](./ACCESSIBILITY_GUIDE.md).**
+## 4) Deploy/Production Notes
+
+1. Build command: `npm run build`
+2. Bundler: Vite + TypeScript project references (`tsc -b`)
+3. MediaPipe assets are pulled from explicit remote URLs; CORS/network access is required at runtime.
+4. Browser must support:
+   - `navigator.mediaDevices.getUserMedia`
+   - Web Workers
+   - `requestAnimationFrame`
+5. Camera permissions must be granted by the end-user per origin.
+
+### Production troubleshooting
+
+- If camera feed fails only in production, validate HTTPS origin and permission prompts.
+- If tracking is unstable in production, compare camera resolution/fps constraints across environments.
+- If first-load delay is high, this is usually MediaPipe asset fetch + model initialization.
+
+---
+
+## 5) Evaluation Metrics (for demos/reports)
+
+Suggested measurable metrics for classroom/project presentation:
+
+1. **End-to-end latency**: head motion to cursor motion (ms)
+2. **Steady-state jitter**: std-dev of cursor when user is still
+3. **False click rate**: accidental click events per minute
+4. **Target acquisition time**: average time to activate a fixed-size target
+5. **Session fatigue proxy**: performance drift over 15-minute run
+
+---
+
+## 6) Related Docs
+
+- `docs/ACCESSIBILITY_GUIDE.md`
+- `docs/TYPING_SYSTEM.md`
+- `docs/WHY_WE_STARTED.md`
+- `CONTRIBUTING.md`

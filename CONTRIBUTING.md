@@ -442,6 +442,11 @@ All contributors are recognized in:
 - README acknowledgments section
 - Release notes for significant contributions
 
+### Current Named Contributors
+
+- aadibhat09 (aadibhat09@gmail.com)
+- SanPranav (pranavs22638@gmail.com)
+
 ---
 
 ## License

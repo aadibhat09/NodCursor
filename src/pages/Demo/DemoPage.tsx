@@ -45,7 +45,7 @@ interface EventLogEntry {
 
 export function DemoPage() {
   const { settings, calibration } = useAppContext();
-  const { state, videoRef, cameraError } = useFaceTracking(settings, calibration);
+  const { state, videoRef, cameraError, lightState } = useFaceTracking(settings, calibration);
   
   // Apply continuous smoothing that preserves momentum without visible snapping.
   const smoothCursorPos = useSmoothCursor(
@@ -202,6 +202,7 @@ export function DemoPage() {
             cameraError={cameraError}
             sourceLabel={state.source}
             mirrored={settings.mirrorCamera}
+            lightState={lightState}
           />
           <GestureIndicators
             blink={actions.leftClick}

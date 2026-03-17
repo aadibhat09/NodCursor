@@ -10,7 +10,7 @@ const steps = ['center', 'left', 'right', 'up', 'down'] as const;
 
 export function CalibrationPage() {
   const { settings, calibration, setCalibration } = useAppContext();
-  const { state, videoRef, cameraError } = useFaceTracking(settings, calibration);
+  const { state, videoRef, cameraError, lightState } = useFaceTracking(settings, calibration);
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
 
@@ -47,6 +47,7 @@ export function CalibrationPage() {
         cameraError={cameraError}
         sourceLabel={state.source}
         mirrored={settings.mirrorCamera}
+        lightState={lightState}
       />
       <CalibrationUI
         step={step}

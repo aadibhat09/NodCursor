@@ -13,7 +13,7 @@ interface AppContextValue {
 const defaultSettings: CursorSettings = {
   cameraId: '',
   mirrorCamera: true,
-  sensitivity: 1,
+  sensitivity: 1.2,
   horizontalSensitivity: 1,
   verticalSensitivity: 1,
   deadzone: 0.03,
@@ -42,7 +42,7 @@ const defaultSettings: CursorSettings = {
 
 const mobileDefaultSettings: CursorSettings = {
   ...defaultSettings,
-  sensitivity: 0.9,
+  sensitivity: 1.1,
   horizontalSensitivity: 0.95,
   verticalSensitivity: 1.1,
   deadzone: 0.05,

@@ -270,6 +270,9 @@ Built with:
 - [Tailwind CSS](https://tailwindcss.com/)
 - Accessibility feedback from users and occupational therapists
 
+Contributors:
+- aadibhat09 (aadibhat09@gmail.com)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details
