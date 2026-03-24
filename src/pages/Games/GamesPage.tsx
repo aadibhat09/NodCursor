@@ -14,6 +14,33 @@ import { useVoiceCommands } from '../../hooks/useVoiceCommands';
 const targetCellCount = 9;
 const memoryPadCount = 4;
 const targetRoundSeconds = 30;
+const dashPlayerX = 15;
+const dashPlayerWidth = 6;
+const dashPlayerHeight = 14;
+
+const dashMilestones = [
+  { title: 'Step 1', hint: 'Calibrate for stable cursor range.' },
+  { title: 'Step 2', hint: 'Play Target Rush for precision.' },
+  { title: 'Step 3', hint: 'Play Memory Match for rhythm.' },
+  { title: 'Step 4', hint: 'Enable voice commands for hybrid control.' },
+  { title: 'Step 5', hint: 'Tune dwell and blink timing in Settings.' },
+  { title: 'Step 6', hint: 'Use Demo page to validate full workflow.' }
+];
+
+const fallbackDashMilestone = {
+  title: 'Step',
+  hint: 'Keep practicing to unlock the next training milestone.'
+};
+
+function getDashMilestone(index: number) {
+  if (dashMilestones.length === 0) {
+    return fallbackDashMilestone;
+  }
+
+  const normalizedIndex = Number.isFinite(index) ? Math.floor(index) : 0;
+  const safeIndex = Math.min(Math.max(normalizedIndex, 0), dashMilestones.length - 1);
+  return dashMilestones[safeIndex] ?? fallbackDashMilestone;
+}
 
 function nextIndex(max: number, previous?: number) {
   const candidate = Math.floor(Math.random() * max);
@@ -59,6 +86,35 @@ interface MemoryMatchState {
   message: string;
 }
 
+interface DashObstacle {
+  id: number;
+  x: number;
+  width: number;
+  height: number;
+}
+
+interface NextStepDashState {
+  running: boolean;
+  score: number;
+  best: number;
+  playerY: number;
+  playerVelocity: number;
+  speed: number;
+  spawnInMs: number;
+  obstacles: DashObstacle[];
+  stepIndex: number;
+  status: string;
+}
+
+function createDashObstacle(idSeed: number): DashObstacle {
+  return {
+    id: idSeed,
+    x: 106,
+    width: 3.2 + Math.random() * 2.2,
+    height: 10 + Math.random() * 12
+  };
+}
+
 function initialTargetRushState(): TargetRushState {
   return {
     running: false,
@@ -80,6 +136,22 @@ function initialMemoryMatchState(): MemoryMatchState {
   };
 }
 
+function initialNextStepDashState(): NextStepDashState {
+  const firstMilestone = getDashMilestone(0);
+  return {
+    running: false,
+    score: 0,
+    best: 0,
+    playerY: 0,
+    playerVelocity: 0,
+    speed: 24,
+    spawnInMs: 1300,
+    obstacles: [],
+    stepIndex: 0,
+    status: `${firstMilestone.title}: ${firstMilestone.hint}`
+  };
+}
+
 export function GamesPage() {
   const { settings, calibration } = useAppContext();
   const { state, videoRef, cameraError, lightState } = useFaceTracking(settings, calibration);
@@ -89,8 +161,15 @@ export function GamesPage() {
   );
   const [targetRush, setTargetRush] = useState<TargetRushState>(initialTargetRushState);
   const [memoryMatch, setMemoryMatch] = useState<MemoryMatchState>(initialMemoryMatchState);
+  const [nextStepDash, setNextStepDash] = useState<NextStepDashState>(initialNextStepDashState);
+  const [dashFullscreen, setDashFullscreen] = useState(false);
   const [activity, setActivity] = useState<string[]>(['Ready. Start a round and use blink, dwell, or mouse input.']);
   const moveTimerRef = useRef<number | null>(null);
+  const dashAnimationRef = useRef<number | null>(null);
+  const dashLastFrameAtRef = useRef(0);
+  const dashObstacleIdRef = useRef(0);
+  const dashSignalStateRef = useRef({ blink: false, mouthOpen: false, tilt: false });
+  const dashAnnouncedStepRef = useRef(0);
 
   const appendActivity = useCallback((message: string) => {
     setActivity((prev) => [message, ...prev].slice(0, 8));
@@ -283,6 +362,191 @@ export function GamesPage() {
     [appendActivity]
   );
 
+  const startNextStepDash = useCallback(() => {
+    const firstMilestone = getDashMilestone(0);
+    dashObstacleIdRef.current += 1;
+    setNextStepDash((prev) => ({
+      running: true,
+      score: 0,
+      best: prev.best,
+      playerY: 0,
+      playerVelocity: 0,
+      speed: 24,
+      spawnInMs: 1200,
+      obstacles: [createDashObstacle(dashObstacleIdRef.current)],
+      stepIndex: 0,
+      status: `${firstMilestone.title}: ${firstMilestone.hint}`
+    }));
+    dashAnnouncedStepRef.current = 0;
+    setDashFullscreen(true);
+    appendActivity('Next Step Dash started');
+  }, [appendActivity]);
+
+  const triggerDashJump = useCallback(
+    (source: 'blink' | 'mouth' | 'tilt' | 'space') => {
+      setNextStepDash((prev) => {
+        if (!prev.running || prev.playerY > 6) {
+          return prev;
+        }
+
+        appendActivity(`Dash jump (${source})`);
+        return {
+          ...prev,
+          playerVelocity: 225
+        };
+      });
+    },
+    [appendActivity]
+  );
+
+  useEffect(() => {
+    const tiltThreshold = Math.max(0.12, settings.tiltScrollThreshold * 0.75);
+    const tiltTriggered = Math.abs(state.headTilt) > tiltThreshold;
+
+    if (state.blink && !dashSignalStateRef.current.blink) {
+      triggerDashJump('blink');
+    }
+
+    if (state.mouthOpen && !dashSignalStateRef.current.mouthOpen) {
+      triggerDashJump('mouth');
+    }
+
+    if (tiltTriggered && !dashSignalStateRef.current.tilt) {
+      triggerDashJump('tilt');
+    }
+
+    dashSignalStateRef.current = {
+      blink: state.blink,
+      mouthOpen: state.mouthOpen,
+      tilt: tiltTriggered
+    };
+  }, [settings.tiltScrollThreshold, state.blink, state.headTilt, state.mouthOpen, triggerDashJump]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        triggerDashJump('space');
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [triggerDashJump]);
+
+  useEffect(() => {
+    if (!nextStepDash.running) {
+      if (dashAnimationRef.current !== null) {
+        cancelAnimationFrame(dashAnimationRef.current);
+        dashAnimationRef.current = null;
+      }
+      return;
+    }
+
+    dashLastFrameAtRef.current = performance.now();
+
+    const frame = (now: number) => {
+      const dt = Math.min((now - dashLastFrameAtRef.current) / 1000, 0.05);
+      dashLastFrameAtRef.current = now;
+
+      let crashed = false;
+
+      setNextStepDash((prev) => {
+        if (!prev.running) {
+          return prev;
+        }
+
+        let playerVelocity = prev.playerVelocity - 320 * dt;
+        let playerY = prev.playerY + playerVelocity * dt;
+        if (playerY <= 0) {
+          playerY = 0;
+          if (playerVelocity < 0) {
+            playerVelocity = 0;
+          }
+        }
+
+        const nextSpeed = Math.min(prev.speed + dt * 1.2, 36);
+        let nextObstacles = prev.obstacles
+          .map((obstacle) => ({
+            ...obstacle,
+            x: obstacle.x - nextSpeed * dt
+          }))
+          .filter((obstacle) => obstacle.x + obstacle.width > -6);
+
+        let nextSpawnInMs = prev.spawnInMs - dt * 1000;
+        if (nextSpawnInMs <= 0) {
+          dashObstacleIdRef.current += 1;
+          nextObstacles = [...nextObstacles, createDashObstacle(dashObstacleIdRef.current)];
+          nextSpawnInMs = 1200 + Math.random() * 700;
+        }
+
+        const collision = nextObstacles.some((obstacle) => {
+          const xOverlap = obstacle.x < dashPlayerX + dashPlayerWidth - 1.2 && obstacle.x + obstacle.width > dashPlayerX + 1.2;
+          const yOverlap = playerY < obstacle.height - 1.5;
+          return xOverlap && yOverlap;
+        });
+
+        const nextScore = prev.score + dt * 14;
+        const stepIndex = Math.min(dashMilestones.length - 1, Math.floor(nextScore / 95));
+        const milestone = getDashMilestone(stepIndex);
+
+        if (collision) {
+          crashed = true;
+          return {
+            ...prev,
+            running: false,
+            best: Math.max(prev.best, Math.floor(nextScore)),
+            score: Math.floor(nextScore),
+            status: `Crashed. ${milestone.title}: ${milestone.hint}`,
+            playerY,
+            playerVelocity,
+            stepIndex,
+            obstacles: nextObstacles
+          };
+        }
+
+        return {
+          ...prev,
+          score: nextScore,
+          playerY,
+          playerVelocity,
+          speed: nextSpeed,
+          spawnInMs: nextSpawnInMs,
+          obstacles: nextObstacles,
+          stepIndex,
+          status: `${milestone.title}: ${milestone.hint}`
+        };
+      });
+
+      if (crashed) {
+        appendActivity('Next Step Dash crash');
+        return;
+      }
+
+      dashAnimationRef.current = requestAnimationFrame(frame);
+    };
+
+    dashAnimationRef.current = requestAnimationFrame(frame);
+
+    return () => {
+      if (dashAnimationRef.current !== null) {
+        cancelAnimationFrame(dashAnimationRef.current);
+        dashAnimationRef.current = null;
+      }
+    };
+  }, [appendActivity, nextStepDash.running]);
+
+  useEffect(() => {
+    if (!nextStepDash.running) {
+      return;
+    }
+
+    if (nextStepDash.stepIndex > dashAnnouncedStepRef.current) {
+      dashAnnouncedStepRef.current = nextStepDash.stepIndex;
+      appendActivity(`Unlocked ${getDashMilestone(nextStepDash.stepIndex).title}`);
+    }
+  }, [appendActivity, nextStepDash.running, nextStepDash.stepIndex]);
+
   return (
     <>
       <CursorOverlay x={smoothCursorPos.x} y={smoothCursorPos.y} dwellProgress={dwellProgress} dragMode={state.dragMode} />
@@ -414,8 +678,134 @@ export function GamesPage() {
               })}
             </div>
           </Panel>
+
+          <Panel title="Next Step Dash" className="animate-float-in">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap gap-3 text-sm">
+                <div className="rounded-full border border-app-accent/20 bg-app-panelAlt px-4 py-2 text-app-subtle">
+                  Score: {Math.floor(nextStepDash.score)}
+                </div>
+                <div className="rounded-full border border-app-accent/20 bg-app-panelAlt px-4 py-2 text-app-subtle">
+                  Best: {nextStepDash.best}
+                </div>
+                <div className="rounded-full border border-app-accent/20 bg-app-panelAlt px-4 py-2 text-app-subtle">
+                  Stage: {nextStepDash.stepIndex + 1}/{dashMilestones.length}
+                </div>
+              </div>
+              <BigButton variant="secondary" onClick={startNextStepDash}>
+                {nextStepDash.running ? 'Restart Dash' : 'Start Dash'}
+              </BigButton>
+            </div>
+
+            <p className="mt-4 text-sm text-app-subtle">
+              Geometry Dash-style run powered by your gestures. Blink, open mouth, or tilt your head to jump over spikes and reveal your next training step.
+            </p>
+
+            <div className="mt-4 rounded-2xl border border-app-accent/20 bg-app-panelAlt p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-app-subtle">Next Step Guide</p>
+              <p className="mt-2 text-base font-semibold text-app-text">{nextStepDash.status}</p>
+            </div>
+
+            <div className="mt-4 overflow-hidden rounded-2xl border border-app-accent/20 bg-app-bg/60">
+              <div className="relative h-56 w-full">
+                <div className="absolute left-0 right-0 bottom-6 h-px bg-app-accent/30" />
+
+                <div
+                  className="absolute w-7 rounded-md border border-app-success/50 bg-app-success/25"
+                  style={{
+                    left: `${dashPlayerX}%`,
+                    bottom: `${24 + nextStepDash.playerY}px`,
+                    height: `${dashPlayerHeight}px`
+                  }}
+                />
+
+                {nextStepDash.obstacles.map((obstacle) => (
+                  <div
+                    key={obstacle.id}
+                    className="absolute rounded-t-md border border-app-accent/60 bg-app-accent/30"
+                    style={{
+                      left: `${obstacle.x}%`,
+                      bottom: '24px',
+                      width: `${obstacle.width}%`,
+                      height: `${obstacle.height}px`
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </Panel>
         </div>
       </div>
+
+      {dashFullscreen ? (
+        <div className="fixed inset-0 z-50 bg-app-bg/95 p-4 md:p-6">
+          <button
+            type="button"
+            onClick={() => setDashFullscreen(false)}
+            className="absolute left-4 top-4 rounded-md border border-app-accent/30 bg-app-panelAlt px-3 py-2 text-sm text-app-text transition hover:border-app-accent hover:bg-app-accent/10"
+          >
+            Back
+          </button>
+
+          <div className="mx-auto mt-14 max-w-5xl">
+            <Panel title="Next Step Dash" className="animate-float-in">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <div className="rounded-full border border-app-accent/20 bg-app-panelAlt px-4 py-2 text-app-subtle">
+                    Score: {Math.floor(nextStepDash.score)}
+                  </div>
+                  <div className="rounded-full border border-app-accent/20 bg-app-panelAlt px-4 py-2 text-app-subtle">
+                    Best: {nextStepDash.best}
+                  </div>
+                  <div className="rounded-full border border-app-accent/20 bg-app-panelAlt px-4 py-2 text-app-subtle">
+                    Stage: {nextStepDash.stepIndex + 1}/{dashMilestones.length}
+                  </div>
+                </div>
+                <BigButton variant="secondary" onClick={startNextStepDash}>
+                  {nextStepDash.running ? 'Restart Dash' : 'Start Dash'}
+                </BigButton>
+              </div>
+
+              <p className="mt-4 text-sm text-app-subtle">
+                Geometry Dash-style run powered by your gestures. Blink, open mouth, or tilt your head to jump over spikes and reveal your next training step.
+              </p>
+
+              <div className="mt-4 rounded-2xl border border-app-accent/20 bg-app-panelAlt p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-app-subtle">Next Step Guide</p>
+                <p className="mt-2 text-base font-semibold text-app-text">{nextStepDash.status}</p>
+              </div>
+
+              <div className="mt-4 overflow-hidden rounded-2xl border border-app-accent/20 bg-app-bg/60">
+                <div className="relative h-[60vh] min-h-[360px] w-full">
+                  <div className="absolute bottom-10 left-0 right-0 h-px bg-app-accent/30" />
+
+                  <div
+                    className="absolute w-8 rounded-md border border-app-success/50 bg-app-success/25"
+                    style={{
+                      left: `${dashPlayerX}%`,
+                      bottom: `${40 + nextStepDash.playerY}px`,
+                      height: `${dashPlayerHeight + 2}px`
+                    }}
+                  />
+
+                  {nextStepDash.obstacles.map((obstacle) => (
+                    <div
+                      key={obstacle.id}
+                      className="absolute rounded-t-md border border-app-accent/60 bg-app-accent/30"
+                      style={{
+                        left: `${obstacle.x}%`,
+                        bottom: '40px',
+                        width: `${obstacle.width}%`,
+                        height: `${obstacle.height + 4}px`
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Panel>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

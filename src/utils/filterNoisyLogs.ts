@@ -1,6 +1,8 @@
 const blockedPatterns = [
   'FaceBlendshapesGraph acceleration to xnnpack',
+  'Created TensorFlow Lite XNNPACK delegate for CPU',
   'inference_feedback_manager.cc:121',
+  'landmark_projection_calculator.cc:189',
   'Graph successfully started running.',
   'OpenGL error checking is disabled',
   'GL version:'
