@@ -19,7 +19,11 @@ function MermaidBlock({ chart }: MermaidBlockProps) {
       if (!containerRef.current) return;
 
       try {
-        const mermaidModule = await import('mermaid');
+        const mermaidUrl = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        const mermaidModule = await import(
+          /* @vite-ignore */
+          mermaidUrl
+        );
         const mermaid = mermaidModule.default;
         mermaid.initialize({ startOnLoad: false, securityLevel: 'strict' });
 
