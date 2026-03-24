@@ -129,7 +129,7 @@ export default function App() {
             <Route path="/calibration" element={<CalibrationPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/voice-personalization" element={<VoicePersonalizationPage />} />
-            <Route path="/documentation" element={<Navigate to="/documentation/overview" replace />} />
+            <Route path="/documentation" element={<DocumentationPage />} />
             <Route path="/documentation/:section" element={<DocumentationPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

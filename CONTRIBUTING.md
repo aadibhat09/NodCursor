@@ -173,6 +173,68 @@ function processGesture(state: any) {
 }
 ```
 
+### Architecture: Single Responsibility Principle (SRP)
+
+Every component, hook, and utility should have **one reason to change**. This keeps code focused, testable, and reusable.
+
+**For Components:**
+- A component should do ONE thing
+- Separate presentation (UI) from logic (state/effects)
+- Pass data as props; use context only for global state
+
+```typescript
+// Good: Component only renders props
+const CursorDot: React.FC<{ x: number; y: number }> = ({ x, y }) => (
+  <div style={{ left: `${x}%`, top: `${y}%` }} />
+);
+
+// Bad: Mixed concerns
+const CursorDot: React.FC = () => {
+  const { settings } = useContext(AppContext);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  // ... tracking logic, persistence, state management...
+  return <div style={{ left: `${position.x}%`, top: `${position.y}%` }} />;
+};
+```
+
+**For Hooks:**
+- One hook = one concern
+- Extract pure logic to separate functions
+- Keep side effects minimal
+
+```typescript
+// Good: Pure smoothing logic + hook
+const smoothValue = (raw: number, prev: number, factor: number) => 
+  prev + (raw - prev) * factor;
+
+export function useSmoothCursor(raw: number, factor: number) {
+  const [smooth, setSmooth] = useState(raw);
+  useEffect(() => {
+    setSmooth(prev => smoothValue(raw, prev, factor));
+  }, [raw, factor]);
+  return smooth;
+}
+
+// Bad: Multiple concerns
+export function useFaceTracking(cameraId: string) {
+  // - Initialize MediaPipe
+  // - Manage camera stream
+  // - Spawn Web Worker
+  // - Map coordinates
+  // - Handle persistence
+  // - Manage 10+ state variables
+  // ...
+}
+```
+
+**Red Flags:**
+- Hooks with 150+ lines → Likely multiple concerns
+- Components with 20+ props → Likely needs splitting
+- Contexts with 5+ properties → Likely mixing state domains
+- Functions that do multiple unrelated things → Extract utilities
+
+**Reference:** See [DESIGN_PRINCIPLES.md](../docs/DESIGN_PRINCIPLES.md) for detailed architecture guidance and refactoring strategies.
+
 ### React
 
 - Use functional components with hooks
