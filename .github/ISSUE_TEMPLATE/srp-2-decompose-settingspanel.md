@@ -1,12 +1,12 @@
 ---
 name: "SRP Cleanup: Decompose SettingsPanel.tsx into sub-components"
 about: "ASAP — SettingsPanel.tsx (321 lines) renders 40+ controls in one component. Needs decomposition into focused sub-components."
-title: "🔴 SRP: Decompose `SettingsPanel.tsx` into sub-components"
+title: " SRP: Decompose `SettingsPanel.tsx` into sub-components"
 labels: ["srp-cleanup", "refactor", "ASAP", "components", "ui"]
 assignees: ["SanPranav"]
 ---
 
-## 🔴 Priority: ASAP
+##  Priority: ASAP
 
 `src/components/SettingsPanel/SettingsPanel.tsx` is **321 lines** that renders **40+ accessibility control sliders** in a single monolithic component. Any change to one settings group requires touching a file containing all other groups.
 

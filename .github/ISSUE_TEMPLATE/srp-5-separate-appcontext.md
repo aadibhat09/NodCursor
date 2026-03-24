@@ -1,12 +1,12 @@
 ---
 name: "SRP Cleanup: Separate AppContext.tsx concerns"
 about: "This Sprint — AppContext.tsx mixes settings management, calibration data, and device detection in one context provider."
-title: "🟡 SRP: Separate `AppContext.tsx` concerns"
+title: " SRP: Separate `AppContext.tsx` concerns"
 labels: ["srp-cleanup", "refactor", "this-sprint", "state-management"]
 assignees: ["aadibhat09"]
 ---
 
-## 🟡 Priority: This Sprint
+##  Priority: This Sprint
 
 `src/context/AppContext.tsx` (191 lines) manages three orthogonal concerns in a single React context provider: **user settings** (40+ keys), **calibration data**, and **device detection** (`isPhoneMode`).
 

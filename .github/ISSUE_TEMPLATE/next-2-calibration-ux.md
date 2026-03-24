@@ -1,12 +1,12 @@
 ---
 name: "Next Sprint: Calibration UX improvements + edge-case handling"
 about: "Backlog — Improve calibration flow with incomplete-capture feedback, NaN guards, and a re-calibration prompt for mid-session drift."
-title: "🔵 Next Sprint: Calibration UX improvements + edge-case handling"
+title: " Next Sprint: Calibration UX improvements + edge-case handling"
 labels: ["ux", "calibration", "next-sprint", "accessibility"]
 assignees: ["SanPranav"]
 ---
 
-## 🔵 Priority: Next Sprint
+##  Priority: Next Sprint
 
 The calibration system is functional but lacks guard rails for edge cases and quality feedback, as identified in both individual weekly issues and design research.
 
@@ -30,12 +30,12 @@ flowchart TD
   P3 --> P4["Capture point: up"]
   P4 --> P5["Capture point: down"]
 
-  P3 -->|"User skips or misses"| Miss["❌ Missing point\nNo feedback shown\nmapToViewport receives undefined"]
-  Miss -->|"NaN propagates"| Bug["🐛 Cursor position = NaN\ntracking breaks silently"]
+  P3 -->|"User skips or misses"| Miss[" Missing point\nNo feedback shown\nmapToViewport receives undefined"]
+  Miss -->|"NaN propagates"| Bug[" Cursor position = NaN\ntracking breaks silently"]
 
-  P5 --> Done["✅ Calibration stored\nNo quality score shown"]
+  P5 --> Done[" Calibration stored\nNo quality score shown"]
   Done --> Session["Long session\nUser shifts position"]
-  Session --> Drift["📉 Tracking drift\nNo re-calibration prompt"]
+  Session --> Drift[" Tracking drift\nNo re-calibration prompt"]
 ```
 
 ---

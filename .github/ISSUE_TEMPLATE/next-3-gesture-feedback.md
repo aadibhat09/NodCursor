@@ -1,12 +1,12 @@
 ---
 name: "Next Sprint: Gesture confidence feedback system"
 about: "Backlog — Users currently receive no feedback when a gesture is registered. Implement visual pulse, drag-mode badge, and optional audio cue."
-title: "🔵 Next Sprint: Gesture confidence feedback system"
+title: " Next Sprint: Gesture confidence feedback system"
 labels: ["ux", "gestures", "accessibility", "next-sprint"]
 assignees: ["aadibhat09"]
 ---
 
-## 🔵 Priority: Next Sprint
+##  Priority: Next Sprint
 
 Users have no confirmation that their gesture was registered. This creates anxiety — especially for users with motor impairments who may not be able to easily repeat a gesture if it wasn't detected. Adding visual and optional audio feedback closes this gap.
 
@@ -27,12 +27,12 @@ Users have no confirmation that their gesture was registered. This creates anxie
 flowchart TD
   GC["useGestureControls\nhandlers.onEvent?(type)"]
 
-  GC -->|"left-click"| V1["🟢 Visual pulse on\nGestureIndicator"]
-  GC -->|"right-click"| V2["🟣 Context-click flash"]
-  GC -->|"drag-start"| Badge["📌 'Drag Mode: ON'\npersistent status badge"]
-  GC -->|"drag-end"| Badge2["📌 'Drag Mode: OFF'\nbadge clears"]
-  GC -->|"any gesture"| Log["📋 Event log line\non Demo page"]
-  GC -->|"any gesture\n(if audio enabled)"| Audio["🔔 Short tone\n(optional, 200ms)"]
+  GC -->|"left-click"| V1[" Visual pulse on\nGestureIndicator"]
+  GC -->|"right-click"| V2[" Context-click flash"]
+  GC -->|"drag-start"| Badge[" 'Drag Mode: ON'\npersistent status badge"]
+  GC -->|"drag-end"| Badge2[" 'Drag Mode: OFF'\nbadge clears"]
+  GC -->|"any gesture"| Log[" Event log line\non Demo page"]
+  GC -->|"any gesture\n(if audio enabled)"| Audio[" Short tone\n(optional, 200ms)"]
 ```
 
 ---
@@ -44,14 +44,14 @@ flowchart TD
 When a gesture fires, the matching `GestureIndicator` component should pulse with a brief (200ms) highlight animation:
 
 ```
-[ 👁 Blink ]  →  [ 👁 Blink 💥 ] (200ms glow) → [ 👁 Blink ]
+[  Blink ]  →  [  Blink  ] (200ms glow) → [  Blink ]
 ```
 
 ### 2. Drag Mode Badge
 
 A persistent badge in the top-right corner of the Demo and Games pages:
 - **Drag OFF** (default): no badge, or subtle grey indicator
-- **Drag ON**: bright amber badge `"🔒 Drag: ON"` — clearly visible
+- **Drag ON**: bright amber badge `" Drag: ON"` — clearly visible
 
 ### 3. Event Log (Demo Page)
 

@@ -52,7 +52,7 @@ export function OnScreenKeyboard({
             )}
             aria-pressed={isOpen}
           >
-            {isOpen ? '✓ Keyboard Open' : '✕ Keyboard Closed'}
+            {isOpen ? ' Keyboard Open' : ' Keyboard Closed'}
           </button>
           <button
             type="button"
@@ -66,11 +66,11 @@ export function OnScreenKeyboard({
             )}
             aria-pressed={typingMode && isOpen}
           >
-            {typingMode ? '🎯 Mouth Typing' : '⚪ Mouth Mode'}
+            {typingMode ? ' Mouth Typing' : ' Mouth Mode'}
           </button>
         </div>
         <p className="text-xs leading-relaxed text-app-subtle">
-          📖 <span className="font-semibold">Mouth open</span> = next key | <span className="font-semibold">Smile</span> = select key | <span className="font-semibold">Double blink</span> = backspace
+           <span className="font-semibold">Mouth open</span> = next key | <span className="font-semibold">Smile</span> = select key | <span className="font-semibold">Double blink</span> = backspace
         </p>
       </div>
 

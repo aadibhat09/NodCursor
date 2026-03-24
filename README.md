@@ -285,7 +285,7 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ---
 
-**Made with ❤️ for accessibility**
+**Made with  for accessibility**
 - 4GB RAM minimum
 
 ## Privacy & Security

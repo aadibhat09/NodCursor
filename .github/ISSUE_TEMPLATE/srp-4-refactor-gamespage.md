@@ -1,12 +1,12 @@
 ---
 name: "SRP Cleanup: Refactor GamesPage.tsx — separate game logic from UI"
 about: "This Sprint — GamesPage.tsx (421 lines) embeds two complete games, their state machines, and tracking setup in one file."
-title: "🟡 SRP: Refactor `GamesPage.tsx` — separate game logic from UI"
+title: " SRP: Refactor `GamesPage.tsx` — separate game logic from UI"
 labels: ["srp-cleanup", "refactor", "this-sprint", "games"]
 assignees: ["SanPranav"]
 ---
 
-## 🟡 Priority: This Sprint
+##  Priority: This Sprint
 
 `src/pages/Games/GamesPage.tsx` is **421 lines** that embed two complete games (Target Rush and Memory Match), their state machines, face-tracking initialization, and gesture setup in a single page component.
 

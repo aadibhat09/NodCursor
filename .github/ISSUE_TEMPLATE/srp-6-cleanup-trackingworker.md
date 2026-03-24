@@ -1,12 +1,12 @@
 ---
 name: "SRP Cleanup: Clean up trackingWorker.ts responsibility boundary"
 about: "This Sprint — trackingWorker.ts mixes cursor smoothing, blink state machine, and gesture feature computation in a single onmessage handler with mutable global state."
-title: "🟡 SRP: Clean up `trackingWorker.ts` responsibility boundary"
+title: " SRP: Clean up `trackingWorker.ts` responsibility boundary"
 labels: ["srp-cleanup", "refactor", "this-sprint", "workers", "performance"]
 assignees: ["SanPranav"]
 ---
 
-## 🟡 Priority: This Sprint
+##  Priority: This Sprint
 
 `src/workers/trackingWorker.ts` (65 lines) is compact but interleaves three concerns inside a single `onmessage` handler backed by mutable global variables (`blinkCount`, `lastBlinkAt`, `blinkStart`, `previous`).
 
@@ -24,7 +24,7 @@ stateDiagram-v2
   PostMessage --> Idle : await next frame
 
   note right of BlinkDetect
-    ⚠️ 4 mutable globals
+     4 mutable globals
     blinkCount
     lastBlinkAt
     blinkStart

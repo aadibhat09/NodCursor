@@ -1,7 +1,61 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface MarkdownRendererProps {
   content: string;
+}
+
+interface MermaidBlockProps {
+  chart: string;
+}
+
+function MermaidBlock({ chart }: MermaidBlockProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const render = async () => {
+      if (!containerRef.current) return;
+
+      try {
+        const mermaidModule = await import('mermaid');
+        const mermaid = mermaidModule.default;
+        mermaid.initialize({ startOnLoad: false, securityLevel: 'strict' });
+
+        const elementId = `mermaid-${Math.random().toString(36).slice(2)}`;
+        const { svg } = await mermaid.render(elementId, chart);
+
+        if (!cancelled && containerRef.current) {
+          containerRef.current.innerHTML = svg;
+          setError(false);
+        }
+      } catch {
+        if (!cancelled && containerRef.current) {
+          setError(true);
+        }
+      }
+    };
+
+    render();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [chart]);
+
+  if (error) {
+    return (
+      <div className="overflow-auto rounded-lg border border-app-accent/20 bg-app-bg/70 p-3">
+        <p className="mb-2 text-[11px] uppercase tracking-wide text-app-subtle">mermaid</p>
+        <pre className="whitespace-pre text-xs leading-6 text-app-text">
+          <code>{chart}</code>
+        </pre>
+      </div>
+    );
+  }
+
+  return <div ref={containerRef} className="overflow-auto rounded-lg border border-app-accent/20 bg-app-bg/70 p-3" />;
 }
 
 function splitTableRow(line: string): string[] {
@@ -142,11 +196,20 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       }
       if (index < lines.length) index += 1;
 
+      const code = codeLines.join('\n');
+
+      if (language.toLowerCase() === 'mermaid') {
+        blocks.push(
+          <MermaidBlock key={`code-${index}`} chart={code} />
+        );
+        continue;
+      }
+
       blocks.push(
         <div key={`code-${index}`} className="overflow-auto rounded-lg border border-app-accent/20 bg-app-bg/70 p-3">
           {language ? <p className="mb-2 text-[11px] uppercase tracking-wide text-app-subtle">{language}</p> : null}
           <pre className="whitespace-pre text-xs leading-6 text-app-text">
-            <code>{codeLines.join('\n')}</code>
+            <code>{code}</code>
           </pre>
         </div>
       );

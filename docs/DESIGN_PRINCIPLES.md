@@ -21,31 +21,31 @@ NodCursor follows core software design patterns to maintain a clean, maintainabl
 
 SRP keeps code focused, testable, and reusable. In NodCursor, this means:
 
-### ✅ **Good SRP: Focused Responsibility**
+###  **Good SRP: Focused Responsibility**
 
 ```tsx
-// ✅ Good: Single concern - rendering smooth cursor
+//  Good: Single concern - rendering smooth cursor
 export function CursorOverlay({ x, y }: CursorOverlayProps) {
   return <div style={{ left: `${x}%`, top: `${y}%` }} />;
 }
 
-// ✅ Good: Single concern - managing smooth cursor math
+//  Good: Single concern - managing smooth cursor math
 function useSmoothCursor(rawX: number, rawY: number) {
   const [smoothX, setSmoothX] = useState(rawX);
   // ... smoothing logic only
   return { smoothX, smoothY };
 }
 
-// ✅ Good: Single concern - detecting blinks
+//  Good: Single concern - detecting blinks
 export const eyeAspectRatio = (landmarks: FaceLandmarks) => {
   // ... EAR calculation only
 };
 ```
 
-### ❌ **Bad SRP: Multiple Responsibilities**
+###  **Bad SRP: Multiple Responsibilities**
 
 ```tsx
-// ❌ Bad: Mixing camera setup, MediaPipe, worker coordination, and state
+//  Bad: Mixing camera setup, MediaPipe, worker coordination, and state
 hook useFaceTracking() {
   // - Initialize camera
   // - Load MediaPipe model
@@ -55,7 +55,7 @@ hook useFaceTracking() {
   // - Manage 10+ state variables
 }
 
-// ❌ Bad: AppContext doing settings, calibration, persistence, and device detection
+//  Bad: AppContext doing settings, calibration, persistence, and device detection
 interface AppContextValue {
   settings: CursorSettings;        // ← Settings responsibility
   calibration: CalibrationData;    // ← Calibration responsibility
@@ -63,7 +63,7 @@ interface AppContextValue {
   // + localStorage sync, migration logic...
 }
 
-// ❌ Bad: SettingsPanel rendering 15+ unrelated settings without grouping
+//  Bad: SettingsPanel rendering 15+ unrelated settings without grouping
 <SettingsPanel>
   {/* Cursor controls, blink controls, mouth controls, scroll controls... */}
 </SettingsPanel>
@@ -78,7 +78,7 @@ interface AppContextValue {
 Presentation components only render UI and pass events upward. They have no side effects.
 
 ```tsx
-// ✅ Pure presentation - only renders props
+//  Pure presentation - only renders props
 interface CalibrationPointProps {
   label: string;
   isActive: boolean;
@@ -110,7 +110,7 @@ Container components:
 - Handle events and side effects
 
 ```tsx
-// ✅ Container: Manages calibration state and logic
+//  Container: Manages calibration state and logic
 export function CalibrationUI({ onComplete }: CalibrationUIProps) {
   const { calibration, setCalibration } = useContext(AppContext);
   const [currentStep, setCurrentStep] = useState(0);
@@ -139,7 +139,7 @@ export function CalibrationUI({ onComplete }: CalibrationUIProps) {
 Feature components combine presentation and logic for a specific feature:
 
 ```tsx
-// ✅ Feature component: Self-contained keyboard behavior
+//  Feature component: Self-contained keyboard behavior
 export function OnScreenKeyboard(props: OnScreenKeyboardProps) {
   const { isOpen, selectedIndex, onKeyPress } = props;
   
@@ -157,33 +157,33 @@ export function OnScreenKeyboard(props: OnScreenKeyboardProps) {
 
 Hooks encapsulate logic and state management. Good hook design follows SRP: each hook does one thing.
 
-### **Single-Purpose Hooks** ✅
+### **Single-Purpose Hooks** 
 
 These are well-designed and should serve as examples:
 
 ```tsx
-// ✅ Single purpose: Calculate smooth cursor coordinates
+//  Single purpose: Calculate smooth cursor coordinates
 export function useSmoothCursor(rawX: number, rawY: number, settings: CursorSettings) {
   const [smooth, setSmooth] = useState({ x: rawX, y: rawY });
   // ... smoothing algorithm only
   return smooth;
 }
 
-// ✅ Single purpose: Detect blinks and manage blink state
+//  Single purpose: Detect blinks and manage blink state
 export function useBlinkDetection(landmarks: FaceLandmarks | null) {
   const [isBlink, setIsBlink] = useState(false);
   // ... blink detection logic only
   return { isBlink, confidence };
 }
 
-// ✅ Single purpose: Calculate cursor movement from head position
+//  Single purpose: Calculate cursor movement from head position
 export function useCursorMapping(headData: HeadPosition, calibration: CalibrationData) {
   // ... coordinate mapping logic only
   return { cursorX, cursorY };
 }
 ```
 
-### **Complex Hooks Needing Refactoring** ⚠️
+### **Complex Hooks Needing Refactoring** 
 
 These hooks violate SRP and should be split:
 
@@ -303,7 +303,7 @@ export function useGestureControls(landmarks, headData, settings) {
 
 ## State Management
 
-### **AppContext: Current Multi-Concern Design** ❌
+### **AppContext: Current Multi-Concern Design** 
 
 ```tsx
 interface AppContextValue {
@@ -329,7 +329,7 @@ interface AppContextValue {
 3. Migration and persistence scattered throughout
 4. Hard to test individual concerns
 
-### **Refactored Multi-Context Approach** ✅
+### **Refactored Multi-Context Approach** 
 
 ```tsx
 // 1. Settings context - only cursor settings
@@ -376,12 +376,12 @@ export const settingsPersistence = {
 
 | Area | Status | % Good | Issues |
 |------|--------|--------|--------|
-| **Presentation Components** | ✅ Good | 95% | Minor: Some could extract sub-components |
-| **Single-Purpose Hooks** | ✅ Good | 90% | Good baseline implementations |
-| **Multi-Purpose Hooks** | ⚠️ Moderate | 40% | `useFaceTracking`, `useGestureControls` need refactoring |
-| **State Management** | ⚠️ Moderate | 50% | `AppContext` violates SRP, needs multi-context split |
-| **Utilities** | ✅ Good | 85% | Minor: `voiceProfile.ts` mixes I/O with logic |
-| **Overall** | ⚠️ Moderate | 70% | Good foundation; refactoring in progress |
+| **Presentation Components** |  Good | 95% | Minor: Some could extract sub-components |
+| **Single-Purpose Hooks** |  Good | 90% | Good baseline implementations |
+| **Multi-Purpose Hooks** |  Moderate | 40% | `useFaceTracking`, `useGestureControls` need refactoring |
+| **State Management** |  Moderate | 50% | `AppContext` violates SRP, needs multi-context split |
+| **Utilities** |  Good | 85% | Minor: `voiceProfile.ts` mixes I/O with logic |
+| **Overall** |  Moderate | 70% | Good foundation; refactoring in progress |
 
 ### **Code Smells to Watch**
 
@@ -400,19 +400,19 @@ export const settingsPersistence = {
 **Priority: Hook Extraction**
 
 1. **Extract `useMediaPipeModel`** from `useFaceTracking`
-   - ✅ No other files depend on internal model init
-   - ✅ Independent and testable
+   -  No other files depend on internal model init
+   -  Independent and testable
    - Impact: Cleaner hook interface
 
 2. **Extract `useCameraStream`** from `useFaceTracking`
-   - ✅ Camera stream is re-usable
-   - ✅ Separates device concerns from tracking
+   -  Camera stream is re-usable
+   -  Separates device concerns from tracking
    - Impact: Enable camera-only features later
 
 3. **Refactor `AppContext` → Multi-Context**
-   - ⚠️ Medium risk: Used across many components
-   - ✅ Non-breaking: Providers can wrap each other
-   - 🔄 Strategy: Add new contexts, migrate incrementally
+   -  Medium risk: Used across many components
+   -  Non-breaking: Providers can wrap each other
+   -  Strategy: Add new contexts, migrate incrementally
 
 ### **Phase 2: Medium-Impact** (3-4 sprints)
 
@@ -460,14 +460,14 @@ export const settingsPersistence = {
 
 3. **Separate UI from Logic:**
    ```tsx
-   // ✅ Good: UI component + container
+   //  Good: UI component + container
    const MyButton = ({ onClick, label }) => <button onClick={onClick}>{label}</button>;
    const MyButtonContainer = () => {
      const handleClick = () => { /* logic */ };
      return <MyButton onClick={handleClick} label="Click me" />;
    };
    
-   // ❌ Bad: Mixed
+   //  Bad: Mixed
    const MyButton = () => {
      const [state, setState] = useState();
      const { data } = useContext(AppContext);
@@ -491,7 +491,7 @@ export const settingsPersistence = {
    - Keep side effects in hooks minimal
 
 ```tsx
-// ✅ Good: Pure function + side effect hook
+//  Good: Pure function + side effect hook
 const calculateSmoothedValue = (raw: number, prev: number, factor: number) => {
   return prev + (raw - prev) * factor;
 };
@@ -504,7 +504,7 @@ export function useSmoothCursor(raw: number, factor: number) {
   return smooth;
 }
 
-// ❌ Bad: Business logic + side effects mixed
+//  Bad: Business logic + side effects mixed
 export function useSmoothCursor(raw: number, factor: number) {
   const [smooth, setSmooth] = useState(raw);
   const previousRef = useRef(raw);
@@ -526,17 +526,17 @@ export function useSmoothCursor(raw: number, factor: number) {
 SRP makes testing easier:
 
 ```tsx
-// ✅ Easy to test: Pure function
+//  Easy to test: Pure function
 const result = eyeAspectRatio(mockLandmarks);
 assert.equal(result, expectedValue);
 
-// ✅ Easier to test: Single-concern hook
+//  Easier to test: Single-concern hook
 const { rerender } = render(<Component />, { wrapper: TestProvider });
 expect(useSmoothCursor(0, 0.9)).toBe(0);
 rerender(<Component />);
 expect(useSmoothCursor(100, 0.9)).toBe(10);
 
-// ❌ Hard to test: Multi-concern mixed
+//  Hard to test: Multi-concern mixed
 // Need to mock MediaPipe, spawn workers, manage streams, handle persistence, etc.
 render(<App />, { wrapper: ComplexMockProvider });
 ```

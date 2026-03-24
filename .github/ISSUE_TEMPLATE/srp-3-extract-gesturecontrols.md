@@ -1,12 +1,12 @@
 ---
 name: "SRP Cleanup: Extract gesture dispatch from useGestureControls.ts"
 about: "ASAP — useGestureControls.ts mixes DOM event dispatching with blink state machine logic. These concerns must be separated."
-title: "🔴 SRP: Extract gesture dispatch from `useGestureControls.ts`"
+title: " SRP: Extract gesture dispatch from `useGestureControls.ts`"
 labels: ["srp-cleanup", "refactor", "ASAP", "hooks", "gestures"]
 assignees: ["aadibhat09"]
 ---
 
-## 🔴 Priority: ASAP
+##  Priority: ASAP
 
 `src/hooks/useGestureControls.ts` (177 lines) conflates **blink/gesture state machine tracking** with **DOM mouse event dispatching**. These are two very different concerns — state machines are testable pure logic; DOM dispatch is a side-effect layer.
 
@@ -21,7 +21,7 @@ sequenceDiagram
   participant DOM as Document
 
   W->>GC: {blink, doubleBlink, longBlink, mouthOpen, smile, headTilt}
-  Note over GC: ⚠️ Rising-edge detection AND MouseEvent dispatch<br/>live inside the same useEffect
+  Note over GC:  Rising-edge detection AND MouseEvent dispatch<br/>live inside the same useEffect
   GC->>GC: rising-edge detection (prev ref)
   GC->>GC: drag mode toggling
   GC->>GC: tilt scroll baseline tracking

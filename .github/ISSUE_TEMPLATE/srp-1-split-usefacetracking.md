@@ -1,12 +1,12 @@
 ---
 name: "SRP Cleanup: Split useFaceTracking.ts into focused hooks"
 about: "ASAP — useFaceTracking.ts (441 lines) violates SRP by handling 6 distinct responsibilities. Must be split into focused hooks."
-title: "🔴 SRP: Split `useFaceTracking.ts` into focused hooks"
+title: " SRP: Split `useFaceTracking.ts` into focused hooks"
 labels: ["srp-cleanup", "refactor", "ASAP", "hooks"]
 assignees: ["aadibhat09"]
 ---
 
-## 🔴 Priority: ASAP
+##  Priority: ASAP
 
 `src/hooks/useFaceTracking.ts` is **441 lines** and handles **6 distinct responsibilities** — a critical SRP violation that makes the tracking pipeline hard to maintain, test, or extend.
 
@@ -56,10 +56,10 @@ mindmap
 
 ```mermaid
 flowchart LR
-  subgraph Before["❌ Before"]
+  subgraph Before[" Before"]
     OG["useFaceTracking.ts\n441 lines"]
   end
-  subgraph After["✅ After"]
+  subgraph After[" After"]
     A["useMediaPipeLoader.ts\n~60 lines"]
     B["useCameraStream.ts\n~80 lines"]
     C["useAdaptiveLighting.ts\n~50 lines"]

@@ -21,16 +21,16 @@ The analysis below categorizes violations by severity and provides refactoring g
 
 ## 1. COMPONENTS ANALYSIS (`src/components/`)
 
-### ✅ `common.tsx` — **SRP COMPLIANT**
+###  `common.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - `Panel`: Generic container component for sections
 - `BigButton`: Generic styled button component
 
-**Status:** ✅ Excellent — These are presentation-only primitives with single, focused responsibilities.
+**Status:**  Excellent — These are presentation-only primitives with single, focused responsibilities.
 
 ---
 
-### ⚠️ `OnScreenKeyboard.tsx` — **MINOR SRP VIOLATION**
+###  `OnScreenKeyboard.tsx` — **MINOR SRP VIOLATION**
 **Current Responsibilities:**
 1. UI rendering (keyboard grid, toggle buttons, textarea)
 2. Keyboard state management (shift state, selected index)
@@ -58,51 +58,51 @@ export function useKeyboardState(initialText: string, ...): KeyboardState
 
 ---
 
-### ✅ `VirtualButtons.tsx` — **SRP COMPLIANT**
+###  `VirtualButtons.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Render virtual action buttons
 - Track local hover state for visual feedback
 - Dispatch action events
 
-**Status:** ✅ Good — Single, focused responsibility.
+**Status:**  Good — Single, focused responsibility.
 
 ---
 
-### ✅ `CalibrationUI.tsx` — **SRP COMPLIANT**
+###  `CalibrationUI.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Display calibration step progress
 - Show visual feedback for calibration state
 
-**Status:** ✅ Good — Presentation-only component.
+**Status:**  Good — Presentation-only component.
 
 ---
 
-### ✅ `CameraView.tsx` — **SRP COMPLIANT**
+###  `CameraView.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Display video feed
 - Show light quality metrics from adaptive lighting
 
-**Status:** ✅ Good — Single responsibility.
+**Status:**  Good — Single responsibility.
 
 ---
 
-### ✅ `CursorOverlay.tsx` — **SRP COMPLIANT**
+###  `CursorOverlay.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Render cursor position overlay with visual indicators
 
-**Status:** ✅ Good — Pure presentation.
+**Status:**  Good — Pure presentation.
 
 ---
 
-### ✅ `GestureIndicators.tsx` — **SRP COMPLIANT**
+###  `GestureIndicators.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Display gesture state indicators (blink, double-blink, mouth, etc.)
 
-**Status:** ✅ Good — Presentation only.
+**Status:**  Good — Presentation only.
 
 ---
 
-### 🔴 `SettingsPanel.tsx` — **CRITICAL SRP VIOLATION**
+###  `SettingsPanel.tsx` — **CRITICAL SRP VIOLATION**
 **Current Responsibilities:**
 1. Render cursor sensitivity controls (3 sliders: sensitivity, horizontal, vertical)
 2. Render acceleration curve slider
@@ -161,23 +161,23 @@ Extract into domain-specific sub-components:
 
 ## 2. HOOKS ANALYSIS (`src/hooks/`)
 
-### ✅ `useCameraDevices.ts` — **SRP COMPLIANT**
+###  `useCameraDevices.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Enumerate available camera devices
 
-**Status:** ✅ Good — Single focus.
+**Status:**  Good — Single focus.
 
 ---
 
-### ✅ `useBlinkDetection.ts` — **SRP COMPLIANT**
+###  `useBlinkDetection.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Map raw blink signals to click action types
 
-**Status:** ✅ Trivial but correct — Could be inlined but acceptable as utility.
+**Status:**  Trivial but correct — Could be inlined but acceptable as utility.
 
 ---
 
-### 🔴 `useFaceTracking.ts` — **CRITICAL SRP VIOLATION**
+###  `useFaceTracking.ts` — **CRITICAL SRP VIOLATION**
 **Current Responsibilities:**
 1. **MediaPipe Initialization**
    - Loads MediaPipe WASM from multiple CDN fallbacks
@@ -287,28 +287,28 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
 - Can swap implementations (e.g., different face detection library)
 - Clearer dependency graph
 
-**Implementation Priority:** HIGH 🔥
+**Implementation Priority:** HIGH 
 
 ---
 
-### ✅ `useCursorMapping.ts` — **SRP COMPLIANT**
+###  `useCursorMapping.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Map raw coordinates to viewport using calibration data
 - Apply sensitivity, acceleration, and responsiveness adjustments
 
-**Status:** ✅ Good — Single, clear responsibility.
+**Status:**  Good — Single, clear responsibility.
 
 ---
 
-### ✅ `useDwellClick.ts` — **SRP COMPLIANT**
+###  `useDwellClick.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Implement dwell-to-click timer with movement tolerance
 
-**Status:** ✅ Good — Single responsibility.
+**Status:**  Good — Single responsibility.
 
 ---
 
-### 🔴 `useGestureControls.ts` — **CRITICAL SRP VIOLATION**
+###  `useGestureControls.ts` — **CRITICAL SRP VIOLATION**
 **Current Responsibilities:**
 1. **Blink Gesture Handling**
    - Detect single blink → left click
@@ -420,44 +420,44 @@ export function useGestureControls(
 - Reusable gesture patterns
 - Clear gesture precedence/ordering
 
-**Implementation Priority:** HIGH 🔥
+**Implementation Priority:** HIGH 
 
 ---
 
-### ✅ `useMouthTypingControls.ts` — **SRP COMPLIANT**
+###  `useMouthTypingControls.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Implement mouth-based keyboard navigation (advance, select, backspace)
 - Track text input state
 - Manage shift state
 - Apply cooldown timing between gestures
 
-**Status:** ⚠️ Acceptable — While mixing text management with gesture handling, the concerns are tightly coupled by design. Could be split but not critical.
+**Status:**  Acceptable — While mixing text management with gesture handling, the concerns are tightly coupled by design. Could be split but not critical.
 
 ---
 
-### ✅ `useSmoothCursor.ts` — **SRP COMPLIANT**
+###  `useSmoothCursor.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Animate smooth cursor movement using critically damped interpolation
 - Manage animation frame loop
 - Apply smoothing pipeline
 
-**Status:** ✅ Good — Single responsibility.
+**Status:**  Good — Single responsibility.
 
 ---
 
-### ✅ `useVoiceCommands.ts` — **SRP COMPLIANT**
+###  `useVoiceCommands.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Initialize Web Speech API recognition session
 - Map recognized phrases to action callbacks
 - Handle speech recognition lifecycle
 
-**Status:** ✅ Good — Single, cohesive responsibility. (Could theoretically split speech recognition setup from phrase matching, but integration is appropriate.)
+**Status:**  Good — Single, cohesive responsibility. (Could theoretically split speech recognition setup from phrase matching, but integration is appropriate.)
 
 ---
 
 ## 3. CONTEXT ANALYSIS (`src/context/`)
 
-### 🔴 `AppContext.tsx` — **CRITICAL SRP VIOLATION**
+###  `AppContext.tsx` — **CRITICAL SRP VIOLATION**
 **Current Responsibilities:**
 1. **Settings State Management** (25+ properties)
    - Desktop settings versioning and migration
@@ -551,22 +551,22 @@ export function createSettingsPersistence() {
 - Can add new contexts without touching existing ones
 - Cleaner provider composition
 
-**Implementation Priority:** HIGH 🔥
+**Implementation Priority:** HIGH 
 
 ---
 
 ## 4. PAGE COMPONENTS ANALYSIS (`src/pages/`)
 
-### ✅ `HomePage.tsx` — **SRP COMPLIANT**
+###  `HomePage.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Render marketing/information content
 - Provide navigation via voice commands
 
-**Status:** ✅ Good — Marketing page, focused on content.
+**Status:**  Good — Marketing page, focused on content.
 
 ---
 
-### ⚠️ `DemoPage.tsx` — **LARGE ORCHESTRATOR (Acceptable)**
+###  `DemoPage.tsx` — **LARGE ORCHESTRATOR (Acceptable)**
 **Responsibilities:**
 1. Orchestrate all tracking hooks
 2. Manage event logging
@@ -607,20 +607,20 @@ export function DemoPage() {
 }
 ```
 
-**Status:** ⚠️ Acceptable but could be cleaner — Extract sub-concerns into hooks/sub-components if this grows further.
+**Status:**  Acceptable but could be cleaner — Extract sub-concerns into hooks/sub-components if this grows further.
 
 ---
 
-### ✅ `CalibrationPage.tsx` — **SRP COMPLIANT**
+###  `CalibrationPage.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Manage calibration flow (step progression)
 - Capture calibration points
 
-**Status:** ✅ Good — Single flow coordination.
+**Status:**  Good — Single flow coordination.
 
 ---
 
-### ⚠️ `SettingsPage.tsx` — **MODERATE ISSUES**
+###  `SettingsPage.tsx` — **MODERATE ISSUES**
 **Responsibilities:**
 1. Render SettingsPanel (problematic component!)
 2. Apply sensitivity presets (Steady, Balanced, Responsive)
@@ -646,11 +646,11 @@ export function useSensitivityPresets(isPhoneMode: boolean) {
 <DiagnosticsPanel settings={settings} />
 ```
 
-**Status:** ⚠️ Moderate — Will improve once SettingsPanel is refactored.
+**Status:**  Moderate — Will improve once SettingsPanel is refactored.
 
 ---
 
-### ⚠️ `GamesPage.tsx` — **LARGE ORCHESTRATOR (Functional)**
+###  `GamesPage.tsx` — **LARGE ORCHESTRATOR (Functional)**
 **Responsibilities:**
 1. Manage Target Rush game state
 2. Manage Memory Match game state
@@ -673,32 +673,32 @@ export function useMemoryMatchGame() {
 }
 ```
 
-**Status:** ⚠️ Acceptable but could extract game logic — Not critical.
+**Status:**  Acceptable but could extract game logic — Not critical.
 
 ---
 
-### ✅ `VoicePersonalizationPage.tsx` — **SRP COMPLIANT**
+###  `VoicePersonalizationPage.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Manage voice profile enrollment
 - Manage voice profile verification
 - Display profile status and live matching
 
-**Status:** ✅ Good — Single feature focus.
+**Status:**  Good — Single feature focus.
 
 ---
 
-### ✅ `DocumentationPage.tsx` — **SRP COMPLIANT**
+###  `DocumentationPage.tsx` — **SRP COMPLIANT**
 **Responsibilities:**
 - Render documentation content
 - Handle section navigation
 
-**Status:** ✅ Good — Content display.
+**Status:**  Good — Content display.
 
 ---
 
 ## 5. UTILITIES ANALYSIS (`src/utils/`)
 
-### 🔴 `voiceProfile.ts` — **CRITICAL SRP VIOLATION**
+###  `voiceProfile.ts` — **CRITICAL SRP VIOLATION**
 **Current Responsibilities:**
 1. **Voice Profile Persistence**
    - Load profile from localStorage
@@ -822,28 +822,28 @@ export async function startVoiceFeatureMonitor(
 - Audio I/O can be mocked for testing
 - Feature extraction could move to Web Worker in future
 
-**Implementation Priority:** MEDIUM 📌
+**Implementation Priority:** MEDIUM 
 
 ---
 
-### ✅ `calibration/mapToViewport.ts` — **SRP COMPLIANT**
+###  `calibration/mapToViewport.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Normalize raw coordinates based on calibration boundaries
 - Clamp results to viewport bounds
 
-**Status:** ✅ Good — Single transformation function.
+**Status:**  Good — Single transformation function.
 
 ---
 
-### ✅ `gestureDetection/eyeAspectRatio.ts` — **SRP COMPLIANT**
+###  `gestureDetection/eyeAspectRatio.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Calculate eye aspect ratio from landmark positions
 
-**Status:** ✅ Good — Single calculation function.
+**Status:**  Good — Single calculation function.
 
 ---
 
-### ⚠️ `ml/adaptiveLightLearner.ts` — **MINOR SRP VIOLATION**
+###  `ml/adaptiveLightLearner.ts` — **MINOR SRP VIOLATION**
 **Current Responsibilities:**
 1. **Adaptive Light State Tracking**
    - Update baseline brightness/contrast with exponential smoothing
@@ -879,45 +879,45 @@ const lightSample = sampleVideoLuma(videoRef.current);
 const adaptiveState = lightLearner.update(lightSample);
 ```
 
-**Status:** ⚠️ Acceptable — Not critical, but cleaner separation possible.
+**Status:**  Acceptable — Not critical, but cleaner separation possible.
 
 ---
 
-### ✅ `smoothing/advancedSmoothing.ts` — **SRP COMPLIANT**
+###  `smoothing/advancedSmoothing.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Implement 3-stage smoothing pipeline (Kalman → exponential → micro-deadzone)
 
-**Status:** ✅ Good — Single pipeline orchestrator.
+**Status:**  Good — Single pipeline orchestrator.
 
 ---
 
-### ✅ `smoothing/exponentialSmoothing.ts` — **SRP COMPLIANT**
+###  `smoothing/exponentialSmoothing.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Apply exponential smoothing to coordinates
 
-**Status:** ✅ Good — Single utility function.
+**Status:**  Good — Single utility function.
 
 ---
 
-### ✅ `smoothing/kalmanFilter.ts` — **SRP COMPLIANT**
+###  `smoothing/kalmanFilter.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Implement Kalman filter for 2D position tracking
 
-**Status:** ✅ Good — Single algorithm implementation.
+**Status:**  Good — Single algorithm implementation.
 
 ---
 
-### ✅ `filterNoisyLogs.ts` — **SRP COMPLIANT**
+###  `filterNoisyLogs.ts` — **SRP COMPLIANT**
 **Responsibilities:**
 - Filter known noisy console messages
 
-**Status:** ✅ Good — Single utility.
+**Status:**  Good — Single utility.
 
 ---
 
 ## Summary by Severity
 
-### 🔴 CRITICAL — Immediate Attention Required
+###  CRITICAL — Immediate Attention Required
 | Location | Responsibility Count | Issue |
 |----------|----------------------|-------|
 | `useFaceTracking` | 7 | Orchestrates MediaPipe, camera, worker, lighting, mapping, error handling, state management |
@@ -925,7 +925,7 @@ const adaptiveState = lightLearner.update(lightSample);
 | `SettingsPanel` | 15+ | Renders 25+ settings across 5+ domains without logical grouping |
 | `useGestureControls` | 5 | Handles blink, mouth, head tilt, drag, event dispatch in single hook |
 
-### ⚠️ MODERATE — Refactoring Recommended
+###  MODERATE — Refactoring Recommended
 | Location | Responsibility Count | Issue |
 |----------|----------------------|-------|
 | `OnScreenKeyboard` | 5 | State management mixed with rendering and event handling |
@@ -933,7 +933,7 @@ const adaptiveState = lightLearner.update(lightSample);
 | `SettingsPage` | 4 | Settings rendering, presets, device detection, diagnostics |
 | `ml/adaptiveLightLearner` | 2 | Video sampling mixed with learning algorithm |
 
-### ✅ GOOD — No Changes Needed
+###  GOOD — No Changes Needed
 - `common.tsx` — Presentation primitives
 - `VirtualButtons.tsx` — Button rendering
 - `CameraView.tsx`, `CursorOverlay.tsx`, `GestureIndicators.tsx` — UI rendering
@@ -948,7 +948,7 @@ const adaptiveState = lightLearner.update(lightSample);
 ## Recommended Refactoring Roadmap
 
 ### Phase 1: CRITICAL (Blocks other improvements)
-**Priority:** 🔥 **Do First**
+**Priority:**  **Do First**
 
 1. **Split `useFaceTracking`** into:
    - `useMediaPipeModel` (model init)
@@ -964,7 +964,7 @@ const adaptiveState = lightLearner.update(lightSample);
    - Use provider composition
 
 ### Phase 2: HIGH (Major SRP violations)
-**Priority:** 🔴 **Do Soon**
+**Priority:**  **Do Soon**
 
 3. **Refactor `SettingsPanel`** into:
    - `CursorSettings`, `BlinkSettings`, `DwellSettings`, `MouthSettings`, `HeadTiltSettings`, `CameraSettings`, `VoiceSettings` subcomponents
@@ -979,7 +979,7 @@ const adaptiveState = lightLearner.update(lightSample);
    - Main hook orchestrates
 
 ### Phase 3: MODERATE (Nice to have)
-**Priority:** 📌 **Do When Convenient**
+**Priority:**  **Do When Convenient**
 
 5. **Refactor `voiceProfile.ts`** into modules:
    - `voiceStorage.ts`
@@ -1003,13 +1003,13 @@ const adaptiveState = lightLearner.update(lightSample);
 
 | Aspect | Before | After |
 |--------|--------|-------|
-| **Testability** | 🔴 Hard to test mixed concerns | ✅ Test each concern in isolation |
-| **Reusability** | 🔴 Tightly coupled components | ✅ Composable, reusable modules |
-| **Maintainability** | 🔴 Hard to find/change code | ✅ Clear organization and locations |
-| **Debugging** | 🔴 Issues span multiple concerns | ✅ Narrow down to specific module |
-| **Onboarding** | 🔴 New devs overwhelmed | ✅ Clear responsibility boundaries |
-| **Performance** | ℹ️ Same (will improve slightly with Worker separation) | ✅ Can optimize specific concerns |
-| **Feature Flags** | 🔴 Hard to disable features independently | ✅ Easy to toggle individual features |
+| **Testability** |  Hard to test mixed concerns |  Test each concern in isolation |
+| **Reusability** |  Tightly coupled components |  Composable, reusable modules |
+| **Maintainability** |  Hard to find/change code |  Clear organization and locations |
+| **Debugging** |  Issues span multiple concerns |  Narrow down to specific module |
+| **Onboarding** |  New devs overwhelmed |  Clear responsibility boundaries |
+| **Performance** | ℹ Same (will improve slightly with Worker separation) |  Can optimize specific concerns |
+| **Feature Flags** |  Hard to disable features independently |  Easy to toggle individual features |
 
 ---
 

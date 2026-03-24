@@ -8,18 +8,18 @@ Quick reference for Single Responsibility Principle compliance across NodCursor.
 
 | Category | Status | Compliance | Notes |
 |----------|--------|-----------|-------|
-| **Presentation Components** | ✅ Good | 95% | Most components render-only, well-focused |
-| **Single-Purpose Hooks** | ✅ Good | 90% | `useSmoothCursor`, `useCursorMapping`, etc. are well-designed |
-| **Complex Hooks** | ⚠️ Moderate | 40% | `useFaceTracking` and `useGestureControls` violate SRP |
-| **State Management** | ⚠️ Moderate | 50% | `AppContext` mixes too many concerns |
-| **Utilities** | ✅ Good | 85% | Most utilities focused, except `voiceProfile.ts` |
-| **Pages** | ✅ Good | 80% | Page layouts well-organized |
+| **Presentation Components** |  Good | 95% | Most components render-only, well-focused |
+| **Single-Purpose Hooks** |  Good | 90% | `useSmoothCursor`, `useCursorMapping`, etc. are well-designed |
+| **Complex Hooks** |  Moderate | 40% | `useFaceTracking` and `useGestureControls` violate SRP |
+| **State Management** |  Moderate | 50% | `AppContext` mixes too many concerns |
+| **Utilities** |  Good | 85% | Most utilities focused, except `voiceProfile.ts` |
+| **Pages** |  Good | 80% | Page layouts well-organized |
 
 ---
 
 ## Component Health Report
 
-### ✅ **Excellent Components** (No Changes Needed)
+###  **Excellent Components** (No Changes Needed)
 
 **Presentation Components** — Pure render functions, no side effects:
 - `common.tsx` — UI primitives (Button, Input, Slider)
@@ -38,16 +38,16 @@ Quick reference for Single Responsibility Principle compliance across NodCursor.
 
 ---
 
-### ⚠️ **Moderate Components** (Refactoring Recommended)
+###  **Moderate Components** (Refactoring Recommended)
 
 **`useFaceTracking`** — 7 intertwined responsibilities
-- ❌ Initializes MediaPipe model
-- ❌ Manages camera stream
-- ❌ Spawns Web Worker
-- ❌ Maps coordinates
-- ❌ Applies adaptive lighting
-- ❌ Handles errors
-- ❌ Manages 10+ state variables
+-  Initializes MediaPipe model
+-  Manages camera stream
+-  Spawns Web Worker
+-  Maps coordinates
+-  Applies adaptive lighting
+-  Handles errors
+-  Manages 10+ state variables
 
 **Solution:** Extract into 4 hooks
 - `useMediaPipeModel()` — Model initialization only
@@ -60,11 +60,11 @@ See [SRP_REFACTORING_GUIDE.md](SRP_REFACTORING_GUIDE.md#phase-1-hook-extraction)
 ---
 
 **`useGestureControls`** — 5 independent gesture handlers
-- ❌ Blink gestures
-- ❌ Mouth gestures
-- ❌ Head tilt scrolling
-- ❌ Drag-to-click
-- ❌ Event dispatch
+-  Blink gestures
+-  Mouth gestures
+-  Head tilt scrolling
+-  Drag-to-click
+-  Event dispatch
 
 **Solution:** Extract 4 hooks
 - `useBlinkGestures()` — Blink detection + double/long blinks
@@ -77,12 +77,12 @@ See [SRP_REFACTORING_GUIDE.md](SRP_REFACTORING_GUIDE.md#task-14-refactor-useface
 ---
 
 **`AppContext`** — 6 mixed concerns
-- ❌ Settings management
-- ❌ Calibration data
-- ❌ Device detection (phone mode)
-- ❌ localStorage persistence
-- ❌ Settings migration
-- ❌ Mutation logic
+-  Settings management
+-  Calibration data
+-  Device detection (phone mode)
+-  localStorage persistence
+-  Settings migration
+-  Mutation logic
 
 **Solution:** Split into 3 contexts + 1 service
 - `SettingsContext` — Settings only
@@ -95,9 +95,9 @@ See [SRP_REFACTORING_GUIDE.md](SRP_REFACTORING_GUIDE.md#phase-2-context-refactor
 ---
 
 **`SettingsPanel`** — 15+ mixed concerns
-- ❌ Renders 25+ settings without grouping
-- ❌ Manages all setting updates
-- ❌ No logical component hierarchy
+-  Renders 25+ settings without grouping
+-  Manages all setting updates
+-  No logical component hierarchy
 
 **Solution:** Extract 4 sub-components
 - `CursorSettingsPanel` — Cursor controls (sensitivity, acceleration, deadzone)
@@ -109,7 +109,7 @@ See [SRP_REFACTORING_GUIDE.md](SRP_REFACTORING_GUIDE.md#phase-3-component-decomp
 
 ---
 
-### 🟡 **Minor Issues** (Lower Priority)
+###  **Minor Issues** (Lower Priority)
 
 **`voiceProfile.ts`** — 3 loosely related concerns
 - Audio capture I/O
@@ -135,40 +135,40 @@ When writing new code, watch for these SRP violations:
 
 1. **Hooks with 150+ lines** → Cut into smaller hooks
    ```typescript
-   // ✅ Good
+   //  Good
    const heavy = useLargeLogic();  // Split into 3-5 focused hooks
    
-   // ❌ Bad
+   //  Bad
    const { a, b, c, d } = useDoEverything();  // 200 lines
    ```
 
 2. **Contexts with 5+ properties** → Split into multiple contexts
    ```typescript
-   // ✅ Good
+   //  Good
    const settings = useSettings();
    const calibration = useCalibration();
    const device = useDevice();
    
-   // ❌ Bad
+   //  Bad
    const all = useAppContext();  // Has 15 properties
    ```
 
 3. **Components with 20+ props** → Props smell (needs refactoring)
    ```typescript
-   // ✅ Good
+   //  Good
    <Component prop1={x} prop2={y} prop3={z} />
    
-   // ❌ Bad
+   //  Bad
    <Component prop1={x} prop2={y} prop3={z} prop4={a} ... prop25={z} />
    ```
 
 4. **Functions with `async` + 3+ independent operations** → Extract file I/O
    ```typescript
-   // ✅ Good
+   //  Good
    const data = await loadSettings();  // Pure I/O
    const processed = processSettings(data);  // Pure logic
    
-   // ❌ Bad
+   //  Bad
    async function doEverything() {
      // Load settings
      // Validate settings
@@ -182,7 +182,7 @@ When writing new code, watch for these SRP violations:
 
 ## Migration Path Recommendation
 
-### ✅ **Phase 1: High ROI, Lower Risk** (2-3 weeks)
+###  **Phase 1: High ROI, Lower Risk** (2-3 weeks)
 **Extract hooks from `useFaceTracking`**
 - No breaking changes
 - Improves testability immediately
@@ -196,7 +196,7 @@ When writing new code, watch for these SRP violations:
 - Clearer separation of concerns
 - **Effort: ⭐⭐⭐**
 
-### 🟡 **Phase 3: Nice-to-Have** (1-2 weeks)
+###  **Phase 3: Nice-to-Have** (1-2 weeks)
 **Decompose `SettingsPanel`**
 - Better maintainability
 - Easier testing
@@ -209,18 +209,18 @@ When writing new code, watch for these SRP violations:
 
 ```
 Before Refactoring:
-├─ Clean Code: 👍 (70%)
-├─ Testability: ⚠️ (50% - some parts hard to test)
-├─ Maintainability: ⚠️ (60% - complex hooks hard to understand)
-├─ Onboarding: ⚠️ (50% - newcomers confused by multi-concern code)
-└─ Technical Debt: ⚠️ (Moderate)
+├─ Clean Code:  (70%)
+├─ Testability:  (50% - some parts hard to test)
+├─ Maintainability:  (60% - complex hooks hard to understand)
+├─ Onboarding:  (50% - newcomers confused by multi-concern code)
+└─ Technical Debt:  (Moderate)
 
 After Phase 1-3 Refactoring:
-├─ Clean Code: 👍 (90%)
-├─ Testability: 👍 (85% - most code unit-testable)
-├─ Maintainability: 👍 (85% - clear responsibilities)
-├─ Onboarding: 👍 (80% - easier to understand)
-└─ Technical Debt: 👍 (Minimal)
+├─ Clean Code:  (90%)
+├─ Testability:  (85% - most code unit-testable)
+├─ Maintainability:  (85% - clear responsibilities)
+├─ Onboarding:  (80% - easier to understand)
+└─ Technical Debt:  (Minimal)
 ```
 
 ---
@@ -238,15 +238,15 @@ Use this checklist to identify SRP violations in existing or new code:
 If you checked more than one: **→ Split it**
 
 **Can you describe this in one sentence without using "and"?**
-- ✅ "This hook calculates smooth cursor position"
-- ❌ "This hook initializes the model AND manages the camera AND processes landmarks AND handles errors"
+-  "This hook calculates smooth cursor position"
+-  "This hook initializes the model AND manages the camera AND processes landmarks AND handles errors"
 
 If you can't: **→ Split it**
 
 **How many state variables does this have?**
-- 1-2: ✅ Good
-- 3-5: ⚠️ Watch it
-- 6+: ❌ Probably too many
+- 1-2:  Good
+- 3-5:  Watch it
+- 6+:  Probably too many
 
 ---
 

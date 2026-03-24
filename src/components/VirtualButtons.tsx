@@ -25,7 +25,7 @@ export function VirtualButtons({ onAction }: { onAction: (action: string) => voi
           )}
           aria-pressed={hovered === action}
         >
-          {hovered === action ? `${action} ✓` : action}
+          {hovered === action ? `${action} ` : action}
         </button>
       ))}
     </aside>

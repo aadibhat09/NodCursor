@@ -1,30 +1,30 @@
-# 🗂️ NodCursor – Kanban Board & Burndown Tracker
+#  NodCursor – Kanban Board & Burndown Tracker
 
 > **Maintainers:** [@aadibhat09](https://github.com/aadibhat09) · [@SanPranav](https://github.com/SanPranav)  
 > **Last updated:** March 2026 · **Sprint:** SRP Cleanup Sprint (Q1 2026)
 
 ---
 
-## 📋 Sprint Overview
+##  Sprint Overview
 
 This board tracks **SRP (Single Responsibility Principle) cleanup work** across the NodCursor codebase, plus upcoming features and next-steps. Each column represents the current state of every work item.
 
 ```mermaid
 %%{init: {"theme": "dark", "themeVariables": {"primaryColor": "#6366f1", "edgeLabelBackground": "#1e1e2e"}}}%%
 kanban
-  column1[🔥 ASAP / In Progress]
+  column1[ ASAP / In Progress]
     task1[SRP: Split useFaceTracking.ts]
     task2[SRP: Decompose SettingsPanel.tsx]
     task3[SRP: Extract GestureControls logic]
-  column2[📅 This Sprint]
+  column2[ This Sprint]
     task4[SRP: Refactor GamesPage.tsx]
     task5[SRP: Separate AppContext concerns]
     task6[SRP: Clean up trackingWorker.ts]
-  column3[🔜 Next Sprint]
+  column3[ Next Sprint]
     task7[Add automated test suite]
     task8[Improve calibration UX]
     task9[Gesture confidence feedback]
-  column4[✅ Done]
+  column4[ Done]
     task10[Adaptive lighting ML module]
     task11[Voice command personalization]
     task12[Mobile layout + presets]
@@ -35,47 +35,47 @@ kanban
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 How NodCursor's components fit together — and where SRP violations currently live.
 
 ```mermaid
 flowchart TD
-  subgraph Browser["🌐 Browser (Privacy-First — No Data Leaves Device)"]
+  subgraph Browser[" Browser (Privacy-First — No Data Leaves Device)"]
     subgraph UI["React UI Layer"]
       App["App.tsx\n(Router)"]
       Home["HomePage"]
-      Demo["DemoPage\n⚠️ SRP: too many\nresponsibilities"]
+      Demo["DemoPage\n SRP: too many\nresponsibilities"]
       Cal["CalibrationPage"]
-      Set["SettingsPage\n+ SettingsPanel.tsx\n⚠️ SRP: 40+ controls\nin one component"]
-      Games["GamesPage\n⚠️ SRP: two games +\ntracking in one file"]
+      Set["SettingsPage\n+ SettingsPanel.tsx\n SRP: 40+ controls\nin one component"]
+      Games["GamesPage\n SRP: two games +\ntracking in one file"]
       Docs["DocumentationPage"]
     end
 
     subgraph Hooks["Custom Hooks Layer"]
-      FT["useFaceTracking.ts\n⚠️ SRP CRITICAL\n441 lines, 6 concerns"]
-      GC["useGestureControls.ts\n⚠️ SRP: dispatch +\nstate machine mixed"]
-      CM["useCursorMapping.ts\n✅ Focused"]
-      BD["useBlinkDetection.ts\n✅ Focused"]
-      DC["useDwellClick.ts\n✅ Focused"]
-      SC["useSmoothCursor.ts\n✅ Focused"]
-      VC["useVoiceCommands.ts\n✅ Focused"]
+      FT["useFaceTracking.ts\n SRP CRITICAL\n441 lines, 6 concerns"]
+      GC["useGestureControls.ts\n SRP: dispatch +\nstate machine mixed"]
+      CM["useCursorMapping.ts\n Focused"]
+      BD["useBlinkDetection.ts\n Focused"]
+      DC["useDwellClick.ts\n Focused"]
+      SC["useSmoothCursor.ts\n Focused"]
+      VC["useVoiceCommands.ts\n Focused"]
     end
 
     subgraph Workers["Web Worker (Off-Thread)"]
-      TW["trackingWorker.ts\n⚠️ SRP minor:\nsmoothing + blink\n+ gesture detection"]
+      TW["trackingWorker.ts\n SRP minor:\nsmoothing + blink\n+ gesture detection"]
     end
 
     subgraph Utils["Utility Modules"]
-      ES["exponentialSmoothing.ts\n✅ Focused"]
-      KF["kalmanFilter.ts\n✅ Focused"]
-      AS["advancedSmoothing.ts\n✅ Focused"]
-      AL["adaptiveLightLearner.ts\n✅ Focused (ML)"]
-      VP["voiceProfile.ts\n✅ Focused"]
+      ES["exponentialSmoothing.ts\n Focused"]
+      KF["kalmanFilter.ts\n Focused"]
+      AS["advancedSmoothing.ts\n Focused"]
+      AL["adaptiveLightLearner.ts\n Focused (ML)"]
+      VP["voiceProfile.ts\n Focused"]
     end
 
     subgraph State["State Management"]
-      AC["AppContext.tsx\n⚠️ SRP: settings +\ncalibration + device\ndetection in one context"]
+      AC["AppContext.tsx\n SRP: settings +\ncalibration + device\ndetection in one context"]
     end
   end
 
@@ -98,7 +98,7 @@ flowchart TD
 
 ---
 
-## 📉 Burndown Chart — SRP Cleanup Sprint
+##  Burndown Chart — SRP Cleanup Sprint
 
 > Estimated complexity: each SRP issue = 1 story point per 100 lines of code affected.
 > Total story points this sprint: **~14 points**.
@@ -114,25 +114,25 @@ xychart-beta
 
 ---
 
-## 🗓️ Sprint Timeline (Gantt)
+##  Sprint Timeline (Gantt)
 
 ```mermaid
 gantt
   title NodCursor SRP Cleanup Sprint — Q1 2026
   dateFormat  YYYY-MM-DD
-  section 🔥 ASAP (Priority 1)
+  section  ASAP (Priority 1)
     SRP: Split useFaceTracking.ts          :crit, active, srp1, 2026-03-24, 5d
     SRP: Decompose SettingsPanel.tsx        :crit, active, srp2, 2026-03-24, 3d
     SRP: Extract GestureControls logic      :crit, srp3, after srp2, 3d
-  section 📅 This Sprint (Priority 2)
+  section  This Sprint (Priority 2)
     SRP: Refactor GamesPage.tsx             :srp4, after srp1, 4d
     SRP: Separate AppContext concerns       :srp5, after srp3, 3d
     SRP: Clean up trackingWorker.ts         :srp6, after srp4, 2d
-  section 🔜 Next Sprint (Priority 3)
+  section  Next Sprint (Priority 3)
     Add automated test suite                :test1, 2026-04-07, 7d
     Improve calibration UX                  :ux1, 2026-04-07, 5d
     Gesture confidence feedback             :ux2, after ux1, 4d
-  section ✅ Completed (Previous Work)
+  section  Completed (Previous Work)
     Adaptive lighting ML module             :done, ml1, 2026-03-10, 7d
     Voice command personalization           :done, vc1, 2026-03-05, 5d
     Mobile layout + presets                 :done, mob1, 2026-03-01, 4d
@@ -142,27 +142,27 @@ gantt
 
 ---
 
-## 📌 Issue Index
+##  Issue Index
 
 | # | Title | Priority | Assignee | Status |
 |---|-------|----------|----------|--------|
-| [SRP-1](#srp-1-split-usefacetrackingts) | SRP: Split `useFaceTracking.ts` into focused hooks | 🔴 ASAP | @aadibhat09 | 🔄 In Progress |
-| [SRP-2](#srp-2-decompose-settingspaneltsx) | SRP: Decompose `SettingsPanel.tsx` into sub-components | 🔴 ASAP | @SanPranav | 🔄 In Progress |
-| [SRP-3](#srp-3-extract-gesturecontrols-logic) | SRP: Extract gesture dispatch from `useGestureControls.ts` | 🔴 ASAP | @aadibhat09 | 📋 To Do |
-| [SRP-4](#srp-4-refactor-gamespagetsxo) | SRP: Refactor `GamesPage.tsx` — separate game logic from UI | 🟡 This Sprint | @SanPranav | 📋 To Do |
-| [SRP-5](#srp-5-separate-appcontext-concerns) | SRP: Separate `AppContext.tsx` concerns | 🟡 This Sprint | @aadibhat09 | 📋 To Do |
-| [SRP-6](#srp-6-clean-up-trackingworkerts) | SRP: Clean up `trackingWorker.ts` responsibility boundary | 🟡 This Sprint | @SanPranav | 📋 To Do |
-| [NEXT-1](#next-1-automated-test-suite) | Add automated test suite (Vitest + Testing Library) | 🔵 Next Sprint | @aadibhat09 | 📋 Backlog |
-| [NEXT-2](#next-2-calibration-ux-improvements) | Calibration UX improvements + edge-case handling | 🔵 Next Sprint | @SanPranav | 📋 Backlog |
-| [NEXT-3](#next-3-gesture-confidence-feedback) | Gesture confidence feedback system | 🔵 Next Sprint | @aadibhat09 | 📋 Backlog |
+| [SRP-1](#srp-1-split-usefacetrackingts) | SRP: Split `useFaceTracking.ts` into focused hooks |  ASAP | @aadibhat09 |  In Progress |
+| [SRP-2](#srp-2-decompose-settingspaneltsx) | SRP: Decompose `SettingsPanel.tsx` into sub-components |  ASAP | @SanPranav |  In Progress |
+| [SRP-3](#srp-3-extract-gesturecontrols-logic) | SRP: Extract gesture dispatch from `useGestureControls.ts` |  ASAP | @aadibhat09 |  To Do |
+| [SRP-4](#srp-4-refactor-gamespagetsxo) | SRP: Refactor `GamesPage.tsx` — separate game logic from UI |  This Sprint | @SanPranav |  To Do |
+| [SRP-5](#srp-5-separate-appcontext-concerns) | SRP: Separate `AppContext.tsx` concerns |  This Sprint | @aadibhat09 |  To Do |
+| [SRP-6](#srp-6-clean-up-trackingworkerts) | SRP: Clean up `trackingWorker.ts` responsibility boundary |  This Sprint | @SanPranav |  To Do |
+| [NEXT-1](#next-1-automated-test-suite) | Add automated test suite (Vitest + Testing Library) |  Next Sprint | @aadibhat09 |  Backlog |
+| [NEXT-2](#next-2-calibration-ux-improvements) | Calibration UX improvements + edge-case handling |  Next Sprint | @SanPranav |  Backlog |
+| [NEXT-3](#next-3-gesture-confidence-feedback) | Gesture confidence feedback system |  Next Sprint | @aadibhat09 |  Backlog |
 
 ---
 
-## 🔴 ASAP Issues
+##  ASAP Issues
 
 ### SRP-1: Split `useFaceTracking.ts`
 
-> **Priority:** 🔴 ASAP | **Assignee:** @aadibhat09 | **Effort:** ~4 story points
+> **Priority:**  ASAP | **Assignee:** @aadibhat09 | **Effort:** ~4 story points
 
 **What's wrong:**
 
@@ -205,11 +205,11 @@ mindmap
 
 ```mermaid
 flowchart LR
-  subgraph Before["❌ Before (1 file, 441 lines)"]
+  subgraph Before[" Before (1 file, 441 lines)"]
     OG["useFaceTracking.ts\n441 lines\n6 responsibilities"]
   end
 
-  subgraph After["✅ After (5 focused files)"]
+  subgraph After[" After (5 focused files)"]
     A["useMediaPipeLoader.ts\n~60 lines\nLoad WASM + model"]
     B["useCameraStream.ts\n~80 lines\nCamera init + errors"]
     C["useAdaptiveLighting.ts\n~50 lines\nLight learning + tuning"]
@@ -236,7 +236,7 @@ flowchart LR
 
 ### SRP-2: Decompose `SettingsPanel.tsx`
 
-> **Priority:** 🔴 ASAP | **Assignee:** @SanPranav | **Effort:** ~3 story points
+> **Priority:**  ASAP | **Assignee:** @SanPranav | **Effort:** ~3 story points
 
 **What's wrong:**
 
@@ -288,7 +288,7 @@ flowchart LR
 
 ### SRP-3: Extract Gesture Dispatch from `useGestureControls.ts`
 
-> **Priority:** 🔴 ASAP | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
+> **Priority:**  ASAP | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
 
 **What's wrong:**
 
@@ -301,7 +301,7 @@ sequenceDiagram
   participant DOM as Document
 
   W->>GC: { blink, doubleBlink, longBlink, mouthOpen, smile }
-  Note over GC: ⚠️ State machine logic AND<br/>event dispatch live here
+  Note over GC:  State machine logic AND<br/>event dispatch live here
   GC->>GC: rising-edge detection (prev ref)
   GC->>GC: drag mode toggling
   GC->>GC: tilt scroll baseline calibration
@@ -333,11 +333,11 @@ flowchart LR
 
 ---
 
-## 🟡 This Sprint
+##  This Sprint
 
 ### SRP-4: Refactor `GamesPage.tsx`
 
-> **Priority:** 🟡 This Sprint | **Assignee:** @SanPranav | **Effort:** ~3 story points
+> **Priority:**  This Sprint | **Assignee:** @SanPranav | **Effort:** ~3 story points
 
 **What's wrong:**
 
@@ -372,7 +372,7 @@ pie title GamesPage.tsx Responsibility Breakdown (421 lines)
 
 ### SRP-5: Separate `AppContext.tsx` Concerns
 
-> **Priority:** 🟡 This Sprint | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
+> **Priority:**  This Sprint | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
 
 **What's wrong:**
 
@@ -442,7 +442,7 @@ erDiagram
 
 ### SRP-6: Clean Up `trackingWorker.ts`
 
-> **Priority:** 🟡 This Sprint | **Assignee:** @SanPranav | **Effort:** ~1 story point
+> **Priority:**  This Sprint | **Assignee:** @SanPranav | **Effort:** ~1 story point
 
 **What's wrong:**
 
@@ -477,11 +477,11 @@ stateDiagram-v2
 
 ---
 
-## 🔵 Next Sprint Backlog
+##  Next Sprint Backlog
 
 ### NEXT-1: Automated Test Suite
 
-> **Priority:** 🔵 Next Sprint | **Assignee:** @aadibhat09 | **Effort:** ~5 story points
+> **Priority:**  Next Sprint | **Assignee:** @aadibhat09 | **Effort:** ~5 story points
 
 NodCursor currently has **zero automated tests**. The SRP refactor (above) is a prerequisite because isolated, pure functions are far easier to unit-test.
 
@@ -517,7 +517,7 @@ flowchart TD
 
 ### NEXT-2: Calibration UX Improvements
 
-> **Priority:** 🔵 Next Sprint | **Assignee:** @SanPranav | **Effort:** ~3 story points
+> **Priority:**  Next Sprint | **Assignee:** @SanPranav | **Effort:** ~3 story points
 
 Cited from **Issue #2** (SanPranav's weekly issue, Task C): *"Add/verify user feedback for incomplete calibration data... Ensure mapping always clamps to [0..1] and avoids NaN/undefined cases."*
 
@@ -531,7 +531,7 @@ Cited from **Issue #2** (SanPranav's weekly issue, Task C): *"Add/verify user fe
 
 ### NEXT-3: Gesture Confidence Feedback
 
-> **Priority:** 🔵 Next Sprint | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
+> **Priority:**  Next Sprint | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
 
 Cited from **Issue #3** (aadibhat09's weekly issue, Task B): *"Add visible state indicators — Drag mode: On/Off; Gestures enabled: yes/no"*
 
@@ -545,7 +545,7 @@ Cited from **Issue #4** (Design Research): *"Users prefer gesture confirmation f
 
 ---
 
-## ✅ Completed Work
+##  Completed Work
 
 The following items were completed in previous sprints and are documented here for sprint velocity reference.
 
@@ -570,7 +570,7 @@ The following items were completed in previous sprints and are documented here f
 
 ---
 
-## 📊 Velocity Tracker
+##  Velocity Tracker
 
 ```mermaid
 xychart-beta
@@ -583,7 +583,7 @@ xychart-beta
 
 ---
 
-## 🧠 SRP Diagnosis Summary
+##  SRP Diagnosis Summary
 
 ```mermaid
 quadrantChart

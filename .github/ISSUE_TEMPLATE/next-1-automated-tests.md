@@ -1,12 +1,12 @@
 ---
 name: "Next Sprint: Add automated test suite (Vitest + Testing Library)"
 about: "Backlog — NodCursor currently has zero automated tests. The SRP refactor is a prerequisite. This issue tracks the full test infrastructure setup."
-title: "🔵 Next Sprint: Add automated test suite (Vitest + Testing Library)"
+title: " Next Sprint: Add automated test suite (Vitest + Testing Library)"
 labels: ["testing", "next-sprint", "dx", "quality"]
 assignees: ["aadibhat09"]
 ---
 
-## 🔵 Priority: Next Sprint (requires SRP cleanup first)
+##  Priority: Next Sprint (requires SRP cleanup first)
 
 NodCursor currently has **zero automated tests**. The SRP cleanup sprint (SRP-1 through SRP-6) is a prerequisite because isolated, pure functions and focused components are far easier to unit-test than 400+ line monoliths.
 
@@ -35,7 +35,7 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-  subgraph Unit["🧪 Unit Tests — Vitest"]
+  subgraph Unit[" Unit Tests — Vitest"]
     U1["exponentialSmoothing.ts\nconverges to target value"]
     U2["kalmanFilter.ts\nreduces variance over time"]
     U3["advancedSmoothing.ts\njitter threshold behavior"]
@@ -46,14 +46,14 @@ flowchart TD
     U8["dispatchMouseEvent.ts\npointFromNormalized math"]
   end
 
-  subgraph Component["🖥️ Component Tests — Vitest + @testing-library/react"]
+  subgraph Component[" Component Tests — Vitest + @testing-library/react"]
     C1["SettingsPanel sub-components\n(after SRP-2): renders + onChange"]
     C2["GestureIndicators\nrenders correct gesture label"]
     C3["CursorOverlay\npositions correctly at x,y"]
     C4["CalibrationUI steps\nstep progression"]
   end
 
-  subgraph Integration["🌐 Integration Tests — Playwright"]
+  subgraph Integration[" Integration Tests — Playwright"]
     I1["Calibration flow\n5-point capture → stored in context"]
     I2["Settings persistence\nchange → reload → verify localStorage"]
     I3["Demo page loads\ncamera permission mock"]

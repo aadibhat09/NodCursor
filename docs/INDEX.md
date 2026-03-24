@@ -172,38 +172,38 @@ Complete guide to all NodCursor documentation, organized by topic.
 ## Document Relationships
 
 ```
-Contributing 📄
+Contributing 
 ├─ References: Coding Standards
 │  └─ Links to: DESIGN_PRINCIPLES.md (SRP section)
 └─ Testing Guidelines
    └─ References: ACCESSIBILITY_GUIDE.md
 
-DESIGN_PRINCIPLES.md 📚
+DESIGN_PRINCIPLES.md 
 ├─ Core architecture guide
 ├─ References: SRP concept
 └─ Links to: SRP_ANALYSIS.md, SRP_REFACTORING_GUIDE.md
 
-SRP_ANALYSIS.md 📋
+SRP_ANALYSIS.md 
 ├─ Quick reference summary
 ├─ References: DESIGN_PRINCIPLES.md (deep dive)
 └─ Links to: SRP_REFACTORING_GUIDE.md (implementation)
 
-SRP_REFACTORING_GUIDE.md 🛠️
+SRP_REFACTORING_GUIDE.md 
 ├─ Step-by-step implementation
 ├─ References: SRP_ANALYSIS.md (why refactor)
 ├─ References: DESIGN_PRINCIPLES.md (guidelines)
 └─ Code examples and testing patterns
 
-API.md 📖
+API.md 
 ├─ Reference documentation
 └─ Used by: All contributing developers
 
-ACCESSIBILITY_GUIDE.md ♿
+ACCESSIBILITY_GUIDE.md 
 ├─ Feature design requirements
 ├─ Testing guidelines
 └─ User-centered considerations
 
-WHY_WE_STARTED.md 📖
+WHY_WE_STARTED.md 
 └─ Mission and values context
 ```
 
@@ -272,10 +272,10 @@ A: [API.md](API.md) — Type reference for all public APIs.
 **March 2026**
 
 ### Document Status
-- ✅ [DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md) — Current, comprehensive
-- ✅ [SRP_ANALYSIS.md](SRP_ANALYSIS.md) — Current, generated from analysis
-- ✅ [SRP_REFACTORING_GUIDE.md](SRP_REFACTORING_GUIDE.md) — Current, actionable
-- ✅ [../CONTRIBUTING.md](../CONTRIBUTING.md) — Updated with SRP guidelines
+-  [DESIGN_PRINCIPLES.md](DESIGN_PRINCIPLES.md) — Current, comprehensive
+-  [SRP_ANALYSIS.md](SRP_ANALYSIS.md) — Current, generated from analysis
+-  [SRP_REFACTORING_GUIDE.md](SRP_REFACTORING_GUIDE.md) — Current, actionable
+-  [../CONTRIBUTING.md](../CONTRIBUTING.md) — Updated with SRP guidelines
 - ⏳ [API.md](API.md) — May need updates as code evolves
 - ⏳ [ACCESSIBILITY_GUIDE.md](ACCESSIBILITY_GUIDE.md) — Best practices, evergreen
 
