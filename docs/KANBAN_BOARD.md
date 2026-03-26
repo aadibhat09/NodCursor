@@ -41,7 +41,7 @@ How NodCursor's components fit together — and where SRP violations currently l
 
 ```mermaid
 flowchart TD
-  subgraph Browser[" Browser (Privacy-First — No Data Leaves Device)"]
+  subgraph Browser[" Browser (Privacy-First - No Data Leaves Device)"]
     subgraph UI["React UI Layer"]
       App["App.tsx\n(Router)"]
       Home["HomePage"]
@@ -79,7 +79,7 @@ flowchart TD
     end
   end
 
-  subgraph External["External (CDN — one-time load)"]
+  subgraph External["External (CDN - one-time load)"]
     MP["@mediapipe/tasks-vision\nFaceLandmarker WASM"]
     Model["face_landmarker.task\nGoogle Storage"]
   end
@@ -92,7 +92,7 @@ flowchart TD
   AC -->|"settings + calibration"| FT
   AC --> GC
   AC --> CM
-  FT -->|"CDN fallback chain:\njsDelivr → unpkg"| MP
+  FT -->|"CDN fallback chain:\njsDelivr -> unpkg"| MP
   MP --> Model
 ```
 
@@ -105,7 +105,7 @@ flowchart TD
 
 ```mermaid
 xychart-beta
-  title "SRP Cleanup Sprint Burndown (March–April 2026)"
+  title "SRP Cleanup Sprint Burndown (March-April 2026)"
   x-axis ["Sprint Start", "Day 3", "Day 6", "Day 9", "Day 12", "Day 15", "Day 18", "Sprint End"]
   y-axis "Story Points Remaining" 0 --> 15
   line [14, 14, 12, 10, 8, 5, 2, 0]
@@ -118,7 +118,7 @@ xychart-beta
 
 ```mermaid
 gantt
-  title NodCursor SRP Cleanup Sprint — Q1 2026
+  title NodCursor SRP Cleanup Sprint - Q1 2026
   dateFormat  YYYY-MM-DD
   section  ASAP (Priority 1)
     SRP: Split useFaceTracking.ts          :crit, active, srp1, 2026-03-24, 5d
@@ -149,7 +149,7 @@ gantt
 | [SRP-1](#srp-1-split-usefacetrackingts) | SRP: Split `useFaceTracking.ts` into focused hooks |  ASAP | @aadibhat09 |  In Progress |
 | [SRP-2](#srp-2-decompose-settingspaneltsx) | SRP: Decompose `SettingsPanel.tsx` into sub-components |  ASAP | @SanPranav |  In Progress |
 | [SRP-3](#srp-3-extract-gesturecontrols-logic) | SRP: Extract gesture dispatch from `useGestureControls.ts` |  ASAP | @aadibhat09 |  To Do |
-| [SRP-4](#srp-4-refactor-gamespagetsxo) | SRP: Refactor `GamesPage.tsx` — separate game logic from UI |  This Sprint | @SanPranav |  To Do |
+| [SRP-4](#srp-4-refactor-gamespagetsxo) | SRP: Refactor `GamesPage.tsx` - separate game logic from UI |  This Sprint | @SanPranav |  To Do |
 | [SRP-5](#srp-5-separate-appcontext-concerns) | SRP: Separate `AppContext.tsx` concerns |  This Sprint | @aadibhat09 |  To Do |
 | [SRP-6](#srp-6-clean-up-trackingworkerts) | SRP: Clean up `trackingWorker.ts` responsibility boundary |  This Sprint | @SanPranav |  To Do |
 | [NEXT-1](#next-1-automated-test-suite) | Add automated test suite (Vitest + Testing Library) |  Next Sprint | @aadibhat09 |  Backlog |

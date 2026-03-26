@@ -30,7 +30,7 @@ mindmap
       tuneCameraForRecommendation()
       sampleVideoLuma() integration
     Landmark Extraction
-      nose/eye/mouth ratios
+      nose, eye, mouth ratios
       blinkRatio computation
       headTilt calculation
     Web Worker Coordination

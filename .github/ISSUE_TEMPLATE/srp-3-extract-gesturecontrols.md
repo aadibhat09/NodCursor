@@ -21,7 +21,7 @@ sequenceDiagram
   participant DOM as Document
 
   W->>GC: {blink, doubleBlink, longBlink, mouthOpen, smile, headTilt}
-  Note over GC:  Rising-edge detection AND MouseEvent dispatch<br/>live inside the same useEffect
+  Note over GC: Rising-edge detection AND MouseEvent dispatch<br/>live inside the same useEffect
   GC->>GC: rising-edge detection (prev ref)
   GC->>GC: drag mode toggling
   GC->>GC: tilt scroll baseline tracking

@@ -1,17 +1,15 @@
-import { useMemo, useState } from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useMemo, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Panel } from '../../components/common';
 import { MarkdownRenderer } from '../../components/MarkdownRenderer';
+import { GitHubProjectsView } from '../../components/GitHubProjectsView';
+import { CalendarView } from '../../components/CalendarView';
 import { useAppContext } from '../../context/AppContext';
 import { useVoiceCommands } from '../../hooks/useVoiceCommands';
+import { DocSection } from '../../hooks/useProjectView';
 
-interface DocSection {
-  id: string;
-  title: string;
-  summary: string;
-  sourcePath: string;
-  content: string;
-}
+// Re-export for convenience
+export type { DocSection };
 
 const markdownFiles = {
   ...import.meta.glob('/docs/*.md', { eager: true, query: '?raw', import: 'default' }),
@@ -29,7 +27,10 @@ function prettifyName(raw: string): string {
 }
 
 function extractTitle(content: string, fallback: string): string {
-  const heading = content
+  // Remove YAML frontmatter first
+  const withoutFrontmatter = content.replace(/^---[\s\S]*?---\n/, '');
+  
+  const heading = withoutFrontmatter
     .split('\n')
     .map((line) => line.trim())
     .find((line) => line.startsWith('# '));
@@ -39,14 +40,92 @@ function extractTitle(content: string, fallback: string): string {
 }
 
 function extractSummary(content: string): string {
-  const firstTextLine = content
+  // Remove YAML frontmatter first
+  const withoutFrontmatter = content.replace(/^---[\s\S]*?---\n/, '');
+  
+  const firstTextLine = withoutFrontmatter
     .split('\n')
     .map((line) => line.trim())
-    .find((line) => line && !line.startsWith('#') && !line.startsWith('|') && line !== '---');
+    .find((line) => line && !line.startsWith('#') && !line.startsWith('|') && !line.startsWith('```') && line !== '---');
 
   if (!firstTextLine) return 'Repository documentation file.';
   return firstTextLine.slice(0, 120);
 }
+
+function categorizeDoc(fileName: string): string {
+  const name = fileName.toLowerCase();
+  if (name.includes('accessibility') || name.includes('why_we_started') || name.includes('contributing')) {
+    return 'Guides';
+  }
+  if (name.includes('design') || name.includes('data_structures') || name.includes('typing')) {
+    return 'Architecture';
+  }
+  if (name.includes('srp') || name.includes('refactor')) {
+    return 'Code Quality';
+  }
+  if (name.includes('api') || name.includes('index')) {
+    return 'Reference';
+  }
+  if (name.includes('kanban') || name.includes('auto_generated_issues') || name.includes('project_management') || name.includes('project-management')) {
+    return 'Project';
+  }
+  return 'Other';
+}
+
+function getDocIcon(fileName: string): string {
+  const name = fileName.toLowerCase();
+  
+  // SVG icons for different doc types
+  const icons: Record<string, string> = {
+    accessibility: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"></circle><path d="M8 8v4a4 4 0 0 0 8 0V8"></path><path d="M5 20h14"></path><line x1="6" y1="14" x2="6" y2="20"></line><line x1="18" y1="14" x2="18" y2="20"></line></svg>`,
+    api: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16" y1="21" x2="16" y2="3"></line><line x1="8" y1="21" x2="8" y2="3"></line><line x1="3" y1="8" x2="21" y2="8"></line><line x1="3" y1="16" x2="21" y2="16"></line></svg>`,
+    'auto-generated-issues': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20m-10-10h20"></path><circle cx="12" cy="12" r="1"></circle><circle cx="18" cy="6" r="1"></circle><circle cx="6" cy="18" r="1"></circle></svg>`,
+    guides: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><line x1="10" y1="6" x2="16" y2="6"></line><line x1="10" y1="10" x2="16" y2="10"></line><line x1="10" y1="14" x2="16" y2="14"></line></svg>`,
+    architecture: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><line x1="10" y1="6.5" x2="14" y2="6.5"></line><line x1="10" y1="17.5" x2="14" y2="17.5"></line></svg>`,
+    'code-quality': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline><path d="M4 12l5-5m0 0l11-11"></path></svg>`,
+    'project-management': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>`,
+    'srp-master': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>`,
+    reference: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="7" x2="12" y2="17"></line><line x1="7" y1="12" x2="17" y2="12"></line></svg>`,
+    project: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="9" y1="9" x2="9" y2="15"></line><line x1="15" y1="9" x2="15" y2="15"></line><line x1="3" y1="9" x2="21" y2="9"></line></svg>`,
+  };
+
+  for (const [key, icon] of Object.entries(icons)) {
+    if (name.includes(key)) return icon;
+  }
+
+  return icons.guides;
+}
+
+const issueMetadata: Record<string, { issueNumber: number; assignees: string[]; status: 'draft' | 'review' | 'published' | 'archived'; date?: string }> = {
+  // Root level docs
+  'readme': { issueNumber: 100, assignees: ['@aadibhat09', '@SanPranav'], status: 'published', date: '2026-03-25' },
+  'contributing': { issueNumber: 103, assignees: ['@aadibhat09', '@SanPranav'], status: 'published', date: '2026-03-18' },
+  'srp-analysis': { issueNumber: 108, assignees: ['@SanPranav'], status: 'review', date: '2026-03-22' },
+  // Docs folder
+  'docs-accessibility-guide': { issueNumber: 101, assignees: ['@aadibhat09'], status: 'published', date: '2026-03-20' },
+  'docs-api': { issueNumber: 102, assignees: ['@SanPranav'], status: 'published', date: '2026-03-19' },
+  'docs-auto-generated-issues': { issueNumber: 115, assignees: ['@SanPranav', '@aadibhat09'], status: 'published', date: '2026-03-26' },
+  'docs-data-structures-evidence': { issueNumber: 104, assignees: ['@SanPranav'], status: 'review', date: '2026-03-17' },
+  'docs-design-principles': { issueNumber: 105, assignees: ['@aadibhat09'], status: 'published', date: '2026-03-21' },
+  'docs-implementation-summary': { issueNumber: 116, assignees: ['@SanPranav', '@aadibhat09'], status: 'published', date: '2026-03-26' },
+  'docs-index': { issueNumber: 106, assignees: ['@SanPranav'], status: 'published', date: '2026-03-15' },
+  'docs-kanban-board': { issueNumber: 107, assignees: ['@aadibhat09', '@SanPranav'], status: 'published', date: '2026-03-24' },
+  'docs-project-management': { issueNumber: 117, assignees: ['@aadibhat09', '@SanPranav'], status: 'published', date: '2026-03-26' },
+  'docs-srp-analysis': { issueNumber: 112, assignees: ['@SanPranav'], status: 'review', date: '2026-03-22' },
+  'docs-srp-master': { issueNumber: 114, assignees: ['@aadibhat09', '@SanPranav'], status: 'published', date: '2026-03-26' },
+  'docs-srp-refactoring-guide': { issueNumber: 109, assignees: ['@aadibhat09'], status: 'draft', date: '2026-03-23' },
+  'docs-typing-system': { issueNumber: 110, assignees: ['@SanPranav'], status: 'published', date: '2026-03-16' },
+  'docs-why-we-started': { issueNumber: 111, assignees: ['@aadibhat09'], status: 'published', date: '2026-03-14' },
+  // SRP Violations - Issue Assignments
+  'srp-refactor-onscreen-keyboard': { issueNumber: 201, assignees: ['@aadibhat09'], status: 'draft', date: '2026-03-26' },
+  'srp-refactor-settings-panel': { issueNumber: 202, assignees: ['@SanPranav'], status: 'draft', date: '2026-03-26' },
+  'srp-refactor-face-tracking': { issueNumber: 203, assignees: ['@SanPranav'], status: 'draft', date: '2026-03-26' },
+  'srp-refactor-gesture-controls': { issueNumber: 204, assignees: ['@aadibhat09'], status: 'draft', date: '2026-03-26' },
+  'srp-refactor-app-context': { issueNumber: 205, assignees: ['@SanPranav'], status: 'draft', date: '2026-03-26' },
+  'srp-refactor-voice-profile': { issueNumber: 206, assignees: ['@aadibhat09'], status: 'draft', date: '2026-03-26' },
+  'srp-refactor-demo-page': { issueNumber: 207, assignees: ['@SanPranav'], status: 'draft', date: '2026-03-26' },
+  'srp-refactor-settings-page': { issueNumber: 208, assignees: ['@aadibhat09'], status: 'draft', date: '2026-03-26' },
+};
 
 const docSections: DocSection[] = Object.entries(markdownFiles)
   .map(([sourcePath, content]) => {
@@ -56,23 +135,160 @@ const docSections: DocSection[] = Object.entries(markdownFiles)
     const title = extractTitle(content, fallbackTitle);
     const id = normalizedPath.replace(/\.md$/i, '').replace(/[/.]/g, '-').toLowerCase();
 
+    const metadata = issueMetadata[id] || { issueNumber: 0, assignees: [], status: 'draft' as const };
+
     return {
       id,
       title,
       summary: extractSummary(content),
       sourcePath: normalizedPath,
-      content
+      content,
+      category: categorizeDoc(fileName),
+      issueNumber: metadata.issueNumber,
+      assignees: metadata.assignees,
+      status: metadata.status,
+      icon: getDocIcon(fileName),
+      date: metadata.date
     };
   })
   .sort((a, b) => a.title.localeCompare(b.title));
 
+const categoryOrder = ['Guides', 'Architecture', 'Code Quality', 'Reference', 'Project', 'Other'];
+
+function getCategorizedDocs(sections: DocSection[]): Record<string, DocSection[]> {
+  const categorized: Record<string, DocSection[]> = {};
+  sections.forEach((section) => {
+    if (!categorized[section.category]) {
+      categorized[section.category] = [];
+    }
+    categorized[section.category].push(section);
+  });
+
+  Object.keys(categorized).forEach((cat) => {
+    categorized[cat].sort((a, b) => a.title.localeCompare(b.title));
+  });
+
+  return categorized;
+}
+
+interface DocModalProps {
+  doc: DocSection;
+  onClose: () => void;
+}
+
+function getStatusColor(status?: string): string {
+  switch (status) {
+    case 'published': return 'bg-green-500/20 text-green-400 border-green-500/30';
+    case 'review': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+    case 'draft': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+    case 'archived': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    default: return 'bg-app-accent/20 text-app-accent';
+  }
+}
+
+function DocModal({ doc, onClose }: DocModalProps) {
+  // Remove YAML frontmatter from content for display
+  const cleanContent = doc.content.replace(/^---[\s\S]*?---\n/, '');
+
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscapeKey);
+    return () => window.removeEventListener('keydown', handleEscapeKey);
+  }, [onClose]);
+  
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto" onClick={handleBackdropClick}>
+      <div className="relative w-full max-w-5xl my-8 rounded-xl border border-app-accent bg-app-panel shadow-2xl flex flex-col max-h-[95vh]" onClick={(e) => e.stopPropagation()}>
+        {/* Modal Header */}
+        <div className="flex items-start justify-between gap-6 border-b border-app-accent/20 p-8">
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-lg border border-app-accent/30 bg-app-panelAlt p-3 flex items-center justify-center text-app-accent flex-shrink-0">
+                {doc.icon ? (
+                  <div dangerouslySetInnerHTML={{ __html: doc.icon }} className="w-full h-full" />
+                ) : (
+                  <span>📄</span>
+                )}
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-app-text">{doc.title}</h1>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="px-3 py-1 bg-app-accent/20 text-app-accent rounded-full text-xs font-semibold">
+                    {doc.category}
+                  </span>
+                  {doc.status && (
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(doc.status)}`}>
+                      {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
+                    </span>
+                  )}
+                  {doc.issueNumber ? (
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-semibold border border-purple-500/30">
+                      #{doc.issueNumber}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm text-app-subtle">{doc.sourcePath}</p>
+              {doc.assignees && doc.assignees.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-app-text">Assignees:</span>
+                  <div className="flex gap-2">
+                    {doc.assignees.map((assignee) => (
+                      <span key={assignee} className="px-2 py-1 bg-app-accent/30 text-app-accent text-xs rounded-full">
+                        {assignee}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            }}
+            className="flex-shrink-0 rounded-lg border border-app-accent/30 bg-app-accent/10 px-4 py-3 text-app-text transition hover:border-app-accent hover:bg-app-accent/20 font-bold text-lg"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Modal Content */}
+        <div className="flex-1 overflow-auto p-8">
+          <div className="prose prose-invert max-w-none">
+            <MarkdownRenderer content={cleanContent} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function DocumentationPage() {
   const { settings } = useAppContext();
   const navigate = useNavigate();
-  const { section } = useParams();
   const [query, setQuery] = useState('');
+  const [selectedDoc, setSelectedDoc] = useState<DocSection | null>(null);
+  const [viewMode, setViewMode] = useState<'kanban' | 'projects' | 'calendar'>('kanban');
 
-  const activeSection = docSections.find((item) => item.id === section) ?? docSections[0];
   const normalizedQuery = query.trim().toLowerCase();
 
   const filteredSections = useMemo(() => {
@@ -81,106 +297,170 @@ export function DocumentationPage() {
     return docSections.filter((item) => {
       return item.title.toLowerCase().includes(normalizedQuery)
         || item.summary.toLowerCase().includes(normalizedQuery)
-        || item.sourcePath.toLowerCase().includes(normalizedQuery);
+        || item.sourcePath.toLowerCase().includes(normalizedQuery)
+        || item.category.toLowerCase().includes(normalizedQuery);
     });
   }, [normalizedQuery]);
 
-  const activeIndex = filteredSections.findIndex((item) => item.id === activeSection.id);
-  const previousSection = activeIndex > 0 ? filteredSections[activeIndex - 1] : null;
-  const nextSection = activeIndex >= 0 && activeIndex < filteredSections.length - 1
-    ? filteredSections[activeIndex + 1]
-    : null;
+  const categorizedDocs = useMemo(() => getCategorizedDocs(filteredSections), [filteredSections]);
 
   useVoiceCommands(settings.voiceEnabled, {
-    scrollUp:   () => window.scrollBy({ top: -200, behavior: 'smooth' }),
-    scrollDown: () => window.scrollBy({ top:  200, behavior: 'smooth' }),
-    navigate:   (path) => navigate(path)
+    navigate: (path) => navigate(path)
   });
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
-      <Panel title="Documentation Index" className="animate-float-in h-fit">
+    <div className="space-y-4">
+      <Panel title="Project Management" className="animate-float-in">
         <div className="space-y-3">
+          {/* Search Bar */}
           <div className="rounded-lg border border-app-accent/20 bg-app-panelAlt p-3">
             <label htmlFor="documentation-search" className="mb-1 block text-xs font-semibold text-app-text">
-              Quick find
+              Filter issues
             </label>
             <input
               id="documentation-search"
               type="text"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search title, summary, or path"
+              placeholder="Search title, category, summary, or path"
               className="w-full rounded-md border border-app-accent/30 bg-app-bg/70 px-2 py-1.5 text-xs text-app-text"
             />
             <p className="mt-2 text-[11px] text-app-subtle">
-              Showing {filteredSections.length} of {docSections.length} files
+              {filteredSections.length} of {docSections.length} issues
             </p>
           </div>
 
-          <div className="max-h-[65vh] space-y-2 overflow-auto pr-1">
-            {filteredSections.map((item) => (
-            <NavLink
-              key={item.id}
-              to={`/documentation/${item.id}`}
-              className={({ isActive }) => [
-                'block rounded-lg border px-3 py-2 text-sm transition',
-                isActive
-                  ? 'border-app-accent bg-app-accent/15 text-app-text shadow-glow'
-                  : 'border-app-accent/20 bg-app-panelAlt text-app-subtle hover:border-app-accent/40 hover:text-app-text'
-              ].join(' ')}
+          {/* View Mode Switcher */}
+          <div className="flex gap-2 rounded-lg border border-app-accent/20 bg-app-panelAlt p-3">
+            <button
+              onClick={() => setViewMode('kanban')}
+              className={`flex-1 rounded-md px-3 py-2 text-xs font-semibold transition ${
+                viewMode === 'kanban'
+                  ? 'bg-app-accent text-app-bg'
+                  : 'border border-app-accent/30 text-app-text hover:border-app-accent'
+              }`}
             >
-              <p className="font-semibold">{item.title}</p>
-              <p className="text-xs opacity-90">{item.summary}</p>
-              <p className="mt-1 text-[11px] opacity-75">{item.sourcePath}</p>
-            </NavLink>
-            ))}
-          </div>
-
-          {filteredSections.length === 0 ? (
-            <div className="rounded-lg border border-app-accent/20 bg-app-panelAlt p-3 text-xs text-app-subtle">
-              No documentation files match this search.
-            </div>
-          ) : null}
-        </div>
-      </Panel>
-
-      <Panel title={activeSection.title} className="animate-float-in">
-        <div className="space-y-4 text-sm text-app-subtle">
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-app-accent/20 bg-app-panelAlt p-3 text-xs">
-            <p className="text-app-subtle">
-              {activeIndex >= 0 ? `Result ${activeIndex + 1} of ${filteredSections.length}` : 'Current file is outside search results'}
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => previousSection && navigate(`/documentation/${previousSection.id}`)}
-                disabled={!previousSection}
-                className="rounded-md border border-app-accent/30 px-2 py-1 text-app-text transition enabled:hover:border-app-accent enabled:hover:bg-app-accent/10 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <button
-                type="button"
-                onClick={() => nextSection && navigate(`/documentation/${nextSection.id}`)}
-                disabled={!nextSection}
-                className="rounded-md border border-app-accent/30 px-2 py-1 text-app-text transition enabled:hover:border-app-accent enabled:hover:bg-app-accent/10 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-app-accent/20 bg-app-panelAlt p-3 text-xs">
-            <p className="font-semibold text-app-text">Source</p>
-            <p>{activeSection.sourcePath}</p>
-          </div>
-
-          <div className="max-h-[60vh] overflow-auto rounded-lg border border-app-accent/20 bg-app-panelAlt p-4">
-            <MarkdownRenderer content={activeSection.content} />
+              Kanban
+            </button>
+            <button
+              onClick={() => setViewMode('projects')}
+              className={`flex-1 rounded-md px-3 py-2 text-xs font-semibold transition ${
+                viewMode === 'projects'
+                  ? 'bg-app-accent text-app-bg'
+                  : 'border border-app-accent/30 text-app-text hover:border-app-accent'
+              }`}
+            >
+              Projects
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`flex-1 rounded-md px-3 py-2 text-xs font-semibold transition ${
+                viewMode === 'calendar'
+                  ? 'bg-app-accent text-app-bg'
+                  : 'border border-app-accent/30 text-app-text hover:border-app-accent'
+              }`}
+            >
+              Calendar
+            </button>
           </div>
         </div>
       </Panel>
+
+      {/* View Content */}
+      {viewMode === 'kanban' && (
+        <div className="kanban-container flex gap-4 overflow-x-auto pb-4">
+          {categoryOrder.map((category) => {
+            const docs = categorizedDocs[category];
+            if (!docs) return null;
+
+            return (
+              <div
+                key={category}
+                className="flex-shrink-0 w-80 rounded-lg border border-app-accent/20 bg-app-panelAlt/50 p-4"
+              >
+                <h2 className="mb-4 text-lg font-semibold text-app-accent flex items-center gap-2">
+                  <span>{category}</span>
+                  <span className="text-xs font-normal bg-app-accent/20 text-app-accent px-2 py-1 rounded">
+                    {docs.length}
+                  </span>
+                </h2>
+
+                <div className="max-h-[70vh] space-y-2 overflow-y-auto pr-2">
+                  {docs.map((doc) => (
+                    <button
+                      key={doc.id}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedDoc(doc);
+                    }}
+                      className="w-full text-left rounded-lg border border-app-accent/20 bg-app-bg/70 text-app-subtle px-3 py-3 transition hover:border-app-accent/40 hover:text-app-text hover:bg-app-accent/5 cursor-pointer group"
+                    >
+                      {/* Icon and Title */}
+                      <div className="flex items-start gap-3 mb-2">
+                        <div className="w-10 h-10 rounded-md border border-app-accent/30 bg-app-panelAlt p-1.5 flex items-center justify-center text-app-accent flex-shrink-0 group-hover:border-app-accent/50">
+                          {doc.icon ? (
+                            <div dangerouslySetInnerHTML={{ __html: doc.icon }} className="w-full h-full" />
+                          ) : (
+                            <span>📄</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm truncate">{doc.title}</p>
+                          {doc.issueNumber ? (
+                            <p className="text-xs text-app-accent font-mono">#{doc.issueNumber}</p>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      {/* Summary */}
+                      <p className="text-xs opacity-75 mb-2 line-clamp-2">{doc.summary}</p>
+
+                      {/* Status and Assignees */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {doc.status && (
+                          <span className={`px-2 py-1 rounded text-xs font-medium border ${getStatusColor(doc.status)}`}>
+                            {doc.status}
+                          </span>
+                        )}
+                        {doc.assignees && doc.assignees.length > 0 && (
+                          <div className="flex -space-x-2">
+                            {doc.assignees.map((assignee) => (
+                              <span
+                                key={assignee}
+                                title={assignee}
+                                className="w-6 h-6 rounded-full bg-app-accent/30 text-app-accent text-xs font-bold flex items-center justify-center border border-app-accent/50"
+                              >
+                                {assignee.charAt(1).toUpperCase()}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+
+                  {docs.length === 0 ? (
+                    <div className="rounded-lg border border-app-accent/20 bg-app-panelAlt p-3 text-xs text-app-subtle">
+                      No issues in this category
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {viewMode === 'projects' && (
+        <GitHubProjectsView issues={filteredSections} onIssueSelect={setSelectedDoc} />
+      )}
+
+      {viewMode === 'calendar' && (
+        <CalendarView issues={filteredSections} onIssueSelect={setSelectedDoc} />
+      )}
+
+      {selectedDoc && <DocModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}
     </div>
   );
 }

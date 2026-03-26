@@ -30,7 +30,7 @@ The analysis below categorizes violations by severity and provides refactoring g
 
 ---
 
-###  `OnScreenKeyboard.tsx` — **MINOR SRP VIOLATION**
+###  `OnScreenKeyboard.tsx` — **MINOR SRP VIOLATION** [#201]
 **Current Responsibilities:**
 1. UI rendering (keyboard grid, toggle buttons, textarea)
 2. Keyboard state management (shift state, selected index)
@@ -102,7 +102,7 @@ export function useKeyboardState(initialText: string, ...): KeyboardState
 
 ---
 
-###  `SettingsPanel.tsx` — **CRITICAL SRP VIOLATION**
+###  `SettingsPanel.tsx` — **CRITICAL SRP VIOLATION** [#202]
 **Current Responsibilities:**
 1. Render cursor sensitivity controls (3 sliders: sensitivity, horizontal, vertical)
 2. Render acceleration curve slider
@@ -177,7 +177,7 @@ Extract into domain-specific sub-components:
 
 ---
 
-###  `useFaceTracking.ts` — **CRITICAL SRP VIOLATION**
+###  `useFaceTracking.ts` — **CRITICAL SRP VIOLATION** [#203]
 **Current Responsibilities:**
 1. **MediaPipe Initialization**
    - Loads MediaPipe WASM from multiple CDN fallbacks
@@ -308,7 +308,7 @@ export function useFaceTracking(settings: CursorSettings, calibration: Calibrati
 
 ---
 
-###  `useGestureControls.ts` — **CRITICAL SRP VIOLATION**
+###  `useGestureControls.ts` — **CRITICAL SRP VIOLATION** [#204]
 **Current Responsibilities:**
 1. **Blink Gesture Handling**
    - Detect single blink → left click
@@ -457,7 +457,7 @@ export function useGestureControls(
 
 ## 3. CONTEXT ANALYSIS (`src/context/`)
 
-###  `AppContext.tsx` — **CRITICAL SRP VIOLATION**
+###  `AppContext.tsx` — **CRITICAL SRP VIOLATION** [#205]
 **Current Responsibilities:**
 1. **Settings State Management** (25+ properties)
    - Desktop settings versioning and migration
@@ -566,7 +566,7 @@ export function createSettingsPersistence() {
 
 ---
 
-###  `DemoPage.tsx` — **LARGE ORCHESTRATOR (Acceptable)**
+###  `DemoPage.tsx` — **LARGE ORCHESTRATOR (Acceptable)** [#207]
 **Responsibilities:**
 1. Orchestrate all tracking hooks
 2. Manage event logging
@@ -620,7 +620,7 @@ export function DemoPage() {
 
 ---
 
-###  `SettingsPage.tsx` — **MODERATE ISSUES**
+###  `SettingsPage.tsx` — **MODERATE ISSUES** [#208]
 **Responsibilities:**
 1. Render SettingsPanel (problematic component!)
 2. Apply sensitivity presets (Steady, Balanced, Responsive)
@@ -698,7 +698,7 @@ export function useMemoryMatchGame() {
 
 ## 5. UTILITIES ANALYSIS (`src/utils/`)
 
-###  `voiceProfile.ts` — **CRITICAL SRP VIOLATION**
+###  `voiceProfile.ts` — **CRITICAL SRP VIOLATION** [#206]
 **Current Responsibilities:**
 1. **Voice Profile Persistence**
    - Load profile from localStorage
