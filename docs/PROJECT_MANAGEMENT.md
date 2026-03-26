@@ -158,7 +158,7 @@ The Projects view automatically maps documentation status to workflow stages:
 
 | Doc Status | Projects Column | Color |
 |-----------|-----------------|-------|
-| `draft` | Not Started | 🔵 Blue |
+| `draft` | Not Started | Blue |
 | `review` | In Review | 🟡 Yellow |
 | `published` | Done | 🟢 Green |
 | (none) | Not Started | ⚫ Gray |

@@ -74,7 +74,7 @@ export function GitHubProjectsView({ issues, onIssueSelect }: GitHubProjectsView
                           {issue.icon ? (
                             <div dangerouslySetInnerHTML={{ __html: issue.icon }} className="w-full h-full" />
                           ) : (
-                            <span>📄</span>
+                            <span>Doc</span>
                           )}
                         </div>
                         <div className="min-w-0">

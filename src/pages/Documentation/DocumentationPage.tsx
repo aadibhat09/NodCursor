@@ -218,7 +218,7 @@ function DocModal({ doc, onClose }: DocModalProps) {
                 {doc.icon ? (
                   <div dangerouslySetInnerHTML={{ __html: doc.icon }} className="w-full h-full" />
                 ) : (
-                  <span>📄</span>
+                  <span>Doc</span>
                 )}
               </div>
               <div className="space-y-2">
@@ -402,7 +402,7 @@ export function DocumentationPage() {
                           {doc.icon ? (
                             <div dangerouslySetInnerHTML={{ __html: doc.icon }} className="w-full h-full" />
                           ) : (
-                            <span>📄</span>
+                            <span>Doc</span>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">

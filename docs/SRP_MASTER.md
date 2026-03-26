@@ -80,7 +80,7 @@ const commitIssues = generateCommitIssues(200);
 
 ---
 
-## 🔄 In-Progress SRP Refactoring
+## In-Progress SRP Refactoring
 
 ### Hook Decomposition
 
@@ -161,7 +161,7 @@ const commitIssues = generateCommitIssues(200);
 
 ---
 
-## 📋 SRP Principles Applied
+## SRP Principles Applied
 
 ### Principle 1: One Reason to Change
 
@@ -216,21 +216,21 @@ export {
 
 ---
 
-## 📊 SRP Metrics
+## SRP Metrics
 
 | Component | Lines | Responsibilities | Status |
 |-----------|-------|------------------|--------|
 | DocumentationPage | 250 | 2 (was 5) | ✅ Refactored |
 | DocModal | 50 | 1 | ✅ New |
-| useFaceTracking | 441 | 6 | 🔄 Needs refactor |
-| SettingsPanel | 350+ | 3+ | 🔄 Needs refactor |
-| GamesPage | 300+ | 4 | 🔄 Needs refactor |
-| trackingWorker | 200+ | 3 | 🔄 Needs refactor |
-| AppContext | 150+ | 3 | 🔄 Needs refactor |
+| useFaceTracking | 441 | 6 | Needs refactor |
+| SettingsPanel | 350+ | 3+ | Needs refactor |
+| GamesPage | 300+ | 4 | Needs refactor |
+| trackingWorker | 200+ | 3 | Needs refactor |
+| AppContext | 150+ | 3 | Needs refactor |
 
 ---
 
-## 🎯 Benefits of SRP Implementation
+## Benefits of SRP Implementation
 
 ### For Development
 - ✓ Easier to understand what each file does
@@ -250,7 +250,7 @@ export {
 
 ---
 
-## 🛠️ How to Apply SRP
+## How to Apply SRP
 
 ### Process
 
@@ -293,7 +293,7 @@ export function useFaceTracking() {
 
 ---
 
-## 📚 References
+## References
 
 - **SRP Principle** — Part of SOLID principles
 - **Module Cohesion** — "Things that change together belong together"
@@ -304,7 +304,7 @@ export function useFaceTracking() {
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 1. **Phase 1 (Current)** — Refactor DocumentationPage ✅
 2. **Phase 2** — Decompose useFaceTracking into focused hooks
