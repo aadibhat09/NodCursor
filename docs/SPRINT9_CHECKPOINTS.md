@@ -11,10 +11,10 @@
 
 Sprint 9 is the final capstone sprint where you will:
 
-1. ✅ Implement data backup/restore functionality
-2. ✅ Achieve >50% code coverage with automated testing
-3. ✅ Refine UI/UX for accessibility and usability
-4. ✅ Deploy to production with Docker and custom domain
+1.  Implement data backup/restore functionality
+2.  Achieve >50% code coverage with automated testing
+3.  Refine UI/UX for accessibility and usability
+4.  Deploy to production with Docker and custom domain
 
 This document provides the GitHub issues structure for tracking and managing Sprint 9 work.
 
@@ -48,7 +48,7 @@ Each issue should follow this template:
 - Links to relevant documentation
 
 ## Complexity
-🟡 Medium (estimate: 8-16 hours)
+Medium Medium (estimate: 8-16 hours)
 
 ## Labels
 - scope: backend/frontend/devops
@@ -130,7 +130,7 @@ When all tests pass and manual testing complete:
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 6 hours)
+Medium Medium (estimate: 6 hours)
 
 ## Labels
 - scope: frontend
@@ -208,7 +208,7 @@ When all tests pass:
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: frontend
@@ -287,7 +287,7 @@ When all tests pass:
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: frontend
@@ -366,7 +366,7 @@ When complete:
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 6 hours)
+Medium Medium (estimate: 6 hours)
 
 ## Labels
 - scope: devops
@@ -409,7 +409,7 @@ Create: `tests/utils/calibration/mapToViewport.test.ts`
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: frontend
@@ -452,7 +452,7 @@ Create unit tests for Kalman filter and smoothing pipeline.
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 10 hours)
+Medium Medium (estimate: 10 hours)
 
 ## Labels
 - scope: frontend
@@ -493,7 +493,7 @@ Create tests for eye aspect ratio, blink detection, and gesture recognition.
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: frontend
@@ -534,7 +534,7 @@ Create: `tests/hooks/useGestureControls.test.ts`
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 10 hours)
+Medium Medium (estimate: 10 hours)
 
 ## Labels
 - scope: frontend
@@ -575,7 +575,7 @@ Create: `tests/hooks/useFaceTracking.test.ts`
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 12 hours)
+Medium Medium (estimate: 12 hours)
 
 ## Labels
 - scope: frontend
@@ -616,7 +616,7 @@ Create: `tests/components/CursorOverlay/CursorOverlay.test.tsx`
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: frontend
@@ -657,7 +657,7 @@ Create: `tests/components/SettingsPanel/SettingsPanel.test.tsx`
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🟡 Medium (estimate: 10 hours)
+Medium Medium (estimate: 10 hours)
 
 ## Labels
 - scope: frontend
@@ -702,7 +702,7 @@ Complete remaining tests to achieve overall >50% code coverage target.
 - docs/TESTING_COVERAGE_PLAN.md
 
 ## Complexity
-🔴 High (estimate: 40+ cumulative hours from #204-#210)
+High High (estimate: 40+ cumulative hours from #204-#210)
 
 ## Labels
 - scope: frontend
@@ -758,7 +758,7 @@ Improve app accessibility to reach WCAG AA compliance and ensure keyboard naviga
 - WCAG 2.1 standards
 
 ## Complexity
-🟡 Medium (estimate: 12 hours)
+Medium Medium (estimate: 12 hours)
 
 ## Labels
 - scope: frontend
@@ -806,7 +806,7 @@ Enhance visual feedback for detected gestures with clearer animations and indica
 - Issue #212 (Accessibility)
 
 ## Complexity
-🟡 Medium (estimate: 10 hours)
+Medium Medium (estimate: 10 hours)
 
 ## Labels
 - scope: frontend
@@ -861,7 +861,7 @@ Build guided walkthrough for new users covering calibration, gesture setup, and 
 - Issue #212 (Accessibility)
 
 ## Complexity
-🟡 Medium (estimate: 12 hours)
+Medium Medium (estimate: 12 hours)
 
 ## Labels
 - scope: frontend
@@ -908,7 +908,7 @@ Ensure app works well on mobile and tablet devices (5" to 12" screens).
 - Issue #212 (Accessibility)
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: frontend
@@ -977,7 +977,7 @@ services:
 - docs/CS113_ALIGNMENT.md
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: devops
@@ -1033,7 +1033,7 @@ Create nginx configuration for serving app, caching, compression, and security h
 - Issue #218 (DNS)
 
 ## Complexity
-🟡 Medium (estimate: 8 hours)
+Medium Medium (estimate: 8 hours)
 
 ## Labels
 - scope: devops
@@ -1104,7 +1104,7 @@ TXT: Verification records (if needed)
 - Issue #219 (CI/CD Pipeline)
 
 ## Complexity
-🟡 Medium (estimate: 6-8 hours depending on host)
+Medium Medium (estimate: 6-8 hours depending on host)
 
 ## Labels
 - scope: devops
@@ -1176,7 +1176,7 @@ jobs:
 - docs/CS113_ALIGNMENT.md
 
 ## Complexity
-🟡 Medium (estimate: 8-10 hours)
+Medium Medium (estimate: 8-10 hours)
 
 ## Labels
 - scope: devops
@@ -1245,14 +1245,14 @@ jobs:
 
 ## Success Criteria for Sprint 9
 
-✅ **Checkpoint 1**: Data backup/restore complete and tested  
-✅ **Checkpoint 2**: >50% code coverage achieved  
-✅ **Checkpoint 3**: Accessibility audit passed, UI/UX polished  
-✅ **Checkpoint 4**: Live deployment working at custom domain  
-✅ **Blog Portfolio**: All sections published, 5000+ words  
-✅ **GitHub**: Clean commit history, organized PRs  
-✅ **LinkedIn**: Profile complete, project featured  
-✅ **Demo**: Working application with smooth gesture control  
+ **Checkpoint 1**: Data backup/restore complete and tested  
+ **Checkpoint 2**: >50% code coverage achieved  
+ **Checkpoint 3**: Accessibility audit passed, UI/UX polished  
+ **Checkpoint 4**: Live deployment working at custom domain  
+ **Blog Portfolio**: All sections published, 5000+ words  
+ **GitHub**: Clean commit history, organized PRs  
+ **LinkedIn**: Profile complete, project featured  
+ **Demo**: Working application with smooth gesture control  
 
 ---
 

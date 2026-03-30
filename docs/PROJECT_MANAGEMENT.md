@@ -7,7 +7,7 @@
 The Documentation page has been transformed into a full-featured project management system, inspired by GitHub Projects but tailored for NodCursor. Switch between three powerful views to manage issues and documentation:
 
 - **Kanban** — Topic-based columns
-- **GitHub Projects** — Status-based workflow (Not Started → In Progress → In Review → Done)
+- **GitHub Projects** — Status-based workflow (Not Started →In Progress→ In Review → Done)
 - **Calendar** — Timeline visualization by issue date
 
 ---
@@ -34,11 +34,11 @@ Three complementary views, switch anytime:
 
 **Organized by topic/category:**
 
-- ✓ Guides
-- ✓ Architecture
-- ✓ Code Quality
-- ✓ Reference
-- ✓ Project
+- Guides
+- Architecture
+- Code Quality
+- Reference
+- Project
 
 **Each column shows:**
 - Issue count badge
@@ -60,7 +60,7 @@ Three complementary views, switch anytime:
 **Inspired by GitHub Projects — Status-based workflow:**
 
 ```
-┌─ Not Started ─┬─ In Progress ─┬─ In Review ─┬─ Done ─┐
+┌─ Not Started ─┬─In Progress─┬─ In Review ─┬─ Done ─┐
 │      5        │       2       │      1      │   12   │
 ├───────────────┼──────────────┼────────────┼────────┤
 │ #108: SRP...  │ #109: SRP... │ #104: ...  │ #100:  │
@@ -159,8 +159,8 @@ The Projects view automatically maps documentation status to workflow stages:
 | Doc Status | Projects Column | Color |
 |-----------|-----------------|-------|
 | `draft` | Not Started | Blue |
-| `review` | In Review | 🟡 Yellow |
-| `published` | Done | 🟢 Green |
+| `review` | In Review | Medium Yellow |
+| `published` | Done | Low Green |
 | (none) | Not Started | ⚫ Gray |
 
 ---
@@ -246,7 +246,7 @@ src/
 - `getIssuesByCategory(issues)` — Group by category
 
 **Exported Types:**
-- `DocSection` — Complete issue interface
+- `DocSection` —Completeissue interface
 
 ---
 
@@ -289,22 +289,22 @@ const issueMetadata = {
 ## Benefits
 
 ### For Documentation
-- ✅ Visual project status at a glance
-- ✅ Timeline understanding
-- ✅ Clear workflow state
-- ✅ Organized by topic AND status
+-  Visual project status at a glance
+-  Timeline understanding
+-  Clear workflow state
+-  Organized by topic AND status
 
 ### For Project Management
-- ✅ Sprint planning with calendar
-- ✅ Workflow visualization
-- ✅ Assignee tracking
-- ✅ Progress metrics
+-  Sprint planning with calendar
+-  Workflow visualization
+-  Assignee tracking
+-  Progress metrics
 
 ### For Team Communication
-- ✅ Everyone sees same view
-- ✅ Clear status indicators
-- ✅ Timeline transparency
-- ✅ Multiple perspectives (topic, status, time)
+-  Everyone sees same view
+-  Clear status indicators
+-  Timeline transparency
+-  Multiple perspectives (topic, status, time)
 
 ---
 

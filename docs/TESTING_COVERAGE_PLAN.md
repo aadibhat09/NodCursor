@@ -603,20 +603,20 @@ test('cursor animation is smooth at 60fps', () => { /* ... */ })
 
 | Module | Target | Current | Test Files | Priority |
 |---|---|---|---|---|
-| **utils/calibration/** | 90% | 0% | mapToViewport.test.ts | 🔴 High |
-| **utils/smoothing/** | 85% | 0% | kalmanFilter.test.ts, exponential.test.ts | 🔴 High |
-| **utils/gestureDetection/** | 88% | 0% | eyeAspectRatio.test.ts | 🔴 High |
-| **utils/ml/** | 75% | 0% | adaptiveLightLearner.test.ts | 🟡 Medium |
-| **utils/voiceProfile.ts** | 80% | 0% | voiceProfile.test.ts | 🟡 Medium |
-| **hooks/useFaceTracking.ts** | 70% | 0% | useFaceTracking.test.ts | 🔴 High |
-| **hooks/useGestureControls.ts** | 75% | 0% | useGestureControls.test.ts | 🔴 High |
-| **hooks/useSmoothCursor.ts** | 75% | 0% | useSmoothCursor.test.ts | 🔴 High |
-| **hooks/useCursorMapping.ts** | 80% | 0% | useCursorMapping.test.ts | 🟡 Medium |
-| **components/CursorOverlay/** | 80% | 0% | CursorOverlay.test.tsx | 🟡 Medium |
-| **components/SettingsPanel/** | 70% | 0% | SettingsPanel.test.tsx | 🟡 Medium |
-| **components/GestureIndicators/** | 65% | 0% | GestureIndicators.test.tsx | 🟢 Low |
-| **context/AppContext.tsx** | 60% | 0% | AppContext.test.tsx | 🟡 Medium |
-| **pages/** | 40% | 0% | Page integration tests | 🟢 Low |
+| **utils/calibration/** | 90% | 0% | mapToViewport.test.ts | High High |
+| **utils/smoothing/** | 85% | 0% | kalmanFilter.test.ts, exponential.test.ts | High High |
+| **utils/gestureDetection/** | 88% | 0% | eyeAspectRatio.test.ts | High High |
+| **utils/ml/** | 75% | 0% | adaptiveLightLearner.test.ts | Medium Medium |
+| **utils/voiceProfile.ts** | 80% | 0% | voiceProfile.test.ts | Medium Medium |
+| **hooks/useFaceTracking.ts** | 70% | 0% | useFaceTracking.test.ts | High High |
+| **hooks/useGestureControls.ts** | 75% | 0% | useGestureControls.test.ts | High High |
+| **hooks/useSmoothCursor.ts** | 75% | 0% | useSmoothCursor.test.ts | High High |
+| **hooks/useCursorMapping.ts** | 80% | 0% | useCursorMapping.test.ts | Medium Medium |
+| **components/CursorOverlay/** | 80% | 0% | CursorOverlay.test.tsx | Medium Medium |
+| **components/SettingsPanel/** | 70% | 0% | SettingsPanel.test.tsx | Medium Medium |
+| **components/GestureIndicators/** | 65% | 0% | GestureIndicators.test.tsx | Low Low |
+| **context/AppContext.tsx** | 60% | 0% | AppContext.test.tsx | Medium Medium |
+| **pages/** | 40% | 0% | Page integration tests | Low Low |
 
 **Total Target:** >50% overall coverage (preferably 55-65%)
 
@@ -791,12 +791,12 @@ expect(duration).toBeLessThan(5) // Max 5ms per frame
 
 Each test must:
 
-- ✅ Be **independent** (no test depends on another's result)
-- ✅ Be **deterministic** (same input → same output always)
-- ✅ Be **focused** (one concept per test)
-- ✅ Have **clear assertions** (specific expected values)
-- ✅ Be **fast** (unit tests <100ms, integration <500ms)
-- ✅ Have **meaningful names** (describe behavior, not implementation)
+-  Be **independent** (no test depends on another's result)
+-  Be **deterministic** (same input → same output always)
+-  Be **focused** (one concept per test)
+-  Have **clear assertions** (specific expected values)
+-  Be **fast** (unit tests <100ms, integration <500ms)
+-  Have **meaningful names** (describe behavior, not implementation)
 
 Example of good test name:
 ```typescript

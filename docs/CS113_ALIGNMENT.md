@@ -44,54 +44,54 @@ A browser-based, privacy-first application that transforms head movements and fa
 
 ## CS113 Learning Objectives Alignment
 
-### ✅ Data Structures
+###  Data Structures
 
 | Learning Objective | Implementation | Evidence | Status |
 |---|---|---|---|
-| **Collections (Arrays/Lists)** | Face landmark arrays, gesture history buffers | [useFaceTracking.ts](../src/hooks/useFaceTracking.ts#L50-L80), [GestureIndicators.tsx](../src/components/GestureIndicators/GestureIndicators.tsx) | ✓ Implemented |
-| **Maps/Dictionaries** | Settings management, calibration data, gesture mappings | [AppContext.tsx](../src/context/AppContext.tsx), [useGestureControls.ts](../src/hooks/useGestureControls.ts#L15-L30) | ✓ Implemented |
-| **Sets** | Unique camera device tracking, unique gesture types | [useCameraDevices.ts](../src/hooks/useCameraDevices.ts), gesture Set in controls | ✓ Implemented |
-| **Stacks/Queues** | Smoothing pipeline buffers (fixed-size circular queues) | [advancedSmoothing.ts](../src/utils/smoothing/advancedSmoothing.ts) | ✓ Implemented |
-| **Trees** | Project documentation hierarchy, calendar event tree | [KANBAN_BOARD.md](./KANBAN_BOARD.md), [useProjectView.ts](../src/hooks/useProjectView.ts) | ✓ Implemented |
-| **Graphs** | User gesture → action mapping graph, face landmark network | [GestureIndicators.tsx](../src/components/GestureIndicators/GestureIndicators.tsx), MediaPipe adjacency | ✓ Implemented |
+| **Collections (Arrays/Lists)** | Face landmark arrays, gesture history buffers | [useFaceTracking.ts](../src/hooks/useFaceTracking.ts#L50-L80), [GestureIndicators.tsx](../src/components/GestureIndicators/GestureIndicators.tsx)  Implemented |
+| **Maps/Dictionaries** | Settings management, calibration data, gesture mappings | [AppContext.tsx](../src/context/AppContext.tsx), [useGestureControls.ts](../src/hooks/useGestureControls.ts#L15-L30)  Implemented |
+| **Sets** | Unique camera device tracking, unique gesture types | [useCameraDevices.ts](../src/hooks/useCameraDevices.ts), gesture Set in controls  Implemented |
+| **Stacks/Queues** | Smoothing pipeline buffers (fixed-size circular queues) | [advancedSmoothing.ts](../src/utils/smoothing/advancedSmoothing.ts)  Implemented |
+| **Trees** | Project documentation hierarchy, calendar event tree | [KANBAN_BOARD.md](./KANBAN_BOARD.md), [useProjectView.ts](../src/hooks/useProjectView.ts)  Implemented |
+| **Graphs** | User gesture → action mapping graph, face landmark network | [GestureIndicators.tsx](../src/components/GestureIndicators/GestureIndicators.tsx), MediaPipe adjacency  Implemented |
 
-### ✅ Algorithms
+###  Algorithms
 
 | Learning Objective | Implementation | Evidence | Complexity | Status |
 |---|---|---|---|---|
-| **Searching** | Binary search for calibration points, gesture recognition matching | [mapToViewport.ts](../src/utils/calibration/mapToViewport.ts) | O(log n) | ✓ Implemented |
-| **Sorting** | Sort cameras by device name, sort gestures by confidence | [useCameraDevices.ts](../src/hooks/useCameraDevices.ts#L20) | O(n log n) | ✓ Implemented |
-| **Hashing** | Voice profile fingerprinting, settings hash validation | [voiceProfile.ts](../src/utils/voiceProfile.ts#L45-L70) | O(1) average | ✓ Implemented |
-| **Custom Algorithms** | Kalman filtering for smoothing, adaptive light learning | [kalmanFilter.ts](../src/utils/smoothing/kalmanFilter.ts), [adaptiveLightLearner.ts](../src/utils/ml/adaptiveLightLearner.ts) | O(n) | ✓ Implemented |
+| **Searching** | Binary search for calibration points, gesture recognition matching | [mapToViewport.ts](../src/utils/calibration/mapToViewport.ts) | O(log n)  Implemented |
+| **Sorting** | Sort cameras by device name, sort gestures by confidence | [useCameraDevices.ts](../src/hooks/useCameraDevices.ts#L20) | O(n log n)  Implemented |
+| **Hashing** | Voice profile fingerprinting, settings hash validation | [voiceProfile.ts](../src/utils/voiceProfile.ts#L45-L70) | O(1) average  Implemented |
+| **Custom Algorithms** | Kalman filtering for smoothing, adaptive light learning | [kalmanFilter.ts](../src/utils/smoothing/kalmanFilter.ts), [adaptiveLightLearner.ts](../src/utils/ml/adaptiveLightLearner.ts) | O(n)  Implemented |
 
-### ✅ Object-Oriented Design
+###  Object-Oriented Design
 
 | OOP Principle | Implementation | Evidence | Status |
 |---|---|---|---|
-| **Abstraction** | Hook-based abstraction for complex logic (useFaceTracking, useSmoothCursor) | [src/hooks/](../src/hooks/) directory | ✓ Implemented |
-| **Encapsulation** | Private component state, public props interface | [React components](../src/components/) use TypeScript interfaces | ✓ Implemented |
-| **Inheritance** | Page component hierarchy, settings inheritance | [pages/](../src/pages/) structure | ✓ Implemented |
-| **Polymorphism** | Gesture handlers with multiple implementations | [useGestureControls.ts](../src/hooks/useGestureControls.ts) handlers | ✓ Implemented |
-| **Design Patterns** | Hooks pattern, Context API, Strategy pattern | [src/hooks/](../src/hooks/), [src/context/](../src/context/) | ✓ Implemented |
+| **Abstraction** | Hook-based abstraction for complex logic (useFaceTracking, useSmoothCursor) | [src/hooks/](../src/hooks/) directory  Implemented |
+| **Encapsulation** | Private component state, public props interface | [React components](../src/components/) use TypeScript interfaces  Implemented |
+| **Inheritance** | Page component hierarchy, settings inheritance | [pages/](../src/pages/) structure  Implemented |
+| **Polymorphism** | Gesture handlers with multiple implementations | [useGestureControls.ts](../src/hooks/useGestureControls.ts) handlers  Implemented |
+| **Design Patterns** | Hooks pattern, Context API, Strategy pattern | [src/hooks/](../src/hooks/), [src/context/](../src/context/)  Implemented |
 
-### ✅ Software Development Practices
-
-| Practice | Implementation | Evidence | Status |
-|---|---|---|---|
-| **Version Control** | Git branching, conventional commits, pull requests | [CONTRIBUTING.md](../CONTRIBUTING.md), commit history | ✓ In Progress |
-| **Testing** | Unit tests, integration tests, component tests | [tests/](../tests/) (to be created) | 🔄 Sprint 9 |
-| **Build Tools** | Vite build system, TypeScript compilation, Tailwind CSS | [vite.config.ts](../vite.config.ts), [package.json](../package.json) | ✓ Implemented |
-| **Debugging** | VS Code debugger, React DevTools, MediaPipe debug visualization | [CameraView.tsx](../src/components/CameraView/CameraView.tsx) | ✓ Implemented |
-| **Documentation** | Inline comments, JSDoc, architecture documentation | [docs/](./), component comments | ✓ In Progress |
-
-### ✅ Deployment Practices
+###  Software Development Practices
 
 | Practice | Implementation | Evidence | Status |
 |---|---|---|---|
-| **Docker** | Containerized build and runtime | `Dockerfile`, `docker-compose.yml` | 🔄 Sprint 9 |
-| **DNS Configuration** | Custom domain setup with proper records | Domain configuration | 🔄 Sprint 9 |
-| **nginx** | Reverse proxy and static file serving | `nginx.conf` | 🔄 Sprint 9 |
-| **CI/CD** | Automated testing and deployment pipeline | GitHub Actions workflow | 🔄 Sprint 9 |
+| **Version Control** | Git branching, conventional commits, pull requests | [CONTRIBUTING.md](../CONTRIBUTING.md), commit history  In Progress |
+| **Testing** | Unit tests, integration tests, component tests | [tests/](../tests/) (to be created) |In ProgressSprint 9 |
+| **Build Tools** | Vite build system, TypeScript compilation, Tailwind CSS | [vite.config.ts](../vite.config.ts), [package.json](../package.json)  Implemented |
+| **Debugging** | VS Code debugger, React DevTools, MediaPipe debug visualization | [CameraView.tsx](../src/components/CameraView/CameraView.tsx)  Implemented |
+| **Documentation** | Inline comments, JSDoc, architecture documentation | [docs/](./), component comments  In Progress |
+
+###  Deployment Practices
+
+| Practice | Implementation | Evidence | Status |
+|---|---|---|---|
+| **Docker** | Containerized build and runtime | `Dockerfile`, `docker-compose.yml` |In ProgressSprint 9 |
+| **DNS Configuration** | Custom domain setup with proper records | Domain configuration |In ProgressSprint 9 |
+| **nginx** | Reverse proxy and static file serving | `nginx.conf` |In ProgressSprint 9 |
+| **CI/CD** | Automated testing and deployment pipeline | GitHub Actions workflow |In ProgressSprint 9 |
 
 ---
 
@@ -419,11 +419,11 @@ interface GestureHandlers {
 
 ### Design Patterns
 
-**[✓] Strategy Pattern**: Smoothing algorithms (Kalman, Exponential, Advanced)  
-**[✓] Factory Pattern**: Camera device initialization  
-**[✓] Observer Pattern**: Context API for settings changes  
-**[✓] Adapter Pattern**: MediaPipe → Internal coordinate systems  
-**[✓] Template Method**: Page component lifecycle  
+**[IMPLEMENTED] Strategy Pattern**: Smoothing algorithms (Kalman, Exponential, Advanced)  
+**[IMPLEMENTED] Factory Pattern**: Camera device initialization  
+**[IMPLEMENTED] Observer Pattern**: Context API for settings changes  
+**[IMPLEMENTED] Adapter Pattern**: MediaPipe → Internal coordinate systems  
+**[IMPLEMENTED] Template Method**: Page component lifecycle  
 
 ---
 
@@ -618,11 +618,11 @@ Users can:
 
 ### Ethical Considerations
 
-**Privacy**: ✓ All face tracking happens locally  
-**Security**: ✓ No data storage, no backend required  
-**Accessibility**: ✓ High contrast UI, keyboard navigation for demos  
-**Inclusivity**: ✓ Supports multiple languages, customizable  
-**Equity**: ✓ Free and open-source, no subscription  
+**Privacy**: All face tracking happens locally  
+**Security**: No data storage, no backend required  
+**Accessibility**: High contrast UI, keyboard navigation for demos  
+**Inclusivity**: Supports multiple languages, customizable  
+**Equity**: Free and open-source, no subscription  
 
 ---
 
@@ -672,14 +672,14 @@ Users can:
 
 | CS113 Objective | Evidence | Status |
 |---|---|---|
-| Data Structures | 6+ applied (Arrays, Maps, Sets, Stacks, Trees, Graphs) | ✓ Complete |
-| Algorithms | 4 categories implemented (Search, Sort, Hash, Custom) | ✓ Complete |
-| OOP Design | Abstraction, Encapsulation, Inheritance, Polymorphism | ✓ Complete |
-| Software Dev | Version control, testing, debugging, documentation | ✓ In Progress |
-| Deployment | Docker, DNS, nginx, CI/CD | 🔄 Sprint 9 |
-| Blog Portfolio | Design, code, contributions, testing, deployment | 🔄 Sprint 9 |
-| Real-world Problem | Accessibility for disabled users, open-source solution | ✓ Clear |
-| Ethical Design | Privacy, security, accessibility, equity | ✓ Addressed |
+| Data Structures | 6+ applied (Arrays, Maps, Sets, Stacks, Trees, Graphs) |Complete|
+| Algorithms | 4 categories implemented (Search, Sort, Hash, Custom) |Complete|
+| OOP Design | Abstraction, Encapsulation, Inheritance, Polymorphism |Complete|
+| Software Dev | Version control, testing, debugging, documentation  In Progress |
+| Deployment | Docker, DNS, nginx, CI/CD |In ProgressSprint 9 |
+| Blog Portfolio | Design, code, contributions, testing, deployment |In ProgressSprint 9 |
+| Real-world Problem | Accessibility for disabled users, open-source solution | Clear |
+| Ethical Design | Privacy, security, accessibility, equity | Addressed |
 
 ---
 
@@ -702,7 +702,7 @@ Users can:
 
 4. **Final (Week 36):**
    - [ ] Prepare presentation materials
-   - [ ] Complete LinkedIn profile
+   - [ ]CompleteLinkedIn profile
    - [ ] Final code review and polish
 
 ---

@@ -10,13 +10,13 @@ Complete guide to all NodCursor documentation, organized by topic.
 
 ## Quick Links for CS113 Capstone
 
-### 🎓 **CS113 Competency Evidence** (START HERE)
-- [**CS113_ALIGNMENT.md**](CS113_ALIGNMENT.md) — Complete alignment of project to CS113 learning objectives
+### CS113 Competency Evidence** (START HERE)
+- [**CS113_ALIGNMENT.md**](CS113_ALIGNMENT.md) —Complete alignment of project to CS113 learning objectives
 - [**TESTING_COVERAGE_PLAN.md**](TESTING_COVERAGE_PLAN.md) — Testing strategy and code coverage goals (>50% target)
 - [**BLOG_PORTFOLIO_GUIDE.md**](BLOG_PORTFOLIO_GUIDE.md) — Blog portfolio requirements and templates
 - [**SPRINT9_CHECKPOINTS.md**](SPRINT9_CHECKPOINTS.md) — Sprint 9 milestone issues and deliverables
 
-### 💼 **For Interviews & Portfolios**
+### For Interviews & Portfolios**
 - Blog Portfolio Guide: Design documents, code explanations, testing evidence
 - GitHub Profile: Organized repos, detailed commit history, clear PRs
 - LinkedIn Profile Setup: Featured project description and accomplishments
@@ -148,11 +148,11 @@ Complete guide to all NodCursor documentation, organized by topic.
 - Ethical considerations and social relevance
 
 **Coverage:** 
-- ✅ 6 data structures with evidence and complexity analysis
-- ✅ 4 algorithm categories implemented with O() notation
-- ✅ Complete OOP principles demonstrated
-- ✅ Deployment strategy documented
-- ✅ Blog requirements included
+-  6 data structures with evidence and complexity analysis
+-  4 algorithm categories implemented with O() notation
+- CompleteOOP principles demonstrated
+-  Deployment strategy documented
+-  Blog requirements included
 
 **Read this if:** You need to understand how NodCursor meets CS113 requirements or need evidence for college credit articulation.
 
@@ -248,14 +248,14 @@ Complete guide to all NodCursor documentation, organized by topic.
 - Week 36: Checkpoint 4 + finalization
 
 **Deliverables:**
-- ✅ Working application with smooth gesture control
-- ✅ >50% code coverage
-- ✅ WCAG AA accessibility compliance
-- ✅ Live deployment at custom domain
-- ✅ Blog portfolio published
-- ✅ GitHub clean commit history
-- ✅ LinkedIn profile complete
-- ✅ Individual demo to instructor
+-  Working application with smooth gesture control
+-  >50% code coverage
+-  WCAG AA accessibility compliance
+-  Live deployment at custom domain
+-  Blog portfolio published
+-  GitHub clean commit history
+-  LinkedIn profile complete
+-  Individual demo to instructor
 
 **Read this if:** You need to know Sprint 9 milestones, GitHub issue templates, or project timeline.
 

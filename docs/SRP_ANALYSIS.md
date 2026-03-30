@@ -187,21 +187,21 @@ When writing new code, watch for these SRP violations:
 - No breaking changes
 - Improves testability immediately
 - Enables code reuse
-- **Effort: ⭐⭐**
+- **Effort: **
 
-### ⭐ **Phase 2: Long-term Foundation** (3-4 weeks)
+###  **Phase 2: Long-term Foundation** (3-4 weeks)
 **Split `AppContext` into multiple contexts**
 - Enables more granular re-render control
 - Better TypeScript types
 - Clearer separation of concerns
-- **Effort: ⭐⭐⭐**
+- **Effort: **
 
 ###  **Phase 3: Nice-to-Have** (1-2 weeks)
 **Decompose `SettingsPanel`**
 - Better maintainability
 - Easier testing
 - Not critical path
-- **Effort: ⭐⭐**
+- **Effort: **
 
 ---
 

@@ -146,8 +146,8 @@ gantt
 
 | # | Title | Priority | Assignee | Status |
 |---|-------|----------|----------|--------|
-| [SRP-1](#srp-1-split-usefacetrackingts) | SRP: Split `useFaceTracking.ts` into focused hooks |  ASAP | @aadibhat09 |  In Progress |
-| [SRP-2](#srp-2-decompose-settingspaneltsx) | SRP: Decompose `SettingsPanel.tsx` into sub-components |  ASAP | @SanPranav |  In Progress |
+| [SRP-1](#srp-1-split-usefacetrackingts) | SRP: Split `useFaceTracking.ts` into focused hooks |  ASAP | @aadibhat09 | In Progress|
+| [SRP-2](#srp-2-decompose-settingspaneltsx) | SRP: Decompose `SettingsPanel.tsx` into sub-components |  ASAP | @SanPranav | In Progress|
 | [SRP-3](#srp-3-extract-gesturecontrols-logic) | SRP: Extract gesture dispatch from `useGestureControls.ts` |  ASAP | @aadibhat09 |  To Do |
 | [SRP-4](#srp-4-refactor-gamespagetsxo) | SRP: Refactor `GamesPage.tsx` - separate game logic from UI |  This Sprint | @SanPranav |  To Do |
 | [SRP-5](#srp-5-separate-appcontext-concerns) | SRP: Separate `AppContext.tsx` concerns |  This Sprint | @aadibhat09 |  To Do |

@@ -154,11 +154,11 @@ Each auto-generated commit issue includes:
 │                        │
 │ #200: [docs] Add KB    │
 │ Author: @SanPranav     │
-│ Status: ✅ Completed   │
+│ Status:  Completed   │
 │                        │
 │ #201: [refactor] ...   │
 │ Author: @aadibhat09    │
-│ Status: ✅ Completed   │
+│ Status:  Completed   │
 │                        │
 └────────────────────────┘
 ```
@@ -168,22 +168,22 @@ Each auto-generated commit issue includes:
 ## Benefits
 
 ### For Developers
-- ✅ No manual issue creation needed
-- ✅ Focus on code, tracking is automatic
-- ✅ Clear commit history tied to issues
-- ✅ Issues are always in sync with code
+-  No manual issue creation needed
+-  Focus on code, tracking is automatic
+-  Clear commit history tied to issues
+-  Issues are always in sync with code
 
 ### For Project Managers
-- ✅ Complete project audit trail
-- ✅ No gaps in tracking
-- ✅ Accurate timeline of changes
-- ✅ Can see what was implemented and when
+- Completeproject audit trail
+-  No gaps in tracking
+-  Accurate timeline of changes
+-  Can see what was implemented and when
 
 ### For Team Communication
-- ✅ Everyone sees what's being worked on
-- ✅ Clear assignee from commit author
-- ✅ Timestamp shows when work was done
-- ✅ Categories help understand change types
+-  Everyone sees what's being worked on
+-  Clear assignee from commit author
+-  Timestamp shows when work was done
+-  Categories help understand change types
 
 ---
 
@@ -249,9 +249,9 @@ function generateCommitIssues(
 ## Future Enhancements
 
 ### Phase 1 (Current)
-- ✅ Parse conventional commits
-- ✅ Generate CommitIssue objects
-- ✅ Display in kanban board
+-  Parse conventional commits
+-  Generate CommitIssue objects
+-  Display in kanban board
 
 ### Phase 2
 - Real git history integration

@@ -82,7 +82,7 @@ Your blog portfolio is the **central narrative** of your CS113 capstone project.
 
 ## My Contribution
 - [Your specific roles and responsibilities]
-- Implemented gesture recognition pipeline
+-Implementedgesture recognition pipeline
 - Optimized Kalman filter for real-time smoothing
 - Built comprehensive test suite
 
@@ -188,7 +188,7 @@ Your blog portfolio is the **central narrative** of your CS113 capstone project.
 
 ### Challenge 2: Lighting Variation
 **Problem**: Face detection fails in low light or backlighting
-**Solution**: Implemented AdaptiveLightLearner for dynamic threshold adjustment
+**Solution**:ImplementedAdaptiveLightLearner for dynamic threshold adjustment
 **Result**: Works across 50-500 lux range
 ```
 
@@ -709,7 +709,7 @@ Steps:
 ## Contribution Areas
 
 ### Area 1: Gesture Recognition Pipeline
-- Implemented eye aspect ratio calculation
+-Implementedeye aspect ratio calculation
 - Built gesture debouncing system
 - Added gesture confidence scoring
 
@@ -717,13 +717,13 @@ Steps:
 **Commits**: 12 total, 2000 lines modified  
 **Key Challenges**: 
 - Getting EAR thresholds right across different face shapes
-- Solution: Implemented adaptive threshold calculation based on eye openness history
+- Solution:Implementedadaptive threshold calculation based on eye openness history
 
 [Show before/after code]
 
 ### Area 2: Smoothing Algorithm Optimization
 - Diagnosed 180ms input lag
-- Implemented Kalman filter
+-ImplementedKalman filter
 - Reduced latency to <100ms
 
 **PR**: #61 (Kalman Filter Implementation)  
@@ -1110,8 +1110,8 @@ Fixes #61
 ## Social Impact Goals (2026+)
 
 ### Short Term (2026)
-- ✅ Demonstrated working prototype
-- ✅ Real feedback from accessibility community
+-  Demonstrated working prototype
+-  Real feedback from accessibility community
 - [ ] First 100 users testing in production
 - [ ] Blog documentation widely shared
 
@@ -1130,11 +1130,11 @@ Fixes #61
 ## Accessibility Standards Met
 
 ### WCAG 2.1 Compliance
-- ✅ Level AA (Perceivable, Operable, Understandable, Robust)
-- ✅ High contrast mode
-- ✅ Keyboard accessible
-- ✅ Screen reader compatible
-- ✅ Captions/transcripts available
+-  Level AA (Perceivable, Operable, Understandable, Robust)
+-  High contrast mode
+-  Keyboard accessible
+-  Screen reader compatible
+-  Captions/transcripts available
 
 ### Universal Design Principles
 - Equitable use
@@ -1232,10 +1232,10 @@ Over the past 12 weeks, I built **NodCursor** — a browser-based head-tracking 
 ## Key Learning Outcomes
 
 ### Computer Science Fundamentals
-- ✅ Implemented 6 data structures (Arrays, Maps, Sets, Stacks, Trees, Graphs)
-- ✅ Applied 4 algorithm categories (Search, Sort, Hash, Custom)
-- ✅ Mastered OOP principles (Abstraction, Encapsulation, Inheritance, Polymorphism)
-- ✅ Professional software development practices (Git, Testing, CI/CD)
+- Implemented6 data structures (Arrays, Maps, Sets, Stacks, Trees, Graphs)
+-  Applied 4 algorithm categories (Search, Sort, Hash, Custom)
+-  Mastered OOP principles (Abstraction, Encapsulation, Inheritance, Polymorphism)
+-  Professional software development practices (Git, Testing, CI/CD)
 
 ### Technical Growth
 - Went from "what's Kalman filter?" to successfully implementing one
@@ -1312,10 +1312,10 @@ If this project resonates with you:
 **This blog portfolio demonstrates my CS113 competency in Data Structures, Algorithms, Software Development, Testing, and Deployment. My capstone project addresses a real-world accessibility problem with professional software engineering practices.**
 
 **Next Steps for CS113 Credit:**
-- ✅ Blog portfolio published: [your-blog-url.com](https://your-blog-url.com)
-- ✅ LinkedIn profile updated: [linkedin.com/in/yourname](https://linkedin.com/in/yourname)
-- ✅ GitHub repository with contributions visible: [github.com/username/NodCursor](https://github.com/username/NodCursor)
-- ✅ Live demo deployed: [nodcursor.example.com](https://nodcursor.example.com)
+-  Blog portfolio published: [your-blog-url.com](https://your-blog-url.com)
+-  LinkedIn profile updated: [linkedin.com/in/yourname](https://linkedin.com/in/yourname)
+-  GitHub repository with contributions visible: [github.com/username/NodCursor](https://github.com/username/NodCursor)
+-  Live demo deployed: [nodcursor.example.com](https://nodcursor.example.com)
 
 ---
 
@@ -1366,7 +1366,7 @@ If this project resonates with you:
 **Explanation:** [2-3 sentences explaining what this code does and why it matters]
 
 **Complexity:** O(n) time, O(n) space  
-**Status:** ✅ Complete / 🔄 In Progress / ❌ Issue
+**Status:** Complete/In ProgressIn Progress /  Issue
 ```
 
 ---
@@ -1411,8 +1411,8 @@ If this project resonates with you:
 
 ### Tone
 - **Professional but personable**
-  - ❌ "I will implement features"
-  - ✅ "I implemented a Kalman filter, which reduced latency from 180ms to 100ms"
+  -  "I will implement features"
+  -  "I implemented a Kalman filter, which reduced latency from 180ms to 100ms"
 
 ### Structure
 - Start with **problem** or **question**
@@ -1433,10 +1433,10 @@ If this project resonates with you:
 - Show your research process
 
 ### Honesty
-- ✅ Discuss challenges and how you overcame them
-- ✅ Acknowledge limitations
-- ✅ Show what you learned
-- ❌ Don't hide failures; frame as learning
+-  Discuss challenges and how you overcame them
+-  Acknowledge limitations
+-  Show what you learned
+-  Don't hide failures; frame as learning
 
 ---
 
@@ -1449,7 +1449,7 @@ If this project resonates with you:
 | **GitHub Pages** | Free, version controlled, integrated with GitHub | Limited customization, no CMS | Developer portfolio |
 | **Medium** | Large audience, built-in distribution | Limited customization, owned by Medium | Reach and audience |
 | **Hashnode** | Developer-focused, good analytics, free | Growing platform (less established) | Developer audience |
-| **Personal Blog** | Complete control, custom domain | More setup required, hosting costs | Professional branding |
+| **Personal Blog** |Completecontrol, custom domain | More setup required, hosting costs | Professional branding |
 | **Dev.to** | Developer community, free, good reach | Limited customization | Community engagement |
 
 ### GitHub Pages Setup (Recommended)
