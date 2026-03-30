@@ -2,6 +2,25 @@
 
 Complete guide to all NodCursor documentation, organized by topic.
 
+**Last Updated:** March 29, 2026  
+**Sprint:** 9 (Finals Week)  
+**Status:** CS113 Alignment Complete
+
+---
+
+## Quick Links for CS113 Capstone
+
+### 🎓 **CS113 Competency Evidence** (START HERE)
+- [**CS113_ALIGNMENT.md**](CS113_ALIGNMENT.md) — Complete alignment of project to CS113 learning objectives
+- [**TESTING_COVERAGE_PLAN.md**](TESTING_COVERAGE_PLAN.md) — Testing strategy and code coverage goals (>50% target)
+- [**BLOG_PORTFOLIO_GUIDE.md**](BLOG_PORTFOLIO_GUIDE.md) — Blog portfolio requirements and templates
+- [**SPRINT9_CHECKPOINTS.md**](SPRINT9_CHECKPOINTS.md) — Sprint 9 milestone issues and deliverables
+
+### 💼 **For Interviews & Portfolios**
+- Blog Portfolio Guide: Design documents, code explanations, testing evidence
+- GitHub Profile: Organized repos, detailed commit history, clear PRs
+- LinkedIn Profile Setup: Featured project description and accomplishments
+
 ---
 
 ## Architecture & Design
@@ -115,6 +134,133 @@ Complete guide to all NodCursor documentation, organized by topic.
 
 ---
 
+## CS113 Capstone: Learning Objectives & Evidence
+
+### [CS113_ALIGNMENT.md](CS113_ALIGNMENT.md)
+**Complete CS113 learning objective alignment and evidence**
+
+- Data Structures: 6 structures implemented (Arrays, Maps, Sets, Stacks, Trees, Graphs)
+- Algorithms: Search, Sort, Hash, Custom Algorithms with Big-O analysis
+- OOP Design: Abstraction, Encapsulation, Inheritance, Polymorphism with examples
+- Software Development: Version control, testing, debugging, documentation
+- Object-Oriented Design: Design patterns (Strategy, Factory, Observer, Adapter)
+- Real-world problem statement and accessibility impact
+- Ethical considerations and social relevance
+
+**Coverage:** 
+- ✅ 6 data structures with evidence and complexity analysis
+- ✅ 4 algorithm categories implemented with O() notation
+- ✅ Complete OOP principles demonstrated
+- ✅ Deployment strategy documented
+- ✅ Blog requirements included
+
+**Read this if:** You need to understand how NodCursor meets CS113 requirements or need evidence for college credit articulation.
+
+---
+
+### [TESTING_COVERAGE_PLAN.md](TESTING_COVERAGE_PLAN.md)
+**Comprehensive testing strategy and code coverage goals**
+
+- Test infrastructure setup (Vitest configuration)
+- Unit test targets: 60% coverage on utils/
+- Integration tests: 45% coverage on hooks
+- Component tests: 40% coverage on React components
+- Critical path testing (Priority 1, 2, 3)
+- Coverage goals by module
+- Manual testing checklists
+- CI/CD integration with GitHub Actions
+- Known testing challenges and solutions
+
+**Sprint 9 Goals:**
+- [ ] Achieve >50% code coverage (target: 55%+)
+- [ ] Unit tests for critical functions
+- [ ] Integration tests for hook behaviors
+- [ ] Component tests for UI
+- [ ] CI/CD pipeline verifying every commit
+
+**Read this if:** You're implementing the testing strategy or need to know code coverage targets.
+
+---
+
+### [BLOG_PORTFOLIO_GUIDE.md](BLOG_PORTFOLIO_GUIDE.md)
+**Blog portfolio requirements and content templates**
+
+**10 Required Sections:**
+1. Project Overview — Problem + Solution narrative
+2. Design & Architecture — System diagrams and patterns
+3. Data Structures & Algorithms Deep-Dive — With Big-O analysis
+4. Object-Oriented Design — Patterns and principles
+5. Testing & Code Coverage — Strategy and results
+6. Deployment, DevOps & Release Process — Docker, DNS, CI/CD
+7. Contributions & Git History — Your individual PRs and commits
+8. Challenges & How I Overcame Them — Growth and problem-solving
+9. Personal/Social Impact — Real-world accessibility story
+10. Conclusion & Looking Forward — Reflection and future
+
+**Blog Requirements:**
+- 50+ pages of content (combined)
+- 1000-1500 words per major post
+- Architecture diagrams with visual assets
+- Code examples with syntax highlighting
+- Performance graphs and metrics
+- Interview-ready professional presentation
+- GitHub Pages, Medium, or personal blog
+
+**Publishing Plan:**
+- Post 1-2 articles per week during Sprint 9
+- Deadline: Week 36 (Finals Week)
+- Link from LinkedIn profile
+
+**Read this if:** You're writing your blog portfolio or need templates for documentation.
+
+---
+
+### [SPRINT9_CHECKPOINTS.md](SPRINT9_CHECKPOINTS.md)
+**Sprint 9 milestone tracking and GitHub issue templates**
+
+**4 Checkpoints:**
+1. **Data Backup & Restore** (Week 34) — 3 issues, 22 hours
+   - Settings export to JSON
+   - Settings import from JSON
+   - Calibration backup/restore
+
+2. **Testing & Coverage** (Week 35) — 9 issues, 80+ hours
+   - Test infrastructure setup
+   - Unit tests for critical functions
+   - Integration tests for hooks
+   - Achieve >50% code coverage
+
+3. **UI/UX Improvements** (Week 35-36) — 4 issues, 42 hours
+   - Accessibility & keyboard navigation
+   - Gesture indicator improvements
+   - Interactive tutorial/walkthrough
+   - Mobile responsiveness optimization
+
+4. **Deployment** (Week 36) — 4 issues, 30-36 hours
+   - Docker containerization
+   - nginx reverse proxy setup
+   - DNS configuration & production deploy
+   - GitHub Actions CI/CD pipeline
+
+**Weekly Schedule:**
+- Week 34: Checkpoint 1 + begin Checkpoint 2
+- Week 35: Continue Checkpoint 2, implement Checkpoint 3
+- Week 36: Checkpoint 4 + finalization
+
+**Deliverables:**
+- ✅ Working application with smooth gesture control
+- ✅ >50% code coverage
+- ✅ WCAG AA accessibility compliance
+- ✅ Live deployment at custom domain
+- ✅ Blog portfolio published
+- ✅ GitHub clean commit history
+- ✅ LinkedIn profile complete
+- ✅ Individual demo to instructor
+
+**Read this if:** You need to know Sprint 9 milestones, GitHub issue templates, or project timeline.
+
+---
+
 ## Contributing
 
 ### [../CONTRIBUTING.md](../CONTRIBUTING.md)
@@ -136,6 +282,25 @@ Complete guide to all NodCursor documentation, organized by topic.
 ---
 
 ## Quick Start Paths
+
+### *"I'm a student submitting for CS113 credit"*
+1. **Start:** [CS113_ALIGNMENT.md](CS113_ALIGNMENT.md) — Understand competency evidence
+2. **Follow:** [TESTING_COVERAGE_PLAN.md](TESTING_COVERAGE_PLAN.md) — Implement testing
+3. **Execute:** [SPRINT9_CHECKPOINTS.md](SPRINT9_CHECKPOINTS.md) — Track sprint milestones
+4. **Write:** [BLOG_PORTFOLIO_GUIDE.md](BLOG_PORTFOLIO_GUIDE.md) — Create blog portfolio
+5. **Deploy:** [CS113_ALIGNMENT.md#deployment-strategy](CS113_ALIGNMENT.md#deployment-strategy) — Live deployment
+
+**Deliverables Checklist:**
+- [ ] Data structures (6+) documented with complexity analysis
+- [ ] Algorithms (4 categories) implemented with Big-O notation
+- [ ] OOP principles (4) demonstrated in code
+- [ ] >50% code coverage achieved
+- [ ] Blog portfolio published (10 sections)
+- [ ] Live deployment at custom domain
+- [ ] LinkedIn profile completed
+- [ ] Individual demo prepared
+
+---
 
 ### *"I'm new and want to understand the codebase"*
 1. Start: [WHY_WE_STARTED.md](WHY_WE_STARTED.md) — Understand the mission
@@ -166,6 +331,15 @@ Complete guide to all NodCursor documentation, organized by topic.
 2. Check: [API.md](API.md) — Existing APIs you can use
 3. Test: [../CONTRIBUTING.md](../CONTRIBUTING.md#testing-guidelines) — Testing checklist
 4. Verify: [ACCESSIBILITY_GUIDE.md](ACCESSIBILITY_GUIDE.md) — Accessibility requirements
+
+---
+
+### *"I'm implementing testing"*
+1. Review: [TESTING_COVERAGE_PLAN.md](TESTING_COVERAGE_PLAN.md) — Testing strategy
+2. Setup: Test infrastructure and mocks
+3. Implement: Unit → Integration → Component tests
+4. Track: Coverage goals by module
+5. Verify: >50% coverage achieved
 
 ---
 
