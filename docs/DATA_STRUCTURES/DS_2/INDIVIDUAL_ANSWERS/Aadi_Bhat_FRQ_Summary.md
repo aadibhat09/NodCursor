@@ -195,11 +195,11 @@ for (int i = 0; i < digitList.size() - 1; i++) {
 
 ### My Code Quality Checklist (From FRQ Lessons)
 
-✅ **Boundary checks:** Tested with 0, 1, and max values  
-✅ **No side effects:** Filters return new arrays, data unchanged  
-✅ **Preconditions first:** Check state validity BEFORE mutations  
-✅ **Clear encapsulation:** Private fields with getter methods  
-✅ **Order matters:** Gather data → Transform → Decide → Act
+**Boundary checks:** Tested with 0, 1, and max values  
+**No side effects:** Filters return new arrays, data unchanged  
+**Preconditions first:** Check state validity BEFORE mutations  
+**Clear encapsulation:** Private fields with getter methods  
+**Order matters:** Gather data → Transform → Decide → Act
 
 ---
 
@@ -226,12 +226,12 @@ When Pranav tracks 468 face landmarks efficiently (FRQ array mastery), he's pass
 
 ## Part 6: Achievement Summary & Growth Arc
 
-✅ **14+ weeks of FRQ instruction** → From "crash on edge cases" to "bulletproof boundary checks"  
-✅ **4 major FRQ assignments** → Each taught a different lesson I now apply daily in NodCursor  
-✅ **From struggle to mastery** → Decimal precision confusion (FRQ 1) → Clean decimal ranges (Final Settings)  
-✅ **State machine expertise** → Feeder simulation → Dwell detection accuracy  
-✅ **Functional programming habits** → WordChecker immutability → React-safe settings mutations  
-✅ **Real-world debugging** → Off-by-one errors → Rigorous boundary testing  
+**14+ weeks of FRQ instruction** → From "crash on edge cases" to "bulletproof boundary checks"  
+**4 major FRQ assignments** → Each taught a different lesson I now apply daily in NodCursor  
+**From struggle to mastery** → Decimal precision confusion (FRQ 1) → Clean decimal ranges (Final Settings)  
+**State machine expertise** → Feeder simulation → Dwell detection accuracy  
+**Functional programming habits** → WordChecker immutability → React-safe settings mutations  
+**Real-world debugging** → Off-by-one errors → Rigorous boundary testing  
 
 **Most Valuable Lesson:**  
 *It's not about the elegance of your code. It's about what happens when someone runs your code at 3 AM with five features enabled and poor lighting. That's when boundaries matter.*
@@ -247,7 +247,7 @@ I built an [RPN Visual Calculator](https://aadibhat09.github.io/aadi_2025/2026/0
 
 ---
 
-**Submission Status:** ✅ Complete  
+**Submission Status:** Complete  
 **Submitted:** March 29, 2026  
 **Focus:** Unique narrative style connecting struggle < understanding < mastery < impact  
 **Differentiation:** Reflexive growth story vs. Pranav's performance optimizations; both approaches needed for team success

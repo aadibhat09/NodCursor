@@ -116,11 +116,11 @@ face.landmarks.filter(mark => isConnected(landmark, mark))
 
 | Data Structure | Mastery Level | Evidence |
 |---|---|---|
-| **Arrays/1D** | 5/5 ⭐⭐⭐⭐⭐ | 7 homework assignments, mastered bounds checking |
-| **2D Arrays** | 5/5 ⭐⭐⭐⭐⭐ | Homework 2, 4, 7 deep expertise in neighbor analysis |
-| **ArrayLists** | 5/5 ⭐⭐⭐⭐⭐ | Homework 6, confident with iteration patterns |
-| **Objects/Classes** | 5/5 ⭐⭐⭐⭐⭐ | All homeworks, built 5+ hooks with encapsulation |
-| **Algorithm Design** | 5/5 ⭐⭐⭐⭐⭐ | Loop invariants verified, edge cases handled |
+| **Arrays/1D** | 5/5 | 7 homework assignments, mastered bounds checking |
+| **2D Arrays** | 5/5 | Homework 2, 4, 7 deep expertise in neighbor analysis |
+| **ArrayLists** | 5/5 | Homework 6, confident with iteration patterns |
+| **Objects/Classes** | 5/5 | All homeworks, built 5+ hooks with encapsulation |
+| **Algorithm Design** | 5/5 | Loop invariants verified, edge cases handled |
 
 ### My Individual Contribution to NodCursor
 
@@ -226,16 +226,16 @@ pie title Distribution of FRQ Lessons Applied to NodCursor
 
 ## Part 7: Summary of Achievement
 
-✅ **14+ weeks of structured FRQ instruction** → Mastered object-oriented programming  
-✅ **7 homework assignments** → Progressive complexity from basic classes to 2D array algorithms  
-✅ **3 primary DS categories** → Arrays, Collections, 2D Arrays (all scored 5/5 mastery)  
-✅ **Real-world application** → Every FRQ lesson visible in NodCursor code  
-✅ **Team teaching** → Shared loop invariants, efficiency analysis, encapsulation patterns  
-✅ **Capstone-ready** → Foundation for accessibility solution serving users with disabilities  
+**14+ weeks of structured FRQ instruction** → Mastered object-oriented programming  
+**7 homework assignments** → Progressive complexity from basic classes to 2D array algorithms  
+**3 primary DS categories** → Arrays, Collections, 2D Arrays (all scored 5/5 mastery)  
+**Real-world application** → Every FRQ lesson visible in NodCursor code  
+**Team teaching** → Shared loop invariants, efficiency analysis, encapsulation patterns  
+**Capstone-ready** → Foundation for accessibility solution serving users with disabilities  
 
 ---
 
-**Submission Status:** ✅ Complete  
+**Submission Status:** Complete  
 **Evidence Quality:** High (7 homeworks + 5 NodCursor file links + 4 Mermaid diagrams)  
 **Ready for:** Wednesday Group Discussion & Capstone Integration
 
