@@ -6,7 +6,7 @@
 
 The commit-to-issue system ensures that every code change is tracked as an issue, keeping workflow and communication in sync. When developers commit code using conventional commit format, the system automatically generates trackable issues in the kanban board.
 
-## ✨ Features
+## Features
 
 ### 1. Automatic Issue Generation
 - Git commits automatically create issues
