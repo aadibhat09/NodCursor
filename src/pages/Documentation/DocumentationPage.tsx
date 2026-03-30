@@ -12,7 +12,8 @@ import { DocSection } from '../../hooks/useProjectView';
 export type { DocSection };
 
 const markdownFiles = {
-  ...import.meta.glob('/docs/*.md', { eager: true, query: '?raw', import: 'default' }),
+  ...import.meta.glob('/docs/**/*.md', { eager: true, query: '?raw', import: 'default' }),
+  ...import.meta.glob('/docs/**/**/*.md', { eager: true, query: '?raw', import: 'default' }),
   ...import.meta.glob('/README.md', { eager: true, query: '?raw', import: 'default' }),
   ...import.meta.glob('/CONTRIBUTING.md', { eager: true, query: '?raw', import: 'default' }),
   ...import.meta.glob('/SRP_ANALYSIS.md', { eager: true, query: '?raw', import: 'default' }),
@@ -52,24 +53,22 @@ function extractSummary(content: string): string {
   return firstTextLine.slice(0, 120);
 }
 
-function categorizeDoc(fileName: string): string {
-  const name = fileName.toLowerCase();
-  if (name.includes('accessibility') || name.includes('why_we_started') || name.includes('contributing')) {
-    return 'Guides';
+function categorizeDoc(filePath: string): string {
+  const path = filePath.toLowerCase();
+  
+  // Extract folder name from path (e.g., docs/CS113_CAPSTONE/file.md → CS113_CAPSTONE)
+  const pathMatch = path.match(/^docs\/([^\/]+)\//);
+  if (pathMatch) {
+    const folder = pathMatch[1].toUpperCase();
+    if (folder.includes('CS113_CAPSTONE')) return 'CS113 Capstone';
+    if (folder.includes('ARCHITECTURE')) return 'Architecture';
+    if (folder.includes('DATA_STRUCTURES')) return 'Data Structures';
+    if (folder.includes('CODING_GUIDES')) return 'Coding Guides';
+    if (folder.includes('PROJECT_MANAGEMENT')) return 'Project Management';
   }
-  if (name.includes('design') || name.includes('data_structures') || name.includes('typing')) {
-    return 'Architecture';
-  }
-  if (name.includes('srp') || name.includes('refactor')) {
-    return 'Code Quality';
-  }
-  if (name.includes('api') || name.includes('index')) {
-    return 'Reference';
-  }
-  if (name.includes('kanban') || name.includes('auto_generated_issues') || name.includes('project_management') || name.includes('project-management')) {
-    return 'Project';
-  }
-  return 'Other';
+  
+  // All files not in docs/ subfolders are Root Files
+  return 'Root Files';
 }
 
 function getDocIcon(fileName: string): string {
@@ -143,7 +142,7 @@ const docSections: DocSection[] = Object.entries(markdownFiles)
       summary: extractSummary(content),
       sourcePath: normalizedPath,
       content,
-      category: categorizeDoc(fileName),
+      category: categorizeDoc(normalizedPath),
       issueNumber: metadata.issueNumber,
       assignees: metadata.assignees,
       status: metadata.status,
@@ -153,7 +152,7 @@ const docSections: DocSection[] = Object.entries(markdownFiles)
   })
   .sort((a, b) => a.title.localeCompare(b.title));
 
-const categoryOrder = ['Guides', 'Architecture', 'Code Quality', 'Reference', 'Project', 'Other'];
+const categoryOrder = ['Root Files', 'Architecture', 'Coding Guides', 'CS113 Capstone', 'Data Structures', 'Project Management'];
 
 function getCategorizedDocs(sections: DocSection[]): Record<string, DocSection[]> {
   const categorized: Record<string, DocSection[]> = {};
@@ -169,6 +168,55 @@ function getCategorizedDocs(sections: DocSection[]): Record<string, DocSection[]
   });
 
   return categorized;
+}
+
+interface FolderStructure {
+  folders: {
+    [folderName: string]: {
+      displayName: string;
+      docs: DocSection[];
+      isExpanded: boolean;
+    };
+  };
+  rootFiles: DocSection[];
+}
+
+function getFolderStructure(sections: DocSection[]): FolderStructure {
+  const folders: Record<string, { displayName: string; docs: DocSection[] }> = {};
+  const rootFiles: DocSection[] = [];
+
+  sections.forEach((section) => {
+    const pathMatch = section.sourcePath.match(/^docs\/([^\/]+)\//);
+    if (pathMatch) {
+      const folderName = pathMatch[1];
+      const displayName = folderName.replace(/_/g, '_').toUpperCase();
+      
+      if (!folders[folderName]) {
+        folders[folderName] = { displayName, docs: [] };
+      }
+      folders[folderName].docs.push(section);
+    } else {
+      rootFiles.push(section);
+    }
+  });
+
+  // Sort docs within each folder
+  Object.keys(folders).forEach((key) => {
+    folders[key].docs.sort((a, b) => a.title.localeCompare(b.title));
+  });
+
+  // Sort root files
+  rootFiles.sort((a, b) => a.title.localeCompare(b.title));
+
+  return {
+    folders: Object.keys(folders)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = { ...folders[key], isExpanded: false };
+        return acc;
+      }, {} as Record<string, { displayName: string; docs: DocSection[]; isExpanded: boolean }>),
+    rootFiles
+  };
 }
 
 interface DocModalProps {
@@ -287,7 +335,8 @@ export function DocumentationPage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [selectedDoc, setSelectedDoc] = useState<DocSection | null>(null);
-  const [viewMode, setViewMode] = useState<'kanban' | 'projects' | 'calendar'>('kanban');
+  const [viewMode, setViewMode] = useState<'kanban' | 'projects' | 'calendar' | 'tree'>('kanban');
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -361,6 +410,16 @@ export function DocumentationPage() {
               }`}
             >
               Calendar
+            </button>
+            <button
+              onClick={() => setViewMode('tree')}
+              className={`flex-1 rounded-md px-3 py-2 text-xs font-semibold transition ${
+                viewMode === 'tree'
+                  ? 'bg-app-accent text-app-bg'
+                  : 'border border-app-accent/30 text-app-text hover:border-app-accent'
+              }`}
+            >
+              Tree
             </button>
           </div>
         </div>
@@ -458,6 +517,82 @@ export function DocumentationPage() {
 
       {viewMode === 'calendar' && (
         <CalendarView issues={filteredSections} onIssueSelect={setSelectedDoc} />
+      )}
+
+      {viewMode === 'tree' && (
+        <Panel title="Documentation Structure" className="animate-float-in">
+          <div className="space-y-1 max-h-[70vh] overflow-y-auto pr-2">
+            {(() => {
+              const folderStructure = getFolderStructure(filteredSections);
+              
+              return (
+                <>
+                  {/* Folders */}
+                  {Object.entries(folderStructure.folders).map(([folderKey, folder]) => (
+                    <div key={folderKey}>
+                      <button
+                        onClick={() => {
+                          const newExpanded = new Set(expandedFolders);
+                          if (newExpanded.has(folderKey)) {
+                            newExpanded.delete(folderKey);
+                          } else {
+                            newExpanded.add(folderKey);
+                          }
+                          setExpandedFolders(newExpanded);
+                        }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-app-text hover:text-app-accent transition rounded-md hover:bg-app-accent/5"
+                      >
+                        <span className={`transition ${expandedFolders.has(folderKey) ? 'rotate-90' : ''}`}>
+                          ▶
+                        </span>
+                        <span className="uppercase text-xs tracking-wide">{folder.displayName}</span>
+                      </button>
+                      
+                      {/* Files in folder */}
+                      {expandedFolders.has(folderKey) && (
+                        <div className="pl-6 space-y-1">
+                          {folder.docs.map((doc) => (
+                            <button
+                              key={doc.id}
+                              onClick={() => setSelectedDoc(doc)}
+                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-app-subtle hover:text-app-text rounded-md hover:bg-app-accent/5 transition text-left line-clamp-1"
+                              title={doc.title}
+                            >
+                              <span>📄</span>
+                              <span className="truncate">{doc.title}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  
+                  {/* Root level files */}
+                  {folderStructure.rootFiles.length > 0 && (
+                    <div>
+                      <div className="px-3 py-2 text-xs font-medium text-app-accent/60 uppercase tracking-wider mt-4">
+                        Root
+                      </div>
+                      <div className="space-y-1">
+                        {folderStructure.rootFiles.map((doc) => (
+                          <button
+                            key={doc.id}
+                            onClick={() => setSelectedDoc(doc)}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-app-subtle hover:text-app-text rounded-md hover:bg-app-accent/5 transition text-left line-clamp-1"
+                            title={doc.title}
+                          >
+                            <span>📄</span>
+                            <span className="truncate">{doc.title}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </Panel>
       )}
 
       {selectedDoc && <DocModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}

@@ -142,23 +142,76 @@ gantt
 
 ---
 
-##  Issue Index
+##  Issue Index (Organized by Folder Structure)
+
+### Root Files
+
+Core documentation at project root  
+See: [docs/](../)
+
+| # | Title | Type | Status |
+|---|-------|------|--------|
+| [INDEX](#indexmd) | INDEX.md | Reference | Published |
+| [WHY_WE_STARTED](#why_we_startedmd) | WHY_WE_STARTED.md | Guide | Published |
+| [IMPLEMENTATION_SUMMARY](#implementation_summarymd) | IMPLEMENTATION_SUMMARY.md | Summary | Published |
+
+### Architecture Issues  
+SRP refactoring, design improvements, and structural cleanup  
+See: [docs/ARCHITECTURE/](../ARCHITECTURE/)
 
 | # | Title | Priority | Assignee | Status |
 |---|-------|----------|----------|--------|
-| [SRP-1](#srp-1-split-usefacetrackingts) | SRP: Split `useFaceTracking.ts` into focused hooks |  ASAP | @aadibhat09 | In Progress|
-| [SRP-2](#srp-2-decompose-settingspaneltsx) | SRP: Decompose `SettingsPanel.tsx` into sub-components |  ASAP | @SanPranav | In Progress|
-| [SRP-3](#srp-3-extract-gesturecontrols-logic) | SRP: Extract gesture dispatch from `useGestureControls.ts` |  ASAP | @aadibhat09 |  To Do |
-| [SRP-4](#srp-4-refactor-gamespagetsxo) | SRP: Refactor `GamesPage.tsx` - separate game logic from UI |  This Sprint | @SanPranav |  To Do |
-| [SRP-5](#srp-5-separate-appcontext-concerns) | SRP: Separate `AppContext.tsx` concerns |  This Sprint | @aadibhat09 |  To Do |
-| [SRP-6](#srp-6-clean-up-trackingworkerts) | SRP: Clean up `trackingWorker.ts` responsibility boundary |  This Sprint | @SanPranav |  To Do |
-| [NEXT-1](#next-1-automated-test-suite) | Add automated test suite (Vitest + Testing Library) |  Next Sprint | @aadibhat09 |  Backlog |
-| [NEXT-2](#next-2-calibration-ux-improvements) | Calibration UX improvements + edge-case handling |  Next Sprint | @SanPranav |  Backlog |
-| [NEXT-3](#next-3-gesture-confidence-feedback) | Gesture confidence feedback system |  Next Sprint | @aadibhat09 |  Backlog |
+| [SRP-1](#srp-1-split-usefacetrackingts) | SRP: Split `useFaceTracking.ts` into focused hooks | ASAP | @aadibhat09 | In Progress |
+| [SRP-2](#srp-2-decompose-settingspaneltsx) | SRP: Decompose `SettingsPanel.tsx` into sub-components | ASAP | @SanPranav | In Progress |
+| [SRP-3](#srp-3-extract-gesturecontrols-logic) | SRP: Extract gesture dispatch from `useGestureControls.ts` | ASAP | @aadibhat09 | To Do |
+| [SRP-4](#srp-4-refactor-gamespagetsxo) | SRP: Refactor `GamesPage.tsx` - separate game logic from UI | This Sprint | @SanPranav | To Do |
+| [SRP-5](#srp-5-separate-appcontext-concerns) | SRP: Separate `AppContext.tsx` concerns | This Sprint | @aadibhat09 | To Do |
+| [SRP-6](#srp-6-clean-up-trackingworkerts) | SRP: Clean up `trackingWorker.ts` responsibility boundary | This Sprint | @SanPranav | To Do |
+
+### Coding Guides Issues
+Accessibility, UX improvements, and user experience  
+See: [docs/CODING_GUIDES/](../CODING_GUIDES/)
+
+| # | Title | Priority | Assignee | Status |
+|---|-------|----------|----------|--------|
+| [NEXT-2](#next-2-calibration-ux-improvements) | Calibration UX improvements + edge-case handling | This Sprint | @SanPranav | Backlog |
+| [NEXT-3](#next-3-gesture-confidence-feedback) | Gesture confidence feedback system | This Sprint | @aadibhat09 | Backlog |
+
+### CS113 Capstone Issues
+Testing, deployment, and capstone deliverables  
+See: [docs/CS113_CAPSTONE/](../CS113_CAPSTONE/)
+
+| # | Title | Priority | Assignee | Status |
+|---|-------|----------|----------|--------|
+| [NEXT-1](#next-1-automated-test-suite) | Add automated test suite (Vitest + Testing Library) | This Sprint | @aadibhat09 | Backlog |
+| [CS113-INDIVIDUAL](#cs113-individual-frq-answers) | CS113 Individual FRQ Answers | This Sprint | @SanPranav, @aadibhat09 | In Progress |
+
+### Data Structures Issues
+
+CS113 Data Structures checkpoints, proofs, and implementations  
+See: [docs/DATA_STRUCTURES/](../DATA_STRUCTURES/)
+
+| # | Title | Priority | Assignee | Status |
+|---|-------|----------|----------|--------|
+| [DS-2](#ds-2-checkpoint) | DS #2 Before-Break Checkpoint (Wed 3/31) | This Sprint | @SanPranav, @aadibhat09 | In Progress |
+| [DS-2-INDIVIDUAL](#ds-2-individual-frq-answers) | DS #2 Individual FRQ Answers | This Sprint | @SanPranav, @aadibhat09 | In Progress |
+| [DS-2-GROUP](#ds-2-group-capstone) | DS #2 Group Capstone Updates | This Sprint | @SanPranav, @aadibhat09 | In Progress |
+
+### Project Management Issues
+
+Roadmap, sprint planning, and workflow documentation  
+See: [docs/PROJECT_MANAGEMENT/](../PROJECT_MANAGEMENT/)
+
+| # | Title | Priority | Assignee | Status |
+|---|-------|----------|----------|--------|
+| [REPLAN-1](#replan-1-sprint-velocity) | Establish sprint velocity baseline | Next Sprint | @SanPranav | To Do |
+| [REPLAN-2](#replan-2-backlog-prioritization) | Backlog prioritization for Sprint 10+ | Next Sprint | @SanPranav | To Do |
 
 ---
 
-##  ASAP Issues
+##  Architecture Issues
+
+Related documentation: [docs/ARCHITECTURE/](../ARCHITECTURE/)
 
 ### SRP-1: Split `useFaceTracking.ts`
 
@@ -331,10 +384,6 @@ flowchart LR
 - [ ] No accidental double-dispatching introduced by the refactor
 - [ ] Drag mode and tilt scroll still function correctly
 
----
-
-##  This Sprint
-
 ### SRP-4: Refactor `GamesPage.tsx`
 
 > **Priority:**  This Sprint | **Assignee:** @SanPranav | **Effort:** ~3 story points
@@ -477,7 +526,9 @@ stateDiagram-v2
 
 ---
 
-##  Next Sprint Backlog
+##  CS113 Capstone Issues
+
+Related documentation: [docs/CS113_CAPSTONE/](../CS113_CAPSTONE/)
 
 ### NEXT-1: Automated Test Suite
 
@@ -515,9 +566,13 @@ flowchart TD
 
 ---
 
+##  Coding Guides Issues
+
+Related documentation: [docs/CODING_GUIDES/](../CODING_GUIDES/)
+
 ### NEXT-2: Calibration UX Improvements
 
-> **Priority:**  Next Sprint | **Assignee:** @SanPranav | **Effort:** ~3 story points
+> **Priority:**  This Sprint | **Assignee:** @SanPranav | **Effort:** ~3 story points
 
 Cited from **Issue #2** (SanPranav's weekly issue, Task C): *"Add/verify user feedback for incomplete calibration data... Ensure mapping always clamps to [0..1] and avoids NaN/undefined cases."*
 
@@ -531,7 +586,7 @@ Cited from **Issue #2** (SanPranav's weekly issue, Task C): *"Add/verify user fe
 
 ### NEXT-3: Gesture Confidence Feedback
 
-> **Priority:**  Next Sprint | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
+> **Priority:**  This Sprint | **Assignee:** @aadibhat09 | **Effort:** ~2 story points
 
 Cited from **Issue #3** (aadibhat09's weekly issue, Task B): *"Add visible state indicators — Drag mode: On/Off; Gestures enabled: yes/no"*
 
@@ -542,6 +597,110 @@ Cited from **Issue #4** (Design Research): *"Users prefer gesture confirmation f
 - [ ] "Drag mode: ON" persistent status badge
 - [ ] Audio cue option (short tone) for confirmed click
 - [ ] `onEvent` callback from `useGestureControls` surfaced to Demo UI log panel
+
+---
+
+##  Data Structures Issues
+
+Related documentation: [docs/DATA_STRUCTURES/](../DATA_STRUCTURES/)
+
+### DS-2: Checkpoint
+
+> **Priority:** This Sprint | **Assignee:** @SanPranav, @aadibhat09 | **Deadline:** Wednesday, March 31, 2026
+
+**Objective:** Complete DS #2 Before-Break Checkpoint with individual and group submissions.
+
+**Deliverables:**
+- [x] Checkpoint framework & detailed specifications
+- [ ] All individual FRQ answers submitted (Pranav, Aadi, others)
+- [ ] Group capstone update submissions
+- [ ] Evidence linking implementation to data structures
+- [ ] Complexity analysis for all algorithms
+
+**Files:**
+- `DS_2_WEDNESDAY_CHECKPOINT.md` - Full checkpoint details
+- `DS_2_QUICK_START.md` - 5-minute overview for students
+- `DS_2_CALENDAR.md` - Week-by-week timeline
+- `DS_2/INDIVIDUAL_ANSWERS/` - Student submissions
+
+---
+
+### DS-2-INDIVIDUAL: Individual FRQ Answers
+
+> **Priority:** This Sprint | **Assignee:** @SanPranav, @aadibhat09 | **Deadline:** Wednesday, March 31
+
+**Status:** In Progress
+- [x] Pranav's FRQ summary completed (241 lines, 4 Mermaid diagrams)
+- [x] Aadi's FRQ template created
+- [ ] Final review & feedback
+
+**Location:** `DS_2/INDIVIDUAL_ANSWERS/`
+
+---
+
+### DS-2-GROUP: Group Capstone Updates
+
+> **Priority:** This Sprint | **Assignee:** Student groups | **Deadline:** Wednesday, March 31
+
+**Deliverables:**
+- [ ] Group capstone progress update submitted
+- [ ] Evidence of data structure integration
+- [ ] Updated project roadmap
+
+**Location:** `DS_2/GROUP_CAPSTONE_UPDATES/`
+
+---
+
+##  Project Management Issues
+
+Related documentation: [docs/PROJECT_MANAGEMENT/](../PROJECT_MANAGEMENT/)
+
+### REPLAN-1: Sprint Velocity Baseline
+
+> **Priority:** Next Sprint | **Assignee:** @SanPranav | **Effort:** TBD
+
+Establish sprint velocity from completed work (currently 41 total cumulative story points across all waves).
+
+**Deliverables:**
+- [ ] Calculate average velocity per sprint
+- [ ] Create velocity forecast for remaining sprints
+- [ ] Adjust story point estimates based on team capacity
+
+---
+
+### REPLAN-2: Backlog Prioritization for Sprint 10+
+
+> **Priority:** Next Sprint | **Assignee:** @SanPranav | **Effort:** TBD
+
+Re-prioritize backlog after SRP cleanup and DS #2 checkpoint.
+
+**Deliverables:**
+- [ ] Review remaining high-priority items
+- [ ] Estimate effort for backlog items
+- [ ] Create Sprint 10 plan with top 5 issues
+- [ ] Communicate timeline to team
+
+---
+
+### CS113-INDIVIDUAL: Individual FRQ Answers
+
+> **Priority:** This Sprint | **Assignee:** @SanPranav, @aadibhat09 | **Deadline:** Wednesday, March 31
+
+**Status:** In Progress
+- [ ] Pranav's FRQ answer template created
+- [ ] Aadi's FRQ answer template created
+- [ ] Final review & feedback
+
+**Location:** `INDIVIDUAL_ANSWERS/`
+
+**Deliverables:**
+- [ ] Data structures implementation documented
+- [ ] Algorithm design with complexity analysis
+- [ ] OOP principles applied
+- [ ] Integration with NodCursor codebase verified
+- [ ] Code references and citations included
+- [ ] Testing evidence collected
+- [ ] Documentation checklist completed
 
 ---
 
