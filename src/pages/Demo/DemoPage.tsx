@@ -14,6 +14,7 @@ import { useGestureControls } from '../../hooks/useGestureControls';
 import { OnScreenKeyboard } from '../../components/OnScreenKeyboard';
 import { useMouthTypingControls } from '../../hooks/useMouthTypingControls';
 import { useSmoothCursor } from '../../hooks/useSmoothCursor';
+import { useAutoScroll } from '../../hooks/useAutoScroll';
 
 function dispatchAtCursor(type: string, x: number, y: number, button = 0) {
   const clientX = Math.round(x * window.innerWidth);
@@ -52,6 +53,9 @@ export function DemoPage() {
     { x: state.x, y: state.y },
     { smoothing: settings.smoothing, stabilization: settings.stabilization }
   );
+  
+  // Auto-scroll when cursor reaches top or bottom of screen
+  useAutoScroll(smoothCursorPos.y);
   
   const actions = useBlinkDetection(state.blink, state.doubleBlink, state.longBlink);
   const [eventLog, setEventLog] = useState<EventLogEntry[]>([]);
