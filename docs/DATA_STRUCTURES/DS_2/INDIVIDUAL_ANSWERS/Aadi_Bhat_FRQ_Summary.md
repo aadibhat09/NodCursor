@@ -1,4 +1,4 @@
-# Individual FRQ Teaching & Homework Summary
+# Individual FRQ Interactive Learning & Homework Summary
 
 **Student Name:** Aadi Bhat  
 **Date Submitted:** March 29, 2026  
@@ -6,7 +6,7 @@
 
 ---
 
-## Part 1: FRQ Conceptual Knowledge & Teaching
+## Part 1: FRQ Conceptual Knowledge & Interactive Learning
 
 ### My Data Structure Journey Through 4 Major FRQs
 
@@ -34,19 +34,28 @@ I completed **4 rigorous FRQ assignments** covering ArrayList collections, 2D ar
 
 ---
 
-## Part 2: Teaching Moments & How I Learned (Then Shared)
+## Part 2: Interactive Learning Moments & How I Learned (Then Shared Informally)
 
-Unlike Pranav's expert mastery from day 1, my FRQ journey was about **surviving edge cases and debugging my way to understanding**. But that's exactly what made me a good teacher—I knew every pitfall.
+Unlike Pranav's expert mastery from day 1, my FRQ journey was about **surviving edge cases and debugging my way to understanding**. I was not able to formally teach this FRQ to the class, so I focused on making my own process highly interactive and sharing those takeaways informally with teammates.
 
-### The Edge Case Lesson (From Digits → to Teammates)
+### Interactive Practice Using 2021 FRQ 3
+
+I used the [2021 FRQ 3 prompt](https://pages.opencodingsociety.com/csa/frqs/2021/3) as an interactive drill resource:
+- Broke the prompt into micro-steps and wrote expected outputs before coding
+- Ran tiny test cases first, then scaled to full cases to catch edge conditions early
+- Turned each bug into a quick "why did this fail?" checkpoint before moving on
+
+This made the learning process feel like active simulation instead of passive reading, and it improved both my speed and accuracy on later FRQs.
+
+### The Edge Case Lesson (From Digits → to Interactive Debugging)
 
 **What Happened:**  
 In 2017 FRQ 1, I submitted code that worked for 95% of inputs. Then I tested `Digits(0)` and got an empty ArrayList. My `while (num > 0)` never executed, crashing my whole solution.
 
-**How I Taught This to Others:**
+**How I Made This Interactive:**
 - "Always test your loop exit conditions with boundary values"
 - "What happens when the input is the *smallest* valid value?"
-- Showed the fix: simple `if (num == 0) { digitList.add(0); }` at the start
+- Built a repeatable fix checklist: simple `if (num == 0) { digitList.add(0); }` at the start
 
 **Why This Matters for NodCursor:**
 The same principle applies to face tracking—what if the camera never initializes? What if there are 0 landmarks detected? We prevent null pointer exceptions the same way: explicit boundary checks before loops.
@@ -249,6 +258,6 @@ I built an [RPN Visual Calculator](https://aadibhat09.github.io/aadi_2025/2026/0
 
 **Submission Status:** Complete  
 **Submitted:** March 29, 2026  
-**Focus:** Unique narrative style connecting struggle < understanding < mastery < impact  
+**Focus:** Unique narrative style connecting struggle < interactive practice < mastery < impact  
 **Differentiation:** Reflexive growth story vs. Pranav's performance optimizations; both approaches needed for team success
 
