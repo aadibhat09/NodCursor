@@ -60,15 +60,15 @@ async function convertDocxToMarkdown(file: File): Promise<string> {
     import(/* @vite-ignore */ 'https://esm.sh/turndown-plugin-gfm@1.0.2')
   ]);
 
-  const mammoth = (mammothModule as { default?: typeof mammothModule }).default ?? mammothModule;
-  const TurndownService = (turndownModule as { default?: typeof turndownModule }).default ?? turndownModule;
-  const gfm = (gfmModule as { gfm?: unknown; default?: unknown }).gfm ?? (gfmModule as { default?: unknown }).default;
+  const mammoth: any = (mammothModule as { default?: any }).default ?? mammothModule;
+  const TurndownService: any = (turndownModule as { default?: any }).default ?? turndownModule;
+  const gfm: any = (gfmModule as { gfm?: any; default?: any }).gfm ?? (gfmModule as { default?: any }).default;
 
   const arrayBuffer = await file.arrayBuffer();
   const htmlResult = await mammoth.convertToHtml(
     { arrayBuffer },
     {
-      convertImage: mammoth.images.inline(async (image) => {
+      convertImage: mammoth.images.inline(async (image: { read: (encoding: 'base64') => Promise<string>; contentType: string }) => {
         const imageBuffer = await image.read('base64');
         return {
           src: `data:${image.contentType};base64,${imageBuffer}`

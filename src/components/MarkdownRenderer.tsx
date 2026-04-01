@@ -97,7 +97,8 @@ function parseInline(text: string, keyPrefix: string): ReactNode[] {
 
   const tryMatchAt = (source: string, start: number) => {
     const segment = source.slice(start);
-    const patterns: Array<{ type: 'link' | 'code' | 'bold' | 'italic'; regex: RegExp }> = [
+    const patterns: Array<{ type: 'image' | 'link' | 'code' | 'bold' | 'italic'; regex: RegExp }> = [
+      { type: 'image', regex: /^!\[([^\]]*)\]\(([^)]+)\)/ },
       { type: 'link', regex: /^\[([^\]]+)\]\(([^)]+)\)/ },
       { type: 'code', regex: /^`([^`]+)`/ },
       { type: 'bold', regex: /^\*\*([^*]+)\*\*/ },
@@ -143,7 +144,19 @@ function parseInline(text: string, keyPrefix: string): ReactNode[] {
     const tokenKey = `${keyPrefix}-tok-${tokenIndex++}`;
     const [full, capture1, capture2] = token.match;
 
-    if (token.type === 'link') {
+    if (token.type === 'image') {
+      const src = capture2.trim();
+      nodes.push(
+        <span key={tokenKey} className="my-3 block overflow-hidden rounded-lg border border-app-accent/20 bg-app-bg/70 p-2">
+          <img
+            src={src}
+            alt={capture1 || 'Document image'}
+            className="max-h-[28rem] w-full rounded-md object-contain"
+            loading="lazy"
+          />
+        </span>
+      );
+    } else if (token.type === 'link') {
       const href = capture2;
       const isExternal = /^https?:\/\//.test(href);
       nodes.push(
