@@ -7,11 +7,14 @@ export interface DocSection {
   sourcePath: string;
   content: string;
   category: string;
+  sourceType?: 'repository' | 'uploaded';
   issueNumber?: number;
   assignees?: string[];
   status?: 'draft' | 'review' | 'published' | 'archived';
   icon?: string;
   date?: string;
+  uploadedAt?: string;
+  originalFileName?: string;
 }
 
 interface CalendarDay {

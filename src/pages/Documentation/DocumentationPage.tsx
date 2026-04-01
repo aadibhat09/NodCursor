@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Panel } from '../../components/common';
 import { MarkdownRenderer } from '../../components/MarkdownRenderer';
@@ -7,6 +7,14 @@ import { CalendarView } from '../../components/CalendarView';
 import { useAppContext } from '../../context/AppContext';
 import { useVoiceCommands } from '../../hooks/useVoiceCommands';
 import { DocSection } from '../../hooks/useProjectView';
+import {
+  buildImportedDocSection,
+  clearImportedDocs,
+  loadImportedDocs,
+  saveImportedDocs,
+  uploadedDocsCategory,
+  type ImportedDocSection
+} from '../../utils/docxImport';
 
 // Re-export for convenience
 export type { DocSection };
@@ -126,7 +134,7 @@ const issueMetadata: Record<string, { issueNumber: number; assignees: string[]; 
   'srp-refactor-settings-page': { issueNumber: 208, assignees: ['@aadibhat09'], status: 'draft', date: '2026-03-26' },
 };
 
-const docSections: DocSection[] = Object.entries(markdownFiles)
+const repositoryDocSections: DocSection[] = Object.entries(markdownFiles)
   .map(([sourcePath, content]) => {
     const normalizedPath = sourcePath.replace(/^\//, '');
     const fileName = normalizedPath.split('/').pop() ?? normalizedPath;
@@ -152,7 +160,11 @@ const docSections: DocSection[] = Object.entries(markdownFiles)
   })
   .sort((a, b) => a.title.localeCompare(b.title));
 
-const categoryOrder = ['Root Files', 'Architecture', 'Coding Guides', 'CS113 Capstone', 'Data Structures', 'Project Management'];
+function mergeDocSections(uploadedDocs: ImportedDocSection[]): DocSection[] {
+  return [...repositoryDocSections, ...uploadedDocs];
+}
+
+const categoryOrder = ['Root Files', 'Architecture', 'Coding Guides', 'CS113 Capstone', 'Data Structures', 'Project Management', uploadedDocsCategory];
 
 function getCategorizedDocs(sections: DocSection[]): Record<string, DocSection[]> {
   const categorized: Record<string, DocSection[]> = {};
@@ -275,6 +287,11 @@ function DocModal({ doc, onClose }: DocModalProps) {
                   <span className="px-3 py-1 bg-app-accent/20 text-app-accent rounded-full text-xs font-semibold">
                     {doc.category}
                   </span>
+                  {doc.sourceType === 'uploaded' ? (
+                    <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-xs font-semibold border border-cyan-500/30">
+                      Uploaded DOCX
+                    </span>
+                  ) : null}
                   {doc.status && (
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(doc.status)}`}>
                       {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
@@ -291,6 +308,9 @@ function DocModal({ doc, onClose }: DocModalProps) {
 
             <div className="space-y-2">
               <p className="text-sm text-app-subtle">{doc.sourcePath}</p>
+              {doc.sourceType === 'uploaded' && doc.uploadedAt ? (
+                <p className="text-xs text-app-subtle">Imported {new Date(doc.uploadedAt).toLocaleString()}</p>
+              ) : null}
               {doc.assignees && doc.assignees.length > 0 && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-semibold text-app-text">Assignees:</span>
@@ -333,25 +353,73 @@ function DocModal({ doc, onClose }: DocModalProps) {
 export function DocumentationPage() {
   const { settings } = useAppContext();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState('');
   const [selectedDoc, setSelectedDoc] = useState<DocSection | null>(null);
   const [viewMode, setViewMode] = useState<'kanban' | 'projects' | 'calendar' | 'tree'>('kanban');
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [uploadedDocs, setUploadedDocs] = useState<ImportedDocSection[]>(() => loadImportedDocs());
+  const [uploading, setUploading] = useState(false);
+  const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
+
+  useEffect(() => {
+    saveImportedDocs(uploadedDocs);
+  }, [uploadedDocs]);
+
+  const allDocSections = useMemo(() => mergeDocSections(uploadedDocs), [uploadedDocs]);
 
   const normalizedQuery = query.trim().toLowerCase();
 
   const filteredSections = useMemo(() => {
-    if (!normalizedQuery) return docSections;
+    if (!normalizedQuery) return allDocSections;
 
-    return docSections.filter((item) => {
+    return allDocSections.filter((item) => {
       return item.title.toLowerCase().includes(normalizedQuery)
         || item.summary.toLowerCase().includes(normalizedQuery)
         || item.sourcePath.toLowerCase().includes(normalizedQuery)
         || item.category.toLowerCase().includes(normalizedQuery);
     });
-  }, [normalizedQuery]);
+  }, [normalizedQuery, allDocSections]);
 
   const categorizedDocs = useMemo(() => getCategorizedDocs(filteredSections), [filteredSections]);
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDocxSelection = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+
+    if (!files.length) return;
+
+    const docxFiles = files.filter((file) => file.name.toLowerCase().endsWith('.docx'));
+    if (!docxFiles.length) {
+      setUploadFeedback('Please choose one or more .docx files.');
+      return;
+    }
+
+    setUploading(true);
+    setUploadFeedback(null);
+
+    try {
+      const importedDocs = await Promise.all(docxFiles.map((file) => buildImportedDocSection(file)));
+      setUploadedDocs((prev) => [...importedDocs, ...prev]);
+      setViewMode('kanban');
+      setUploadFeedback(`Imported ${importedDocs.length} DOCX file${importedDocs.length === 1 ? '' : 's'} into the kanban.`);
+    } catch {
+      setUploadFeedback('DOCX import failed. Check that the file is a valid Word document.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleClearUploads = () => {
+    clearImportedDocs();
+    setUploadedDocs([]);
+    setSelectedDoc(null);
+    setUploadFeedback('Cleared imported DOCX documents.');
+  };
 
   useVoiceCommands(settings.voiceEnabled, {
     navigate: (path) => navigate(path)
@@ -361,6 +429,51 @@ export function DocumentationPage() {
     <div className="space-y-4">
       <Panel title="Project Management" className="animate-float-in">
         <div className="space-y-3">
+          <div className="rounded-xl border border-app-accent/20 bg-app-panelAlt/70 p-4 shadow-inner">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold text-app-text">Import DOCX documents</h3>
+                <p className="text-xs text-app-subtle">
+                  Upload a Word document and it will be converted to markdown, saved locally, and added to the kanban under {uploadedDocsCategory}.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleUploadClick}
+                  disabled={uploading}
+                  className="rounded-md bg-app-accentStrong px-4 py-2 text-xs font-semibold text-app-bg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {uploading ? 'Importing...' : 'Choose DOCX'}
+                </button>
+                {uploadedDocs.length > 0 ? (
+                  <button
+                    type="button"
+                    onClick={handleClearUploads}
+                    className="rounded-md border border-app-accent/30 px-4 py-2 text-xs font-semibold text-app-text transition hover:border-app-accent hover:bg-app-accent/10"
+                  >
+                    Clear Imports
+                  </button>
+                ) : null}
+              </div>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              multiple
+              onChange={handleDocxSelection}
+              className="hidden"
+            />
+
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] text-app-subtle">
+              <span>{uploadedDocs.length} imported doc{uploadedDocs.length === 1 ? '' : 's'}</span>
+              <span>{allDocSections.length} total docs</span>
+              {uploadFeedback ? <span className="text-app-accent">{uploadFeedback}</span> : null}
+            </div>
+          </div>
+
           {/* Search Bar */}
           <div className="rounded-lg border border-app-accent/20 bg-app-panelAlt p-3">
             <label htmlFor="documentation-search" className="mb-1 block text-xs font-semibold text-app-text">
@@ -375,7 +488,7 @@ export function DocumentationPage() {
               className="w-full rounded-md border border-app-accent/30 bg-app-bg/70 px-2 py-1.5 text-xs text-app-text"
             />
             <p className="mt-2 text-[11px] text-app-subtle">
-              {filteredSections.length} of {docSections.length} issues
+              {filteredSections.length} of {allDocSections.length} issues
             </p>
           </div>
 
