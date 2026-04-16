@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Panel } from '../../components/common';
 import { MarkdownRenderer } from '../../components/MarkdownRenderer';
 import { GitHubProjectsView } from '../../components/GitHubProjectsView';
@@ -353,6 +353,7 @@ function DocModal({ doc, onClose }: DocModalProps) {
 export function DocumentationPage() {
   const { settings } = useAppContext();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState('');
   const [selectedDoc, setSelectedDoc] = useState<DocSection | null>(null);
@@ -382,6 +383,46 @@ export function DocumentationPage() {
   }, [normalizedQuery, allDocSections]);
 
   const categorizedDocs = useMemo(() => getCategorizedDocs(filteredSections), [filteredSections]);
+
+  const openDoc = useCallback((doc: DocSection) => {
+    setSelectedDoc(doc);
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('issue', doc.id);
+    setSearchParams(nextParams);
+  }, [searchParams, setSearchParams]);
+
+  const closeDoc = useCallback(() => {
+    setSelectedDoc(null);
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete('issue');
+    setSearchParams(nextParams);
+  }, [searchParams, setSearchParams]);
+
+  useEffect(() => {
+    const issueFromUrl = searchParams.get('issue');
+    if (!issueFromUrl) {
+      if (selectedDoc) {
+        setSelectedDoc(null);
+      }
+      return;
+    }
+
+    const match = allDocSections.find((doc) => {
+      if (doc.id === issueFromUrl) return true;
+      if (doc.issueNumber && String(doc.issueNumber) === issueFromUrl) return true;
+      return false;
+    });
+
+    if (!match) {
+      return;
+    }
+
+    if (!selectedDoc || selectedDoc.id !== match.id) {
+      setSelectedDoc(match);
+    }
+  }, [allDocSections, searchParams, selectedDoc]);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -417,7 +458,7 @@ export function DocumentationPage() {
   const handleClearUploads = () => {
     clearImportedDocs();
     setUploadedDocs([]);
-    setSelectedDoc(null);
+    closeDoc();
     setUploadFeedback('Cleared imported DOCX documents.');
   };
 
@@ -564,7 +605,7 @@ export function DocumentationPage() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setSelectedDoc(doc);
+                      openDoc(doc);
                     }}
                       className="w-full text-left rounded-lg border border-app-accent/20 bg-app-bg/70 text-app-subtle px-3 py-3 transition hover:border-app-accent/40 hover:text-app-text hover:bg-app-accent/5 cursor-pointer group"
                     >
@@ -625,11 +666,11 @@ export function DocumentationPage() {
       )}
 
       {viewMode === 'projects' && (
-        <GitHubProjectsView issues={filteredSections} onIssueSelect={setSelectedDoc} />
+        <GitHubProjectsView issues={filteredSections} onIssueSelect={openDoc} />
       )}
 
       {viewMode === 'calendar' && (
-        <CalendarView issues={filteredSections} onIssueSelect={setSelectedDoc} />
+        <CalendarView issues={filteredSections} onIssueSelect={openDoc} />
       )}
 
       {viewMode === 'tree' && (
@@ -667,7 +708,7 @@ export function DocumentationPage() {
                           {folder.docs.map((doc) => (
                             <button
                               key={doc.id}
-                              onClick={() => setSelectedDoc(doc)}
+                              onClick={() => openDoc(doc)}
                               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-app-subtle hover:text-app-text rounded-md hover:bg-app-accent/5 transition text-left line-clamp-1"
                               title={doc.title}
                             >
@@ -690,7 +731,7 @@ export function DocumentationPage() {
                         {folderStructure.rootFiles.map((doc) => (
                           <button
                             key={doc.id}
-                            onClick={() => setSelectedDoc(doc)}
+                            onClick={() => openDoc(doc)}
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-app-subtle hover:text-app-text rounded-md hover:bg-app-accent/5 transition text-left line-clamp-1"
                             title={doc.title}
                           >
@@ -708,7 +749,7 @@ export function DocumentationPage() {
         </Panel>
       )}
 
-      {selectedDoc && <DocModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}
+      {selectedDoc && <DocModal doc={selectedDoc} onClose={closeDoc} />}
     </div>
   );
 }
